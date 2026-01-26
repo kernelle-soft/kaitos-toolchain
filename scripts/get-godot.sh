@@ -27,7 +27,7 @@ function main() {
 	# Extract
 	mkdir -p "$bin_path"
 	unzip -o "$temp_dir/$zip_name" -d "$bin_path"
-  mv "$bin_path/$bin_name" "$bin_path/godot"
+  mv "$bin_path/$bin_name" "$bin_path/godot4"
 
 	chmod +x "$bin_path/godot"
 }

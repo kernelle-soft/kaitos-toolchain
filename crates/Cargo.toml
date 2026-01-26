@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+	"orphan-core/ecs",
+	"orphan-bindings/godot"
+]
