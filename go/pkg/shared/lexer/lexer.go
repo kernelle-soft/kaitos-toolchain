@@ -8,14 +8,14 @@ import (
 )
 
 type BaseLexer struct {
-	Content string
+	Content  string
 	FilePath string
 }
 
 const END_OF_FILE = "END_OF_FILE"
 
 type Token struct {
-	Type TokenType
+	Type  TokenType
 	Value string
 }
 
@@ -29,15 +29,15 @@ func New(filePath string) *BaseLexer {
 }
 
 func (lexer *BaseLexer) Read() []Token {
-	remaining := lexer.Content;
+	remaining := lexer.Content
 	tokens := []Token{}
 
 	for {
 		if len(remaining) == 0 {
 			break
 		}
-		
-		tok, err := lexer.lex(remaining);
+
+		tok, err := lexer.lex(remaining)
 		if err != nil {
 			panic(err)
 		}
@@ -57,18 +57,18 @@ func (lexer *BaseLexer) lex(src string) (Token, error) {
 		return lexer.extractBaseToken(src), nil
 	}
 
-	return lexer.extractIdentifier(src), nil;
+	return lexer.extractIdentifier(src), nil
 }
 
 var WhiteSpace = []string{" ", "\t"}
 
 func (lexer *BaseLexer) isWhitespace(src string) bool {
-  c := src[0]
+	c := src[0]
 	return slice.Contains(WhiteSpace, string(c))
 }
 
 func (lexer *BaseLexer) stripWhitespace(src string) string {
-  c := ""
+	c := ""
 	length := 0
 	for {
 		c = string(src[length])
@@ -136,4 +136,3 @@ func (lexer *BaseLexer) extractIdentifier(src string) Token {
 
 	return Token{IDENTIFIER, src[:length]}
 }
-

@@ -1,1 +1,5 @@
-package cmd;
+package cmd
+
+func main() {
+
+}
