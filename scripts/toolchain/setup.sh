@@ -2,7 +2,7 @@
 set -eo pipefail
 
 USAGE="$(cat <<EOF
-Installer for the Orphan game development framework.
+Installer for the ${TOOLCHAIN_NAME} game development framework.
 
 Usage: "setup.sh [-c,--clean] [-h,--help]"
 
@@ -17,13 +17,12 @@ source "scripts/shared/log.sh"
 
 FLAG_CLEAN=false
 
-PATH_CONFIG="$HOME/.config/orphan"
-PATH_SHARE="$HOME/.local/share/orphan"
+TOOLCHAIN_NAME="${TOOLCHAIN_NAME?:tool}"
+PATH_CONFIG="$HOME/.config/$TOOLCHAIN_NAME"
+PATH_SHARE="$HOME/.local/share/$TOOLCHAIN_NAME"
 PATH_BIN="$HOME/.local/bin"
-PATH_CACHE="$HOME/.cache/orphan"
-
-PATH_TEMPLATE_PROD="$PATH_CONFIG/settings.yaml"
-PATH_TEMPLATE_DEV="scripts/toolchain/template_settings.yaml"
+PATH_COMMAD="$PATH_BIN/$TOOLCHAIN_NAME"
+PATH_CACHE="$HOME/.cache/$TOOLCHAIN_NAME"
 
 function main() {
 	local engine
@@ -82,7 +81,7 @@ function is_user_ready() {
 	[[ -n "$FLAG_CLEAN" ]] && return 0;
 
 	if has_complete_install; then
-		log "There's already an installation of orphan."
+		log "There's already an installation of $TOOLCHAIN_NAME."
 		read "Would you like to do a clean re-install (N/y)? " answer
 
 		if [[ -z "$answer" || "$answer" == [Nn] ]]; then
@@ -91,7 +90,7 @@ function is_user_ready() {
 	fi
 
 	if has_partial_install; then
-		log "It looks like there's a corrupted installation of orphan."
+		log "It looks like there's a corrupted installation of $TOOLCHAIN_NAME."
 		read "Would you like to do a clean re-install (Y/n)? " answer
 
 		if [[ -n "$answer" ]]; then
@@ -113,7 +112,7 @@ function has_complete_install() {
 	if [[ 
 		-d "$PATH_CONFIG" &&
 		-d "$PATH_SHARE" &&
-		-d "$PATH_BIN/orphan"
+		-f "$PATH_COMMAND"
 	]]; then
 		return 0
 	fi
@@ -131,7 +130,7 @@ function has_partial_install() {
 		if [[
 			-d "$PATH_CONFIG" ||
 			-d "$PATH_SHARE" ||
-			-d "$PATH_BIN/orphan"
+			-f "$PATH_COMMAND"
 		]]; then
 			return 0
 		fi
@@ -146,7 +145,7 @@ DOC
 function remove_install() {
 	rm -rf "$PATH_CONFIG"
 	rm -rf "$PATH_SHARE"
-	rm -rf "$PATH_BIN/orphan"
+	rm -rf "$PATH_COMMAND"
 	rm -rf "$PATH_CACHE"
 }
 
@@ -165,9 +164,9 @@ function create_empty_install() {
 DOC
 function download_toolchain() {
 	# TODO
-	# curl and download latest release to $HOME/.cache/orphan/{TOOLCHAIN_VERSION}/bundle.zip
-	# extract $HOME/.cache/orphan/{TOOLCHAIN_VERSION}/bundle.zip to
-	# $HOME/.local/share/orphan/{TOOLCHAIN_VERSION}/ and $HOME/.local/bin/orphan
+	# curl and download latest release to $HOME/.cache/{TOOLCHAIN_NAME}/{TOOLCHAIN_VERSION}/bundle.zip
+	# extract $HOME/.cache/{TOOLCHAIN_NAME}/{TOOLCHAIN_VERSION}/bundle.zip to
+	# $HOME/.local/share/{TOOLCHAIN_NAME}/{TOOLCHAIN_VERSION}/ and $HOME/.local/bin/{TOOLCHAIN_NAME}
 	# - bin: the thin wrapper that coordinates godot and the transpiler
 	# - share: the rest of the guts
 	log "Downloading latest bundle"
@@ -178,7 +177,7 @@ function download_toolchain() {
 DOC
 function install_settings() {
 	sed -e "s/__TOOLCHAIN_VERSION__/$TOOLCHAIN_VERSION/" \
-		"scripts/toolchain/template_settings.yaml" > "$HOME/.config/orphan/settings.yaml"
+		"scripts/toolchain/template_settings.yaml" > "$HOME/.config/$TOOLCHAIN_NAME/settings.yaml"
 }
 
 function download_engine() {
@@ -189,7 +188,7 @@ function download_engine() {
 	# TODO
 	# Download the appropriate engine at the appropriate version
 	# Download it to the cache at TOOLCHAIN_VERSION
-	# Install it to .local/share/orphan/{TOOL_CHAIN_VERSION}/{ENGINE_NAME}
+	# Install it to .local/share/{TOOLCHAIN_NAME}/{TOOL_CHAIN_VERSION}/{ENGINE_NAME}
 	log "Downloading $engine_choice"
 	ret "$engine_choice"
 }
@@ -216,7 +215,7 @@ function get_user_engine_choice() {
 }
 
 : <<'DOC'
-	Performs the work to set up the binding between Orphan and the user's game engine of choice.
+	Performs the work to set up the binding between Kaitos and the user's game engine of choice.
 DOC
 function bind_engine() {
 	local engine="$1"

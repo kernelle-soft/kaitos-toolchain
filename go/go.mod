@@ -1,4 +1,4 @@
-module kernellesoft/orphan
+module kernelle-soft/kaitos
 
 go 1.25
 

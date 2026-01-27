@@ -48,8 +48,8 @@ func main() {
 
 	new := &cobra.Command{
 		Use: "new <name> [version]",
-		Short: "Start a new orphan project",
-		Long: "Start a new orphan project",
+		Short: "Start a new kaitos project",
+		Long: "Start a new kaitos project",
 		Args: cobra.RangeArgs(1, 2),
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Printf("Created project '%s' on Godot version %s", args[0], args[1])
