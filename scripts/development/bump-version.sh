@@ -178,6 +178,14 @@ function plan_bump() {
 		esac
 	fi
 
+	local new_version=""
+	if [[ "$pre_type" != "" ]]; then
+		new_version="$major.$minor.$patch-$pre_type.$pre_increment"
+	else
+		new_version="$major.$minor.$patch"
+	fi
+
+	echo "$new_version"
 	return 0
 }
 
@@ -243,8 +251,8 @@ function compare_prerelease_types() {
 	local bump_type="$1"
 	local cur_type="$2"
 
-	local bump_precedence="$(get_prerelease_precedence $bump_type)"
-	local cur_precedence="$(get_prerelease_precedence $cur_type)"
+	local bump_precedence="$(get_prerelease_precedence "$bump_type")"
+	local cur_precedence="$(get_prerelease_precedence "$cur_type")"
 
 	if [[ "$bump_precedence" -gt "$cur_precedence" ]]; then
 		echo "$bump_type"
@@ -255,13 +263,13 @@ function compare_prerelease_types() {
 
 get_prerelease_precedence() {
 	local pre_type="$1"
-	if [[ pre_type == "rc" ]]; then
+	if [[ "$pre_type" == "rc" ]]; then
 		echo 4
-	elif [[ pre_type == "beta" ]]; then
+	elif [[ "$pre_type" == "beta" ]]; then
 		echo 3
-	elif [[ pre_type == "alpha" ]]; then
+	elif [[ "$pre_type" == "alpha" ]]; then
 		echo 2
-	elif [[ pre_type == "dev" ]]; then
+	elif [[ "$pre_type" == "dev" ]]; then
 		echo 1
 	else
 		echo 0
