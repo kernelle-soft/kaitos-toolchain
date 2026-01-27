@@ -143,7 +143,7 @@ function apply_release_bump() {
 DOC
 function plan_bump() {
 	local semver_regex='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
-	if [[ "$1" =~ $semver_regex ]]; then
+	if [[ ! "$1" =~ $semver_regex ]]; then
 		log "Invalid version: $1"; 
 		return 1;
 	fi
@@ -159,7 +159,7 @@ function plan_bump() {
 		pre_inc=""
 	else
 		# Auto-bump smallest unit
-		[[ -n "$pre_type" ]] && pre_inc="$((pre_inc + 1))" || patch="$((patch + 1))"
+		plan_auto_bump pre_type pre_inc patch
 	fi
 
 	# Format and output
@@ -170,23 +170,47 @@ function plan_bump() {
 	fi
 }
 
+: <<'DOC'
+	Helper function that plans the pre-release bump based on current version and flags.
+	Uses namerefs to modify the input variables 1-5.
+
+	Usage: plan_prerelease_bump major minor patch pre_type pre_inc
+		major - The major version number
+		minor - The minor version number
+		patch - The patch version number
+		pre_type - The pre-release type (dev, alpha, beta, rc)
+		pre_inc - The pre-release increment (1, 2, 3, etc)
+DOC
 function plan_prerelease_bump() {
 	local target_type
-	local -n major="$1" minor="$2" patch="$3" pre_type="$4" pre_inc="$5"
-	target_type="$(compare_prerelease_types "$(get_prerelease_type)" "$pre_type")"
+	local -n _major="$1" _minor="$2" _patch="$3" _pre_type="$4" _pre_inc="$5"
+	target_type="$(compare_prerelease_types "$(get_target_prerelease_type)" "$_pre_type")"
 
-	if [[ "$target_type" != "$pre_type" ]]; then
-		# Changing pre-release type (or starting one)
-		if [[ -z "$pre_type" ]] && ! is_bumping_release; then
-			patch="$((patch + 1))"
+	if [[ "$target_type" != "$_pre_type" ]]; then
+		if [[ -z "$_pre_type" ]] && ! is_bumping_release; then
+			_patch="$((_patch + 1))"
 		fi
 
-		is_bumping_release && apply_release_bump major minor patch
-		pre_type="$target_type"
-		pre_inc=1
+		if is_bumping_release; then
+			apply_release_bump _major _minor _patch
+		fi
+
+		_pre_type="$target_type"
+		_pre_inc=1
 	else
 		# Same pre-release type, just increment
-		pre_inc="$((pre_inc + 1))"
+		_pre_inc="$((_pre_inc + 1))"
+	fi
+}
+
+function plan_auto_bump() {
+	local pre_type="$1"
+	local -n _pre_inc="$2" _patch="$3"
+
+	if [[ -n "$pre_type" ]]; then
+		_pre_inc="$((_pre_inc + 1))"
+	else
+		_patch="$((_patch + 1))"
 	fi
 }
 
@@ -206,7 +230,7 @@ function is_bumping_prerelease() {
 	return 1
 }
 
-function get_prerelease_type() {
+function get_target_prerelease_type() {
 	if $FLAG_DEV; then
 		echo "dev"
 		return 0
