@@ -192,7 +192,7 @@ function plan_prerelease_bump() {
 		fi
 
 		if is_bumping_release; then
-			apply_release_bump _major _minor _patch
+			apply_release_bump "$1" "$2" "$3"
 		fi
 
 		_pre_type="$target_type"
@@ -204,10 +204,9 @@ function plan_prerelease_bump() {
 }
 
 function plan_auto_bump() {
-	local pre_type="$1"
-	local -n _pre_inc="$2" _patch="$3"
+	local -n _pre_type="$1" _pre_inc="$2" _patch="$3"
 
-	if [[ -n "$pre_type" ]]; then
+	if [[ -n "$_pre_type" ]]; then
 		_pre_inc="$((_pre_inc + 1))"
 	else
 		_patch="$((_patch + 1))"
