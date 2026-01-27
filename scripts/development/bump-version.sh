@@ -103,98 +103,97 @@ function prerelease_flags_valid() {
 	return 0
 }
 
+: <<'DOC'
+	Parses a semver string into its components using namerefs.
+	Usage: parse_version "1.2.3-alpha.4" major minor patch pre_type pre_inc
+DOC
+function parse_version() {
+	local ver="$1"
+	local -n _major=$2 _minor=$3 _patch=$4 _pre_type=$5 _pre_inc=$6
+
+	_major="${ver%%.*}"; ver="${ver#*.}"
+	_minor="${ver%%.*}"; ver="${ver#*.}"
+	_patch="${ver%%-*}"
+	_pre_type=""
+	_pre_inc=""
+
+	if [[ "$ver" == *-* ]]; then
+		local pre="${ver#*-}"
+		_pre_type="${pre%%.*}"
+		_pre_inc="${pre##*.}"
+	fi
+}
+
+: <<'DOC'
+	Applies a release bump (major/minor/patch) based on flags.
+	Usage: apply_release_bump major minor patch
+DOC
+function apply_release_bump() {
+	local -n _major=$1 _minor=$2 _patch=$3
+	case "$(get_release_type)" in
+		major) _major="$((_major + 1))"; _minor=0; _patch=0 ;;
+		minor) _minor="$((_minor + 1))"; _patch=0 ;;
+		patch) _patch="$((_patch + 1))" ;;
+	esac
+}
+
+: <<'DOC'
+	Plans the version bump based on current version and flags.
+	Outputs the new version string.
+DOC
 function plan_bump() {
 	local semver_regex='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
-	if [[ ! "$1" =~ $semver_regex ]]; then
-		log "Invalid version string: $1"
-		return 1
+	if [[ "$1" =~ $semver_regex ]]; then
+		log "Invalid version: $1"; 
+		return 1;
 	fi
 
-	local current_version="$1"
-	local major="${current_version%%.*}"
-
-	current_version="${current_version#*.}"
-	local minor="${current_version%%.*}"
-
-	current_version="${current_version#*.}"
-	local patch="${current_version%%-*}"
-
-	local prerelease=""
-	local pre_type=""
-	local pre_increment=""
-
-	if [[ "$current_version" == *-* ]]; then
-			prerelease="${current_version#*-}"
-			pre_type="${prerelease%%.*}"
-			pre_increment="${prerelease##*.}"
-	fi
+	local major minor patch pre_type pre_inc
+	parse_version "$1" major minor patch pre_type pre_inc
 
 	if is_bumping_prerelease; then
-		local bump_type
-		
-		bump_type="$(compare_prerelease_types "$(get_prerelease_type)" "$pre_type")"
-		if [[ "$bump_type" != "$pre_type" ]]; then
+		local target_type
+		target_type="$(compare_prerelease_types "$(get_prerelease_type)" "$pre_type")"
+
+		if [[ "$target_type" != "$pre_type" ]]; then
+			# Changing pre-release type (or starting one)
 			if [[ -z "$pre_type" ]] && ! is_bumping_release; then
 				patch="$((patch + 1))"
 			fi
-		
-			pre_type="$bump_type"
-			pre_increment=1
 
-			if is_bumping_release; then
-				case "$(get_release_type)" in
-					major) 
-						major="$((major + 1))"
-						minor=0
-						patch=0
-						;;
-					minor) 
-						minor="$((minor + 1))"
-						patch=0
-						;;
-					patch) 
-						patch="$((patch + 1))"
-						;;
-				esac
-			fi
+			is_bumping_release && apply_release_bump major minor patch
+			pre_type="$target_type"
+			pre_inc=1
 		else
-			pre_increment="$((pre_increment + 1))"
+			# Same pre-release type, just increment
+			pre_inc="$((pre_inc + 1))"
 		fi
 	elif is_bumping_release; then
+		apply_release_bump major minor patch
 		pre_type=""
-		pre_increment=""
-		case "$(get_release_type)" in
-			major)
-				major="$((major + 1))"
-				minor=0
-				patch=0
-				;;
-			minor)
-				minor="$((minor + 1))"
-				patch=0
-				;;
-			patch)
-				patch="$((patch + 1))"
-				;;
-		esac
+		pre_inc=""
 	else
-		if [[ -n "$pre_type" ]]; then
-			pre_increment="$((pre_increment + 1))"
-		else 
-			patch="$((patch + 1))"
-		fi
+		# Auto-bump smallest unit
+		[[ -n "$pre_type" ]] && pre_inc="$((pre_inc + 1))" || patch="$((patch + 1))"
 	fi
 
-	local new_version=""
-	if [[ "$pre_type" != "" ]]; then
-		new_version="$major.$minor.$patch-$pre_type.$pre_increment"
+	# Format and output
+	if [[ -n "$pre_type" ]]; then
+		echo "$major.$minor.$patch-$pre_type.$pre_inc"
 	else
-		new_version="$major.$minor.$patch"
+		echo "$major.$minor.$patch"
 	fi
-
-	echo "$new_version"
-	return 0
 }
+
+function plan_prerelease_bump() {
+
+}
+
+function plan_release_bump() {
+	
+}
+
+
 
 function is_bumping_release() {
 	if $FLAG_MAJOR || $FLAG_MINOR || $FLAG_PATCH; then
