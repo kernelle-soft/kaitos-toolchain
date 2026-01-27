@@ -152,22 +152,7 @@ function plan_bump() {
 	parse_version "$1" major minor patch pre_type pre_inc
 
 	if is_bumping_prerelease; then
-		local target_type
-		target_type="$(compare_prerelease_types "$(get_prerelease_type)" "$pre_type")"
-
-		if [[ "$target_type" != "$pre_type" ]]; then
-			# Changing pre-release type (or starting one)
-			if [[ -z "$pre_type" ]] && ! is_bumping_release; then
-				patch="$((patch + 1))"
-			fi
-
-			is_bumping_release && apply_release_bump major minor patch
-			pre_type="$target_type"
-			pre_inc=1
-		else
-			# Same pre-release type, just increment
-			pre_inc="$((pre_inc + 1))"
-		fi
+		plan_prerelease_bump major minor patch pre_type pre_inc
 	elif is_bumping_release; then
 		apply_release_bump major minor patch
 		pre_type=""
@@ -186,14 +171,24 @@ function plan_bump() {
 }
 
 function plan_prerelease_bump() {
+	local target_type
+	local -n major="$1" minor="$2" patch="$3" pre_type="$4" pre_inc="$5"
+	target_type="$(compare_prerelease_types "$(get_prerelease_type)" "$pre_type")"
 
+	if [[ "$target_type" != "$pre_type" ]]; then
+		# Changing pre-release type (or starting one)
+		if [[ -z "$pre_type" ]] && ! is_bumping_release; then
+			patch="$((patch + 1))"
+		fi
+
+		is_bumping_release && apply_release_bump major minor patch
+		pre_type="$target_type"
+		pre_inc=1
+	else
+		# Same pre-release type, just increment
+		pre_inc="$((pre_inc + 1))"
+	fi
 }
-
-function plan_release_bump() {
-	
-}
-
-
 
 function is_bumping_release() {
 	if $FLAG_MAJOR || $FLAG_MINOR || $FLAG_PATCH; then
