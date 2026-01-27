@@ -134,6 +134,10 @@ function plan_bump() {
 		
 		bump_type="$(compare_prerelease_types "$(get_prerelease_type)" "$pre_type")"
 		if [[ "$bump_type" != "$pre_type" ]]; then
+			if [[ -z "$pre_type" ]] && ! is_bumping_release; then
+				patch="$((patch + 1))"
+			fi
+		
 			pre_type="$bump_type"
 			pre_increment=1
 
