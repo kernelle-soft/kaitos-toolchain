@@ -87,25 +87,25 @@ function parse_args() {
 }
 
 function release_flags_valid() {
-	[[ "$FLAG_MAJOR" && "$FLAG_MINOR" ]] && return 1
-	[[ "$FLAG_MINOR" && "$FLAG_PATCH" ]] && return 1
-	[[ "$FLAG_MAJOR" && "$FLAG_PATCH" ]] && return 1
+	$FLAG_MAJOR && $FLAG_MINOR && return 1
+	$FLAG_MINOR && $FLAG_PATCH && return 1
+	$FLAG_MAJOR && $FLAG_PATCH && return 1
 	return 0
 }
 
 function prerelease_flags_valid() {
-	[[ "$FLAG_DEV" && "$FLAG_ALPHA" ]] && return 1
-	[[ "$FLAG_DEV" && "$FLAG_BETA" ]] && return 1
-	[[ "$FLAG_DEV" && "$FLAG_RC" ]] && return 1
-	[[ "$FLAG_ALPHA" && "$FLAG_BETA" ]] && return 1
-	[[ "$FLAG_ALPHA" && "$FLAG_RC" ]] && return 1
-	[[ "$FLAG_BETA" && "$FLAG_RC" ]] && return 1
+	$FLAG_DEV && $FLAG_ALPHA && return 1
+	$FLAG_DEV && $FLAG_BETA && return 1
+	$FLAG_DEV && $FLAG_RC && return 1
+	$FLAG_ALPHA && $FLAG_BETA && return 1
+	$FLAG_ALPHA && $FLAG_RC && return 1
+	$FLAG_BETA && $FLAG_RC && return 1
 	return 0
 }
 
 function plan_bump() {
 	local semver_regex='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
-	if [[ ! "$1" == "$semver_regex" ]]; then
+	if [[ ! "$1" =~ $semver_regex ]]; then
 		log "Invalid version string: $1"
 		return 1
 	fi
@@ -129,9 +129,6 @@ function plan_bump() {
 			pre_increment="${prerelease##*.}"
 	fi
 
-	local bumping_release
-
-	bumping_release="$(is_bumping_release)"
 	if is_bumping_prerelease; then
 		local bump_type
 		
@@ -140,42 +137,48 @@ function plan_bump() {
 			pre_type="$bump_type"
 			pre_increment=1
 
-			if $bumping_release; then
+			if is_bumping_release; then
 				case "$(get_release_type)" in
 					major) 
-						major="$($major + 1)"
+						major="$((major + 1))"
 						minor=0
 						patch=0
 						;;
 					minor) 
-						minor="$($minor + 1)"
+						minor="$((minor + 1))"
 						patch=0
 						;;
 					patch) 
-						patch="$($patch + 1)"
+						patch="$((patch + 1))"
 						;;
 				esac
 			fi
 		else
-			pre_increment="$($pre_increment + 1)"
+			pre_increment="$((pre_increment + 1))"
 		fi
-	elif $bumping_release; then
+	elif is_bumping_release; then
 		pre_type=""
 		pre_increment=""
 		case "$(get_release_type)" in
 			major)
-				major="$($major + 1)"
+				major="$((major + 1))"
 				minor=0
 				patch=0
 				;;
 			minor)
-				minor="$($minor + 1)"
+				minor="$((minor + 1))"
 				patch=0
 				;;
 			patch)
-				patch="$($patch + 1)"
+				patch="$((patch + 1))"
 				;;
 		esac
+	else
+		if [[ -n "$pre_type" ]]; then
+			pre_increment="$((pre_increment + 1))"
+		else 
+			patch="$((patch + 1))"
+		fi
 	fi
 
 	local new_version=""
@@ -190,7 +193,7 @@ function plan_bump() {
 }
 
 function is_bumping_release() {
-	if [[ "$FLAG_MAJOR" || "$FLAG_MINOR" || "$FLAG_PATCH" ]]; then
+	if $FLAG_MAJOR || $FLAG_MINOR || $FLAG_PATCH; then
 		return 0
 	fi
 
@@ -198,7 +201,7 @@ function is_bumping_release() {
 }
 
 function is_bumping_prerelease() {
-	if [[ "$FLAG_DEV" || "$FLAG_ALPHA" || "$FLAG_BETA" || "$FLAG_RC" ]]; then
+	if $FLAG_DEV || $FLAG_ALPHA || $FLAG_BETA || $FLAG_RC; then
 		return 0
 	fi
 
@@ -206,20 +209,18 @@ function is_bumping_prerelease() {
 }
 
 function get_prerelease_type() {
-	if [[ "$FLAG_DEV" ]]; then
+	if $FLAG_DEV; then
 		echo "dev"
-	fi
-
-	if [[ "$FLAG_ALPHA" ]]; then
+		return 0
+	elif $FLAG_ALPHA; then
 		echo "alpha"
-	fi
-
-	if [[ "$FLAG_BETA" ]]; then
+		return 0
+	elif $FLAG_BETA; then
 		echo "beta"
-	fi
-
-	if [[ "$FLAG_RC" ]]; then
+		return 0
+	elif $FLAG_RC; then
 		echo "rc"
+		return 0
 	fi
 
 	echo ""
@@ -227,16 +228,15 @@ function get_prerelease_type() {
 }
 
 function get_release_type() {
-	if [[ "$FLAG_MAJOR" ]]; then
+	if $FLAG_MAJOR; then
 		echo "major"
-	fi
-
-	if [[ "$FLAG_MINOR" ]]; then
+		return 0
+	elif $FLAG_MINOR; then
 		echo "minor"
-	fi
-
-	if [[ "$FLAG_PATCH" ]]; then
+		return 0
+	elif $FLAG_PATCH; then
 		echo "patch"
+		return 0
 	fi
 
 	echo ""
@@ -246,6 +246,7 @@ function get_release_type() {
 function compare_prerelease_types() {
 	if [[ "$1" == "$2" ]]; then
 		echo "$1"
+		return 0
 	fi
 
 	local bump_type="$1"
