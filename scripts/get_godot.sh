@@ -1,7 +1,7 @@
 #!/bin/env bash
 set -euo pipefail
 
-source "scripts/assert_exists.sh"
+source "scripts/shared/assert_exists.sh"
 
 assert_exists "$GODOT_VERSION" "GODOT_VERSION is not set"
 assert_exists "$GODOT_LOCAL_PATH" "GODOT_LOCAL_PATH is not set"

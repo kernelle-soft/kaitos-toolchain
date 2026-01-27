@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"kernellesoft/hyper/pkg/shared/slice"
+	"kernellesoft/orphan/pkg/shared/slice"
 	"maps"
 	"os"
 	"unicode"
