@@ -7,13 +7,14 @@ Intelligently bump the VERSION file based on the project's current version.
 Usage: "bump-version.sh [flags...]"
 
 Flags:
-	-M, --major		Bump the major release version (0.9.9 -> 1.0.0)
-	-m, --minor		Bump the minor release version (0.0.9 -> 0.1.0)
-	-p, --patch 	Bump the patch release version (0.0.9 -> 0.0.10)
-	-d, --dev			Start (or increment) the pre-release dev version (1.0.0 -> 1.0.1-dev.1 -> 1.0.1-dev.2)
-	-a, --alpha		Start (or increment) the pre-release alpha version (1.0.0 -> 1.0.1-alpha.1 -> 1.0.1-alpha.2)
-	-b, --beta		Start (or increment) the pre-release beta version (1.0.0 -> 1.0.1-beta.1 -> 1.0.1-beta.2)
-	-c, --rc			Start (or increment) the pre-release rc version (1.0.0 -> 1.0.1-rc.1 -> 1.0.1-rc.2)
+	-M, --major			Bump the major release version (0.9.9 -> 1.0.0)
+	-m, --minor			Bump the minor release version (0.0.9 -> 0.1.0)
+	-p, --patch 		Bump the patch release version (0.0.9 -> 0.0.10)
+	-d, --dev				Start (or increment) the pre-release dev version (1.0.0 -> 1.0.1-dev.1 -> 1.0.1-dev.2)
+	-a, --alpha			Start (or increment) the pre-release alpha version (1.0.0 -> 1.0.1-alpha.1 -> 1.0.1-alpha.2)
+	-b, --beta			Start (or increment) the pre-release beta version (1.0.0 -> 1.0.1-beta.1 -> 1.0.1-beta.2)
+	-c, --rc				Start (or increment) the pre-release rc version (1.0.0 -> 1.0.1-rc.1 -> 1.0.1-rc.2)
+	-r, --release 	Transition from pre-release to release (1.0.0-rc.1 -> 1.0.0)
 
 Notes:
 	When using a pre-release flag on an existing release version, you can also specify which release version you're planning on targeting with the bump. Pre-release versions always target a future release version.
@@ -37,6 +38,7 @@ FLAG_DEV=false
 FLAG_ALPHA=false
 FLAG_BETA=false
 FLAG_RC=false
+FLAG_RELEASE=false # TODO - implement transition from 1.0.0-rc.1 --> 1.0.0
 
 function main() {
 	local current_version
@@ -68,13 +70,14 @@ DOC
 function parse_args() {
 	while [[ $# -gt 0 ]]; do
 		case "$1" in
-			-M|--major) FLAG_MAJOR=true;;
-			-m|--minor) FLAG_MINOR=true;;
-			-p|--patch) FLAG_PATCH=true;;
-			-d|--dev)   FLAG_DEV=true;;
-			-a|--alpha) FLAG_ALPHA=true;;
-			-b|--beta)  FLAG_BETA=true;;
-			-r|--rc) 		FLAG_RC=true;;
+			-M|--major) 	FLAG_MAJOR=true;;
+			-m|--minor) 	FLAG_MINOR=true;;
+			-p|--patch) 	FLAG_PATCH=true;;
+			-d|--dev)   	FLAG_DEV=true;;
+			-a|--alpha) 	FLAG_ALPHA=true;;
+			-b|--beta)  	FLAG_BETA=true;;
+			-c|--rc) 			FLAG_RC=true;;
+			-r|--release) FLAG_RELEASE=true;;
 			-h|--help)	log "$USAGE" && exit 0;;
 			*)
 				log "Unknown option: $1"
@@ -144,8 +147,8 @@ DOC
 function plan_bump() {
 	local semver_regex='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
 	if [[ ! "$1" =~ $semver_regex ]]; then
-		log "Invalid version: $1"; 
-		return 1;
+		log "Invalid version: $1"
+		return 1
 	fi
 
 	local major minor patch pre_type pre_inc
@@ -171,15 +174,15 @@ function plan_bump() {
 }
 
 : <<'DOC'
-	Helper function that plans the pre-release bump based on current version and flags.
-	Uses namerefs to modify the input variables 1-5.
+Helper function that plans the pre-release bump based on current version and flags.
+Uses namerefs to modify the input variables 1-5.
 
-	Usage: plan_prerelease_bump major minor patch pre_type pre_inc
-		major - The major version number
-		minor - The minor version number
-		patch - The patch version number
-		pre_type - The pre-release type (dev, alpha, beta, rc)
-		pre_inc - The pre-release increment (1, 2, 3, etc)
+Usage: plan_prerelease_bump major minor patch pre_type pre_inc
+	major - The major version number
+	minor - The minor version number
+	patch - The patch version number
+	pre_type - The pre-release type (dev, alpha, beta, rc)
+	pre_inc - The pre-release increment (1, 2, 3, etc)
 DOC
 function plan_prerelease_bump() {
 	local target_type
@@ -283,7 +286,7 @@ function compare_prerelease_types() {
 	fi
 }
 
-get_prerelease_precedence() {
+function get_prerelease_precedence() {
 	local pre_type="$1"
 	if [[ "$pre_type" == "rc" ]]; then
 		echo 4
@@ -296,6 +299,26 @@ get_prerelease_precedence() {
 	else
 		echo 0
 	fi
+}
+
+
+: <<'DOC'
+This function handles validating the planned version bump against the latest tag of the repository.
+
+If the planned bump is older than the latest tag, the bump is rejected.
+DOC
+function validate_planned_bump() {
+
+}
+
+
+: <<'DOC'
+Executes the planned version bump, applying it to the VERSION file and Cargo workspace.
+
+If both are successful, it then tags the current ref in git.
+DOC
+function perform_bump() {
+
 }
 
 main "$@"
