@@ -275,7 +275,7 @@ function is_bumping_prerelease() {
 		$FLAG_DEV = true || 
 		$FLAG_ALPHA = true || 
 		$FLAG_BETA = true || 
-		$FLAG_RC 
+		$FLAG_RC = true
 	]]
 }
 
@@ -283,7 +283,7 @@ function is_releasing_prerelease() {
 	local prerelease_type
 
 	prerelease_type="$1"
-	[[ -n "$prerelease_type" && $FLAG_RELEASE ]]
+	[[ -n "$prerelease_type" && $FLAG_RELEASE = true ]]
 }
 
 function get_target_prerelease_type() {
@@ -364,9 +364,9 @@ DOC
 function perform_bump() {
 	local version
 
-	version="$1"	
-	git tag -a "v$version"
-	echo "Bumped to version 'v$version'"
+	version="v$1"
+	git tag -a "$version" -m "$version"
+	echo "Bumped to version '$version'"
 }
 
 main "$@"
