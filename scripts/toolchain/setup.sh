@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -eo pipefail
+REPO_ROOT="$(git rev-parse --show-toplevel)"
 
 USAGE="$(cat <<EOF
 Installer for the ${TOOLCHAIN_NAME} game development framework.
@@ -12,8 +13,7 @@ Flags:
 EOF
 )"
 
-source "scripts/shared/assert_exists.sh"
-source "scripts/shared/log.sh"
+source "$REPO_ROOT/scripts/shared/log.sh"
 
 FLAG_CLEAN=false
 
