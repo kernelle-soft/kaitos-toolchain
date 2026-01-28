@@ -31,6 +31,7 @@ EOF
 
 source "scripts/shared/log.sh"
 
+SEMVER_REGEX='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
 FLAG_MAJOR=false
 FLAG_MINOR=false
 FLAG_PATCH=false
@@ -41,10 +42,8 @@ FLAG_RC=false
 FLAG_RELEASE=false # TODO - implement transition from 1.0.0-rc.1 --> 1.0.0
 
 function main() {
-	local current_version
+	local current_version planned_version
 	
-	current_version="$(cat ./VERSION)"
-
 	parse_args "$@"
 	if ! release_flags_valid; then
 		log "Only one release flag may be specified at a time. Use --help for more information."
@@ -56,11 +55,31 @@ function main() {
 		exit 1
 	fi
 
+	current_version="$(get_current_version)"
+	planned_version="$(plan_bump "$current_version")"
+
+	echo "current: $current_version, next: $planned_version"
 	if ! plan_bump "$current_version"; then
 		exit 1
 	fi
 
 	exit 0
+}
+
+: <<'DOC'
+	Gets the latest tagged version from git. This can be either a pre-release or full release.
+
+	If there is no previous tag, this returns "0.0.0". Otherwise, it will get the current tag
+	with the leading 'v' stripped.
+DOC
+function get_current_version() {
+	local latest_tag semver
+
+	latest_tag="$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")"
+
+	# Strip leading 'v' if there is one
+	semver="${latest_tag#v}"
+	echo "$semver"
 }
 
 : <<'DOC'
@@ -145,13 +164,13 @@ function apply_release_bump() {
 	Outputs the new version string.
 DOC
 function plan_bump() {
-	local semver_regex='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
-	if [[ ! "$1" =~ $semver_regex ]]; then
+	local major minor patch pre_type pre_inc
+
+	if [[ ! "$1" =~ $SEMVER_REGEX ]]; then
 		log "Invalid version: $1"
 		return 1
 	fi
 
-	local major minor patch pre_type pre_inc
 	parse_version "$1" major minor patch pre_type pre_inc
 
 	if is_bumping_prerelease; then
@@ -268,16 +287,19 @@ function get_release_type() {
 }
 
 function compare_prerelease_types() {
+	local bump_type cur_type
+	local bump_precedence cur_precedence
+
 	if [[ "$1" == "$2" ]]; then
 		echo "$1"
 		return 0
 	fi
 
-	local bump_type="$1"
-	local cur_type="$2"
+	bump_type="$1"
+	cur_type="$2"
 
-	local bump_precedence="$(get_prerelease_precedence "$bump_type")"
-	local cur_precedence="$(get_prerelease_precedence "$cur_type")"
+	bump_precedence="$(get_prerelease_precedence "$bump_type")"
+	cur_precedence="$(get_prerelease_precedence "$cur_type")"
 
 	if [[ "$bump_precedence" -gt "$cur_precedence" ]]; then
 		echo "$bump_type"
@@ -301,24 +323,13 @@ function get_prerelease_precedence() {
 	fi
 }
 
-
-: <<'DOC'
-This function handles validating the planned version bump against the latest tag of the repository.
-
-If the planned bump is older than the latest tag, the bump is rejected.
-DOC
-function validate_planned_bump() {
-
-}
-
-
 : <<'DOC'
 Executes the planned version bump, applying it to the VERSION file and Cargo workspace.
 
 If both are successful, it then tags the current ref in git.
 DOC
 function perform_bump() {
-
+	echo "TODO: perform_bump"
 }
 
 main "$@"
