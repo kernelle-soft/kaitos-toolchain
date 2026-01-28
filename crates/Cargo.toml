@@ -1,6 +1,11 @@
 [workspace]
-
+resolver = "2"
 members = [
 	"core/ecs",
+	"core/runtime",
 	"bindings/godot"
 ]
+
+[workspace.package]
+version = "0.0.0"
+
