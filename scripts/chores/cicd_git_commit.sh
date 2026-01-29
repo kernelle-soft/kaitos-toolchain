@@ -3,7 +3,7 @@ set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 
 USAGE="$(cat <<EOF
-Handler for CI/CD git operations. Not for manual use.
+Handler for CI/CD git operations. Not generally for manual use.
 
 Usage: cicd_git_commit.sh [flags...]
 
