@@ -8,6 +8,6 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - run: scripts/chores/configure_cicd_git.sh
+      - run: scripts/chores/cicd_git_config.sh
       - run: scripts/chores/bump_git_version.sh
       - run: scripts/chores/bump_cargo_version.sh
