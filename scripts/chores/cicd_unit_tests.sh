@@ -88,7 +88,7 @@ Runs the go unit test suite for the project.
 DOC
 function run_go_tests() {
   log "$BANNER_GO\n"
-  go test -v ./go/...
+  cd "$REPO_ROOT/go" && go test -v ./...
 }
 
 main "$@"
