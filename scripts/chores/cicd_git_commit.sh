@@ -7,7 +7,7 @@ Handler for CI/CD git operations. Not for manual use.
 Usage: cicd_git_commit.sh [flags...]
 
 Flags:
-  -a, --all      Commit all changed files, included added and deleted files.
+  -a, --all      Commit all changed files, including added and deleted files.
   -m, --message  Supply a custom git message.
 EOF
 )"
