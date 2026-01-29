@@ -4,6 +4,7 @@ on:
   pull_request:
     branches: [main]
 
+# TODO: Run installers for coverage reporting. Then report coverage.
 jobs:
   lint:
     name: Lint
@@ -38,5 +39,18 @@ jobs:
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Run tests
-        run: ./scripts/chores/cicd_unit_tests.sh
+      - name: Install Coverage Tooling
+        run: ./scripts/chores/cicd_install_tools.sh
+
+      - name: Run Tests
+        run: ./scripts/chores/cicd_coverage.sh
+
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./coverage
+          flags: rust,go
+          fail_ci_if_error: true
+          verbose: true
+        

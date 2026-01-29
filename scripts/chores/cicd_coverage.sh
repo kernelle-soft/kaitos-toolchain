@@ -26,7 +26,6 @@ function main() {
   if has_rust_changes; then
     run_rust_coverage
   fi
-
 }
 
 : <<'DOC'
@@ -56,13 +55,19 @@ function has_rust_changes() {
 }
 
 function run_go_coverage() {
+  local path_tempfile path_cobertura
+
+  path_tempfile="$REPO_ROOT/temp/go_coverage.out"
+  path_cobertura="$REPO_ROOT/coverage/go_coverage.xml"
+
   log_banner "Go Coverage"
-  go test -coverprofile=temp/go_coverage.out ./...
-  gocover-cobertura < temp/go_coverage.out > go_coverage.xml
+  go test -coverprofile="$path_tempfile" ./...
+  gocover-cobertura < "$path_tempfile" > "$path_cobertura"
 }
 
 function run_rust_coverage() {
   log_banner "Rust Coverage"
+  cargo llvm-cov --output-path "$REPO_ROOT/coverage/rust_coverage.xml"
 }
 
 main "$@"

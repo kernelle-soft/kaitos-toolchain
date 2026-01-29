@@ -1,3 +1,6 @@
+![Rust Branch Coverage](https://codecov.io/gh/kernelle-soft/kaitos-toolchain/branch/main/graph/badge.svg?flag=rust)
+![Go Branch Coverage](https://codecove.io/gh/kernelle-soft/kaitos-toolchain/branch/main/graph/badge.svg?flag=go)
+
 # Kaitos Toolchain
 
 ## Development Setup
