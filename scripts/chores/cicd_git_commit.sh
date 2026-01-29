@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+REPO_ROOT="$(git rev-parse --show-toplevel)"
 
 USAGE="$(cat <<EOF
 Handler for CI/CD git operations. Not for manual use.
@@ -12,44 +13,53 @@ Flags:
 EOF
 )"
 
+source "$REPO_ROOT/scripts/shared/log.sh"
+
 FLAG_ALL=false
-STR_COMMIT_MSG="$(cat <<<EOF
+STR_COMMIT_MSG="$(cat <<EOF
 chore: automated commit [skip ci]
 
 This commit was made automatically via Github Actions.
-EOF)"
+EOF
+)"
 
 function main() {
+  local commit_args=""
   parse_args "$@"
 
-  # TODO - write the actual logic for performing the commits.
+  if [[ $FLAG_ALL = true ]]; then
+    commit_args="$commit_args -a"
+  fi
+
+  git commit "$commit_args -m $STR_COMMIT_MSG"
 }
 
 : <<'DOC'
-	Parses CLI flags. 
-	See USAGE for flag descriptions.
+  Parses CLI flags. 
+  See USAGE for flag descriptions.
 DOC
 function parse_args() {
-	while [[ $# -gt 0 ]]; do
-		case "$1" in
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
       -a|--all)
         FLAG_ALL=true
-        shift
         ;;
       -m|--message)
         shift # discard actual flag.
         STR_COMMIT_MSG="$1"
-        shift
         ;;
-			-h|--help)	log "$USAGE" && exit 0;;
-			*)
-				log "Unknown option: $1"
-				log "$USAGE"
-				exit 1
-				;;
-		esac
-		shift
-	done
+      -h|--help)
+        log "$USAGE" && exit 0
+        ;;
+      *)
+        log "Unknown option: $1"
+        log "$USAGE"
+        exit 1
+        ;;
+    esac
+
+    shift
+  done
 }
 
 main "$@"
