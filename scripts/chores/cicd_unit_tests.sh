@@ -50,29 +50,29 @@ function main() {
 }
 
 : <<'DOC'
-	Parses CLI flags. 
-	See USAGE for flag descriptions.
+  Parses CLI flags. 
+  See USAGE for flag descriptions.
 DOC
 function parse_args() {
-	while [[ $# -gt 0 ]]; do
-		case "$1" in
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
       -r|--rust-only)
         FLAG_GO=false
         ;;
       -g|--go-only)
         FLAG_RUST=false
         ;;
-			-h|--help)	
+      -h|--help)  
         log "$USAGE" && exit 0
         ;;
-			*)
-				log "Unknown option: $1"
-				log "$USAGE"
-				exit 1
-				;;
-		esac
-		shift
-	done
+      *)
+        log "Unknown option: $1"
+        log "$USAGE"
+        exit 1
+        ;;
+    esac
+    shift
+  done
 }
 
 : <<'DOC'

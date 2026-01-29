@@ -8,7 +8,7 @@ Pulls the latest version of the repository from git and applies it to the Cargo 
 Usage: bump_cargo_version.sh
 
 Flags:
-	-h,--help		Show this help text
+  -h,--help    Show this help text
 EOF
 )"
 
@@ -18,39 +18,39 @@ source "$REPO_ROOT/scripts/shared/get_current_version.func.sh"
 PATH_CARGO_WORKSPACE="$REPO_ROOT/crates/Cargo.toml"
 
 function main() {
-	local current_version old_version_line new_version_line
+  local current_version old_version_line new_version_line
 
-	parse_args "$@"
+  parse_args "$@"
 
-	current_version="$(get_current_version)"
-	new_version_line="$(format_version_line "$current_version")"
-	old_version_line="$(get_cargo_workspace_version)"
-	
-	if [[ "$new_version_line" = "$old_version_line" ]]; then
-		log "Cargo workspace is up-to-date with latest version '$current_version'"
-		exit 0
-	fi
+  current_version="$(get_current_version)"
+  new_version_line="$(format_version_line "$current_version")"
+  old_version_line="$(get_cargo_workspace_version)"
+  
+  if [[ "$new_version_line" = "$old_version_line" ]]; then
+    log "Cargo workspace is up-to-date with latest version '$current_version'"
+    exit 0
+  fi
 
-	replace_workspace_version "$old_version_line" "$new_version_line"
-	log "Successfully updated Cargo.toml to '$current_version'"
+  replace_workspace_version "$old_version_line" "$new_version_line"
+  log "Successfully updated Cargo.toml to '$current_version'"
 }
 
 : <<'DOC'
-	Parses CLI flags. 
-	See USAGE for flag descriptions.
+  Parses CLI flags. 
+  See USAGE for flag descriptions.
 DOC
 function parse_args() {
-	while [[ $# -gt 0 ]]; do
-		case "$1" in
-			-h|--help)	log "$USAGE" && exit 0;;
-			*)
-				log "Unknown option: $1"
-				log "$USAGE"
-				exit 1
-				;;
-		esac
-		shift
-	done
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -h|--help)  log "$USAGE" && exit 0;;
+      *)
+        log "Unknown option: $1"
+        log "$USAGE"
+        exit 1
+        ;;
+    esac
+    shift
+  done
 }
 
 : <<'DOC'
@@ -62,42 +62,42 @@ returning just the version itself.
 If none is specified, defaults to "0.0.0"
 DOC
 function get_cargo_workspace_version() {
-	local version="" 
-	local found_workspace_package=false
+  local version="" 
+  local found_workspace_package=false
 
-	# Walks through the Cargo.toml line by line
-	while IFS= read -r line; do
-		if [[ "$line" == "[workspace.package]" ]]; then
-			found_workspace_package=true
-		
-		elif [[ "$line" == "["* ]]; then
-			found_workspace_package=false
-		
-		elif $found_workspace_package && [[ "$line" == version* ]]; then
-			version="$line"
-			break
-		
-		fi
-	done < "$PATH_CARGO_WORKSPACE"
+  # Walks through the Cargo.toml line by line
+  while IFS= read -r line; do
+    if [[ "$line" == "[workspace.package]" ]]; then
+      found_workspace_package=true
+    
+    elif [[ "$line" == "["* ]]; then
+      found_workspace_package=false
+    
+    elif $found_workspace_package && [[ "$line" == version* ]]; then
+      version="$line"
+      break
+    
+    fi
+  done < "$PATH_CARGO_WORKSPACE"
 
-	if [[ -n "$version" ]]; then
-		echo "$version"
-	else
-		format_version_line "0.0.0"
-	fi
+  if [[ -n "$version" ]]; then
+    echo "$version"
+  else
+    format_version_line "0.0.0"
+  fi
 }
 
 function format_version_line() {
-	echo "version = \"$1\""
+  echo "version = \"$1\""
 }
 
 function replace_workspace_version() {
-	local previous_version next_version
+  local previous_version next_version
 
-	previous_version="$1"
-	next_version="$2"
+  previous_version="$1"
+  next_version="$2"
 
-	sed -i "s/$previous_version/$next_version/" "$PATH_CARGO_WORKSPACE"
+  sed -i "s/$previous_version/$next_version/" "$PATH_CARGO_WORKSPACE"
 }
 
 main "$@"
