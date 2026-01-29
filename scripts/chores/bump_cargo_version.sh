@@ -120,4 +120,3 @@ function replace_workspace_version() {
 }
 
 main "$@"
-main "$@"
