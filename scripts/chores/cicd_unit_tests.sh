@@ -19,23 +19,10 @@ EOF
 )"
 
 source "$REPO_ROOT/scripts/shared/log.func.sh"
+source "$REPO_ROOT/scripts/shared/log_banner.func.sh"
 
 FLAG_RUST=true
 FLAG_GO=true
-
-BANNER_RUST="$(cat <<EOF
--------------------------------
-- Rust Unit Tests             -
--------------------------------
-EOF
-)"
-
-BANNER_GO="$(cat <<EOF
--------------------------------
-- Go Unit Tests               -
--------------------------------
-EOF
-)"
 
 function main() {
   parse_args "$@"
@@ -79,7 +66,7 @@ function parse_args() {
 Runs the rust unit test suite for the project.
 DOC
 function run_rust_tests() {
-  log "$BANNER_RUST"
+  log_banner "Rust Unit Tests"
   cargo test --manifest-path "$REPO_ROOT/crates/Cargo.toml"
 }
 
@@ -87,7 +74,7 @@ function run_rust_tests() {
 Runs the go unit test suite for the project.
 DOC
 function run_go_tests() {
-  log "$BANNER_GO"
+  log_banner "Go Unit Tests"
   cd "$REPO_ROOT/go" && go test -v ./...
 }
 

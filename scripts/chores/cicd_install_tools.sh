@@ -1,0 +1,161 @@
+#!/usr/bin/env bash
+set -euo pipefail
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+USAGE="$(cat <<EOF
+Automatic installer for 3rd party tools. Intended for CI/CD use.
+
+Usage: cicd_install_tools.sh [flags...]
+
+Flags:
+  -c, --check       Do an install check without actually installing
+  -f, --force       Force re-installation.
+  -u, --uninstall   Uninstall all tools.
+  -h, --help        Show this help text.
+
+Notes:
+  To add another command to the installer, add the install and uninstall commands 
+  to the INSTALLERS and UNINSTALLERS array in the script.
+
+EOF
+)"
+
+source "$REPO_ROOT/scripts/shared/log.func.sh"
+source "$REPO_ROOT/scripts/shared/log_banner.func.sh"
+
+FLAG_CHECK=false
+FLAG_FORCE=false
+FLAG_UNINSTALL=false
+
+declare -A INSTALLERS=(
+  [cargo-llvm-cov]="cargo install cargo-llvm-cov"
+  [gocover-cobertura]="go install github.com/boumenot/gocover-cobertura@latest"
+)
+
+declare -A UNINSTALLERS=(
+  [cargo-llvm-cov]="cargo uninstall -v cargo-llvm-cov"
+  [gocover-cobertura]="rm -f \$(which gocover-cobertura) || true"
+)
+
+function main() {
+  parse_args "$@"
+  validate_flags
+
+  if is_check; then
+    run_check
+    exit 0
+  fi
+
+  if should_uninstall; then
+    run_uninstallers
+  fi
+
+  if [[ $FLAG_UNINSTALL = false ]]; then
+    run_installers
+  fi
+
+  log
+  log "All tools installed successfully 🗹"
+}
+
+: <<'DOC'
+  Parses CLI flags. 
+  See USAGE for flag descriptions.
+DOC
+function parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -c|--check)       FLAG_CHECK=true;;
+      -f|--force)       FLAG_FORCE=true;;
+      -u|--uninstall)   FLAG_UNINSTALL=true;;
+      -h|--help)        log "$USAGE" && exit 0;;
+      *)
+        log "Unknown option: $1"
+        log "$USAGE"
+        exit 1
+        ;;
+    esac
+    shift
+  done
+}
+
+function validate_flags() {
+  if [[ 
+    $FLAG_UNINSTALL = true && 
+    ($FLAG_FORCE = true || $FLAG_CHECK = true) 
+  ]]; then
+    log "ERROR: -u,--uninstall is not valid when paired with other flags."
+    exit 1
+  fi
+}
+
+function should_install_command() {
+  local command="$1"
+
+  if [[ $FLAG_UNINSTALL = true ]]; then
+    return 1
+  fi
+
+  if [[ $FLAG_CHECK = true ]]; then 
+    return 1 
+  fi
+
+  if [[ $FLAG_FORCE = true ]]; then
+    return 0
+  fi
+
+  ! command_exists "$command"
+}
+
+function is_check() {
+ [[ $FLAG_CHECK = true ]]
+}
+
+function should_uninstall() {
+  [[ $FLAG_FORCE = true || $FLAG_UNINSTALL = true ]]
+}
+
+function run_check() {
+  local line before after
+
+  before="$(printf '%*s' 4 '')"
+  after="$(printf '%*s' 8 '')"
+  line="$(printf '%*s' 40 '' | tr ' ' '-')"
+
+  log "Installed?   Command"
+  log "$line"
+
+  for cmd in "${!INSTALLERS[@]}"; do
+    local report=""
+    if command_exists "$cmd"; then
+      report="$before🗹$after$cmd"
+    else
+      report="$before𐄂$after$cmd"
+    fi
+    log "$report"
+  done
+}
+
+function run_uninstallers() {
+  for cmd in "${!UNINSTALLERS[@]}"; do
+    if command_exists "$cmd"; then
+      log "Uninstalling $cmd..."
+      eval "${UNINSTALLERS[$cmd]}"
+    fi
+  done
+}
+
+function run_installers() {
+  for cmd in "${!INSTALLERS[@]}"; do
+    if should_install_command "$cmd"; then
+      log "Installing $cmd..."
+      eval "${INSTALLERS[$cmd]}"
+    fi
+  done
+}
+
+function command_exists() {
+  command -v "$1" >/dev/null
+}
+
+main "$@"

@@ -1,2 +1,6 @@
+# Personal configs
+.cursor/
+
+# Build artifacts
 bin/
 temp/

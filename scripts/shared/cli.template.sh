@@ -1,11 +1,22 @@
 #!/usr/bin/env bash
+set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+USAGE="$(cat <<EOF
+
+Flags:
+  -h, --help      Show this help text.
+
+EOF
+)"
 
 source "$REPO_ROOT/scripts/shared/log.func.sh"
 
-log <<EOF
-ERROR: this file is just a template to avoid writing boilerplate.
-EOF
+function main() {
+  parse_args "$@"
+
+  
+}
 
 : <<'DOC'
   Parses CLI flags. 
@@ -25,4 +36,4 @@ function parse_args() {
   done
 }
 
-
+main "$@"
