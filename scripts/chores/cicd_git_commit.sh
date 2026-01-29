@@ -13,7 +13,7 @@ Flags:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/log.sh"
+source "$REPO_ROOT/scripts/shared/log.func.sh"
 
 FLAG_ALL=false
 STR_COMMIT_MSG="$(cat <<EOF
