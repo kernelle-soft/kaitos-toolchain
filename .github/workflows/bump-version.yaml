@@ -3,11 +3,37 @@ on:
   push:
     branches:
       - main
+
+permissions:
+  contents: write
+
 jobs:
-  bump-git-version:
+  bump-version:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - run: scripts/chores/cicd_git_config.sh
-      - run: scripts/chores/bump_git_version.sh
-      - run: scripts/chores/bump_cargo_version.sh
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: ./scripts/chores/cicd_git_config.sh
+
+      - name: Plan version bump
+        id: plan
+        run: |
+          VERSION=$(./scripts/chores/bump_git_version.sh --dry-run)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Bump cargo version
+        run: ./scripts/chores/bump_cargo_version.sh "${{ steps.plan.outputs.version }}"
+
+      - name: Commit cargo version bump
+        run: |
+          ./scripts/chores/cicd_git_commit.sh -a -m "chore: bump to v${{ steps.plan.outputs.version }} [skip ci]"
+
+      - name: Create version tag
+        run: |
+          git tag -a "v${{ steps.plan.outputs.version }}" -m "v${{ steps.plan.outputs.version }}"
+
+      - name: Push changes and tags
+        run: git push origin main --follow-tags

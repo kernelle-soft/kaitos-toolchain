@@ -13,9 +13,9 @@ function lint_rust() {
 
   repo_root="$(git rev-parse --show-toplevel)"
 
-  if ! cargo fmt --manifest-path "$repo_root/crates/Cargo.toml" -- --check; then
+  if ! cargo fmt --manifest-path "$repo_root/crates/Cargo.toml" --all -- --check; then
     echo ""
-    echo "Run 'cargo fmt --manifest-path crates/Cargo.toml' to fix."
+    echo "Run 'cargo fmt --manifest-path crates/Cargo.toml --all' to fix."
     return 1
   fi
 

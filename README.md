@@ -32,5 +32,5 @@ If you need to fix formatting manually:
 gofmt -w go/
 
 # Rust
-cargo fmt --manifest-path crates/Cargo.toml
+cargo fmt --manifest-path crates/Cargo.toml --all
 ```

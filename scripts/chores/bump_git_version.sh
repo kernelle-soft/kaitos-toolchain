@@ -8,15 +8,16 @@ Intelligently bump the VERSION file based on the project's current version.
 Usage: "bump_git_version.sh [flags...]"
 
 Flags:
-  -h, --help      Show this help text
+  -h, --help       Show this help text
   -M, --major      Bump the major release version (0.9.9 -> 1.0.0)
   -m, --minor      Bump the minor release version (0.0.9 -> 0.1.0)
-  -p, --patch     Bump the patch release version (0.0.9 -> 0.0.10)
+  -p, --patch      Bump the patch release version (0.0.9 -> 0.0.10)
   -d, --dev        Start (or increment) the pre-release dev version (1.0.0 -> 1.0.1-dev.1 -> 1.0.1-dev.2)
   -a, --alpha      Start (or increment) the pre-release alpha version (1.0.0 -> 1.0.1-alpha.1 -> 1.0.1-alpha.2)
-  -b, --beta      Start (or increment) the pre-release beta version (1.0.0 -> 1.0.1-beta.1 -> 1.0.1-beta.2)
-  -c, --rc        Start (or increment) the pre-release rc version (1.0.0 -> 1.0.1-rc.1 -> 1.0.1-rc.2)
-  -r, --release   Transition from pre-release to release (1.0.0-rc.1 -> 1.0.0)
+  -b, --beta       Start (or increment) the pre-release beta version (1.0.0 -> 1.0.1-beta.1 -> 1.0.1-beta.2)
+  -c, --rc         Start (or increment) the pre-release rc version (1.0.0 -> 1.0.1-rc.1 -> 1.0.1-rc.2)
+  -r, --release    Transition from pre-release to release (1.0.0-rc.1 -> 1.0.0)
+  --dry-run        Output the planned version bump without creating a tag
 
 Notes:
   When using a pre-release flag on an existing release version, you can also specify which release version you're planning on targeting with the bump. Pre-release versions always target a future release version.
@@ -45,6 +46,7 @@ FLAG_ALPHA=false
 FLAG_BETA=false
 FLAG_RC=false
 FLAG_RELEASE=false
+FLAG_DRY_RUN=false
 
 function main() {
   local current_version planned_version
@@ -71,6 +73,11 @@ function main() {
     exit 1
   fi
 
+  if [[ $FLAG_DRY_RUN = true ]]; then
+    echo "$planned_version"
+    exit 0
+  fi
+
   perform_bump "$planned_version"
 
   exit 0
@@ -91,6 +98,7 @@ function parse_args() {
       -b|--beta)    FLAG_BETA=true;;
       -c|--rc)       FLAG_RC=true;;
       -r|--release) FLAG_RELEASE=true;;
+      --dry-run) FLAG_DRY_RUN=true;;
       -h|--help)  log "$USAGE" && exit 0;;
       *)
         log "Unknown option: $1"

@@ -5,12 +5,19 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 USAGE="$(cat <<EOF
 Pulls the latest version of the repository from git and applies it to the Cargo workspace version.
 
-Usage: bump_cargo_version.sh
+Usage: bump_cargo_version.sh [version]
+
+Arguments:
+  version     Optional semver version to use (e.g., 1.2.3 or 1.0.0-rc.1)
+              If not provided, reads the current version from git tags.
 
 Flags:
-  -h,--help    Show this help text
+  -h, --help  Show this help text
 EOF
 )"
+
+ARG_VERSION=""
+REGEX_SEMVER='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
 
 source "$REPO_ROOT/scripts/shared/log.func.sh"
 source "$REPO_ROOT/scripts/shared/get_current_version.func.sh"
@@ -22,7 +29,11 @@ function main() {
 
   parse_args "$@"
 
-  current_version="$(get_current_version)"
+  if [[ -n "$ARG_VERSION" ]]; then
+    current_version="$ARG_VERSION"
+  else
+    current_version="$(get_current_version)"
+  fi
   new_version_line="$(format_version_line "$current_version")"
   old_version_line="$(get_cargo_workspace_version)"
   
@@ -43,10 +54,18 @@ function parse_args() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
       -h|--help)  log "$USAGE" && exit 0;;
-      *)
+      -*)
         log "Unknown option: $1"
         log "$USAGE"
         exit 1
+        ;;
+      *)
+        if [[ ! "$1" =~ $REGEX_SEMVER ]]; then
+          log "Invalid semver: $1"
+          log "$USAGE"
+          exit 1
+        fi
+        ARG_VERSION="$1"
         ;;
     esac
     shift
@@ -100,4 +119,5 @@ function replace_workspace_version() {
   sed -i "s/$previous_version/$next_version/" "$PATH_CARGO_WORKSPACE"
 }
 
+main "$@"
 main "$@"

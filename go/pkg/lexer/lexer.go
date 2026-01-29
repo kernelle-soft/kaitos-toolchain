@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"kernellesoft/kaitos/pkg/shared/slice"
+	"kernelle-soft/kaitos/pkg/shared/slice"
 	"maps"
 	"os"
 	"unicode"

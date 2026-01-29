@@ -79,7 +79,7 @@ function parse_args() {
 Runs the rust unit test suite for the project.
 DOC
 function run_rust_tests() {
-  log "$BANNER_RUST\n"
+  log "$BANNER_RUST"
   cargo test --manifest-path "$REPO_ROOT/crates/Cargo.toml"
 }
 
@@ -87,7 +87,7 @@ function run_rust_tests() {
 Runs the go unit test suite for the project.
 DOC
 function run_go_tests() {
-  log "$BANNER_GO\n"
+  log "$BANNER_GO"
   cd "$REPO_ROOT/go" && go test -v ./...
 }
 

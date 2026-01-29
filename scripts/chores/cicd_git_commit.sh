@@ -24,14 +24,21 @@ EOF
 )"
 
 function main() {
-  local commit_args=""
+  local -a commit_args=()
   parse_args "$@"
 
   if [[ $FLAG_ALL = true ]]; then
-    commit_args="$commit_args -a"
+    commit_args+=(-a)
+    git add -A
   fi
 
-  git commit "$commit_args -m $STR_COMMIT_MSG"
+  # Skip if nothing to commit
+  if git diff --cached --quiet; then
+    log "Nothing to commit"
+    exit 0
+  fi
+
+  git commit "${commit_args[@]}" -m "$STR_COMMIT_MSG"
 }
 
 : <<'DOC'
