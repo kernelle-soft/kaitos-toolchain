@@ -1,0 +1,13 @@
+name: Bump Project Version
+on:
+  push:
+    branches:
+      - main
+jobs:
+  bump-git-version:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: scripts/chores/configure_cicd_git.sh
+      - run: scripts/chores/bump_git_version.sh
+      - run: scripts/chores/bump_cargo_version.sh
