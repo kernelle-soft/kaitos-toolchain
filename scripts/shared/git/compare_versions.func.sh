@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-__namespace__() {
+__file_scope__() {
   local repo_root
   repo_root="$(git rev-parse --show-toplevel)"
   source "$repo_root/scripts/shared/git/parse_version.func.sh"
   
-  local -A prerelease_precedence=(
+  local -A precedence=(
     [dev]=0
     [alpha]=1
     [beta]=2
@@ -13,8 +13,11 @@ __namespace__() {
   )
 
 : <<'DOC'
-  Compares two semver strings.
-  Returns: -1 if left > right, 1 if left < right, 0 if equal
+  Compares two semver strings. This also accounts for prerelease precedence and increments:
+    - dev.1 < dev.2
+    - dev.2 < alpha.2 < beta.2 < rc.1
+  
+  Returns: -1 if left > right, 1 if left < right, 0 if equal.
 DOC
   function compare_versions() {
     local -A left right
@@ -73,8 +76,8 @@ DOC
       echo 0
     else
       # Compare by precedence
-      local left_prec="${prerelease_precedence[$left_type]:-0}"
-      local right_prec="${prerelease_precedence[$right_type]:-0}"
+      local left_prec="${precedence[$left_type]:-0}"
+      local right_prec="${precedence[$right_type]:-0}"
       __compare_components "$left_prec" "$right_prec"
     fi
   }
@@ -94,5 +97,5 @@ DOC
   }
 }
 
-__namespace__
-unset -f __namespace__
+__file_scope__
+unset -f __file_scope__
