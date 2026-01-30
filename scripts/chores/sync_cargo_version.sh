@@ -5,7 +5,7 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 USAGE="$(cat <<EOF
 Pulls the latest version of the repository from git and applies it to the Cargo workspace version.
 
-Usage: bump_cargo_version.sh [version]
+Usage: sync_cargo_version.sh [version]
 
 Arguments:
   version     Optional semver version to use (e.g., 1.2.3 or 1.0.0-rc.1)

@@ -23,7 +23,7 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Bump cargo version
-        run: ./scripts/chores/bump_cargo_version.sh "${{ steps.plan.outputs.version }}"
+        run: ./scripts/chores/sync_cargo_version.sh "${{ steps.plan.outputs.version }}"
 
       - name: Commit cargo version bump
         run: |
