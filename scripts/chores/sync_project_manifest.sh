@@ -3,7 +3,7 @@ set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 
 USAGE="$(cat <<EOF
-Syncs up the project manifest (project.json) based on the latest in git.
+Syncs up the project manifest (kaitos.json) based on the latest in git.
 
 Usage: sync_project_manifest.sh
 
@@ -24,7 +24,7 @@ source "$REPO_ROOT/scripts/shared/manifest.api.sh"
 function main() {
   parse_args "$@"
 
-  manifest_set latest "$(plan_latest_version)"
+  manifest_set latest "$(plan_latest_version_bump)"
   manifest_set releases "$(plan_releases_bump)"
   manifest_set stable "$(latest_release_version)"
   manifest_set release-nickname "$(get_pokemon_name)"
@@ -57,7 +57,7 @@ function get_pokemon_name() {
   echo "$pokemon_name"
 }
 
-function plan_latest_version_update() {
+function plan_latest_version_bump() {
   local manifest_latest git_latest result
   git_latest="$(latest_version)"
   manifest_latest="$(manifest_get latest)"
