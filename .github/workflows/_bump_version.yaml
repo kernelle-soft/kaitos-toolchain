@@ -16,22 +16,30 @@ jobs:
       - name: Configure git
         run: ./scripts/chores/cicd_git_config.sh
 
-      - name: Plan version bump
+      - name: Plan Version Bump
         id: plan
         run: |
           VERSION=$(./scripts/chores/bump_git_version.sh --dry-run)
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Bump cargo version
-        run: ./scripts/chores/sync_cargo_version.sh "${{ steps.plan.outputs.version }}"
-
-      - name: Commit cargo version bump
+      - name: Sync Cargo Workspace
         run: |
-          ./scripts/chores/cicd_git_commit.sh -a -m "chore: bump to v${{ steps.plan.outputs.version }} [skip ci]"
+          ./scripts/chores/sync_cargo_version.sh \
+            "${{ steps.plan.outputs.version }}"
 
-      - name: Create version tag
+      - name: Sync Project Manifest
+        run: ./scripts/chores/sync_project_manifest.sh
+
+      - name: Commit Version Bump
         run: |
-          git tag -a "v${{ steps.plan.outputs.version }}" -m "v${{ steps.plan.outputs.version }}"
+          ./scripts/chores/cicd_git_commit.sh -a \
+            -m "chore: bump to v${{ steps.plan.outputs.version }} [skip ci]"
+
+      - name: Create Version Tag
+        run: |
+          git tag \
+            -a "v${{ steps.plan.outputs.version }}" \
+            -m "v${{ steps.plan.outputs.version }}"
 
       - name: Push changes and tags
         run: git push origin main --follow-tags

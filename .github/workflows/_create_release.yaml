@@ -10,14 +10,22 @@ jobs:
     steps:
       - run: echo "check prerelease"
 
+  create-title:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: echo "title"
+
   create-notes:
     runs-on: ubuntu-24.04
-    needs: check-prerelease
     steps:
       - run: echo "notes"
 
   upload-release:
     runs-on: ubuntu-24.04
+    needs:
+      - check-prerelease
+      - create-title
+      - create-notes
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     run: |

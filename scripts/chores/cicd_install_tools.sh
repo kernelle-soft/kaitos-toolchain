@@ -30,11 +30,13 @@ FLAG_UNINSTALL=false
 declare -A INSTALLERS=(
   [cargo-llvm-cov]="cargo install cargo-llvm-cov"
   [gocover-cobertura]="go install github.com/boumenot/gocover-cobertura@latest"
+  [gh]="gh_cli_installer"
 )
 
 declare -A UNINSTALLERS=(
   [cargo-llvm-cov]="cargo uninstall -v cargo-llvm-cov"
   [gocover-cobertura]="rm -f \$(which gocover-cobertura) || true"
+  [gh]="gh_cli_uninstaller"
 )
 
 function main() {
@@ -158,4 +160,56 @@ function command_exists() {
   command -v "$1" >/dev/null
 }
 
+function gh_cli_installer() {
+  local url_keyring="https://cli.github.com/packages/githubcli-archive-keyring.gpg"
+  local path_keyring="/etc/apt/keyrings/githubcli-archive-keyring.gpg"
+  local dir_sources_list="/etc/apt/sources.list.d"
+  local url_github_packages="https://cli.github.com/packages"
+  local arch keyring_tmp
+
+  # Ensure wget is available
+  if ! command_exists wget; then
+    sudo apt update && sudo apt install wget -y
+  fi
+
+  # Setup keyrings directory
+  sudo mkdir -p -m 755 /etc/apt/keyrings
+
+  # Download and install GPG keyring
+  keyring_tmp="$(mktemp)"
+  wget -nv -O "$keyring_tmp" "$url_keyring"
+  sudo tee "$path_keyring" < "$keyring_tmp" > /dev/null
+  sudo chmod go+r "$path_keyring"
+  rm -f "$keyring_tmp"
+
+  # Add GitHub CLI apt repository
+  sudo mkdir -p -m 755 "$dir_sources_list"
+  arch="$(dpkg --print-architecture)"
+  echo "deb [arch=$arch signed-by=$path_keyring] $url_github_packages stable main" \
+    | sudo tee "$dir_sources_list/github-cli.list" > /dev/null
+
+  # Install gh
+  sudo apt update
+  sudo apt install gh -y
+}
+
+function gh_cli_uninstaller() {
+  local path_keyring="/etc/apt/keyrings/githubcli-archive-keyring.gpg"
+  local path_sources_list="/etc/apt/sources.list.d/github-cli.list"
+
+  # Remove gh package
+  sudo apt remove gh -y
+  sudo apt autoremove -y
+
+  # Remove apt repository
+  sudo rm -f "$path_sources_list"
+
+  # Remove GPG keyring
+  sudo rm -f "$path_keyring"
+
+  # Refresh apt sources
+  sudo apt update
+}
+
+# TODO: add gh CLI installer.
 main "$@"

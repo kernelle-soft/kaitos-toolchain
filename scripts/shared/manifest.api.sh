@@ -8,7 +8,8 @@ __manifest_api_repo_root="$(git rev-parse --show-toplevel)"
 source "$__manifest_api_repo_root/scripts/shared/log.func.sh"
 
 declare -A __manifest_api_schema=(
-  [name]=".name"
+  [org]=".org"
+  [repo]=".repo"
   [latest]=".latest"
   [stable]=".stable"
   [releases]=".releases"

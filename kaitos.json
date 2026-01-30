@@ -1,5 +1,6 @@
 {
-  "name": "kaitos-toolchain",
+  "repo": "kaitos-toolchain",
+  "org": "kernelle-soft",
   "latest": "0.0.2",
   "stable": "0.0.2",
   "releases": 2,
