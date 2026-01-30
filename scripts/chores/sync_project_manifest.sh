@@ -15,22 +15,19 @@ EOF
 
 source "$REPO_ROOT/scripts/shared/log.func.sh"
 source "$REPO_ROOT/scripts/shared/git/latest_version.func.sh"
+source "$REPO_ROOT/scripts/shared/git/latest_release_version.func.sh"
 source "$REPO_ROOT/scripts/shared/git/parse_version.func.sh"
 source "$REPO_ROOT/scripts/shared/git/compare_versions.func.sh"
+source "$REPO_ROOT/scripts/shared/manifest.api.sh"
 
-PROJECT_MANIFEST="$REPO_ROOT/project.json"
 
 function main() {
-  local git_version manifest_latest updated_latest_release
-  local releases
-
   parse_args "$@"
-  
-  git_version="$(latest_version)"
-  manifest_latest="$(plan_latest_version)"
-  updated_latest_release="$(latest_release_version)"
-  releases="$(jq .successful_releases < "$PROJECT_MANIFEST")"
 
+  manifest_set latest "$(plan_latest_version)"
+  manifest_set releases "$(plan_releases_bump)"
+  manifest_set stable "$(latest_release_version)"
+  manifest_set release-nickname "$(get_pokemon_name)"
 }
 
 : <<'DOC'
@@ -51,29 +48,11 @@ function parse_args() {
   done
 }
 
-function parse_meta() {
-  local -n name latest_version latest_release successful_releases series
-}
-
-function get_release_name() {
-  if is_before_v1; then
-    get_pokemon_name
-    return 0
-  fi
-
-  jq -r '.series_name' "$PROJECT_MANIFEST"
-}
-
-function is_before_v1() {
-  jq -e '.stable | startswith("0.")' "$PROJECT_MANIFEST" > /dev/null
-}
-
 function get_pokemon_name() {
-  local pokemon_name index api_response
-  index="$(jq -r .successful_releases < "$PROJECT_MANIFEST")"
-  api_response="$(curl -s "https://pokeapi.co/api/v2/pokemon/$index")"
+  local pokemon_name api_response
+  api_response="$(curl -s "https://pokeapi.co/api/v2/pokemon/$(manifest_get releases)")"
   pokemon_name="$(jq -r '.name' <<< "$api_response")"
-  pokemon_name="${pokemon_name^}"
+  pokemon_name="${pokemon_name^}" # Uppercase first letter.
 
   echo "$pokemon_name"
 }
@@ -81,7 +60,7 @@ function get_pokemon_name() {
 function plan_latest_version_update() {
   local manifest_latest git_latest result
   git_latest="$(latest_version)"
-  manifest_latest="$(jq .latest < "$PROJECT_MANIFEST")"
+  manifest_latest="$(manifest_get latest)"
 
   # If git version is latest, then update latest version  
   result="$(compare_versions "$git_latest" "$manifest_latest")"
@@ -90,6 +69,21 @@ function plan_latest_version_update() {
   fi
 
   echo "$manifest_latest"
+}
+
+function plan_releases_bump() {
+  local manifest_releases git_stable manifest_stable
+
+  manifest_releases="$(manifest_get releases)"
+
+  git_stable="$(latest_release_version)"
+  manifest_stable="$(manifest_get stable)"
+
+  if [[ "$(compare_versions "$git_stable" "$manifest_stable")" = -1 ]]; then
+    manifest_releases=$((manifest_releases + 1))
+  fi
+  
+  echo "$manifest_releases"
 }
 
 main "$@"
