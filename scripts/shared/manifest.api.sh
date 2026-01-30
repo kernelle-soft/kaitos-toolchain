@@ -1,79 +1,70 @@
 #!/usr/bin/env bash
 
-
 : <<'DOC'
-API for getting and setting info in the project manifest
+API for getting and setting info in the project manifest (kaitos.json)
 DOC
-__file_scope__() {
-  local __repo_root
-  
-  __repo_root="$(git rev-parse --show-toplevel)"
-  source "$__repo_root/scripts/shared/log.func.sh"
-  
-  declare -A __manifest_schema=(
-    [name]=".name"
-    [latest]=".latest"
-    [stable]=".stable"
-    [releases]=".releases"
-    [series]=".series"
-    [release-nickname]=".release-nickname"
-  )
 
-  declare -A __cache
+__manifest_api_repo_root="$(git rev-parse --show-toplevel)"
+source "$__manifest_api_repo_root/scripts/shared/log.func.sh"
 
-  local __manifest_file="$__repo_root/kaitos.json"
+declare -A __manifest_api_schema=(
+  [name]=".name"
+  [latest]=".latest"
+  [stable]=".stable"
+  [releases]=".releases"
+  [series]=".series"
+  [release-nickname]='."release-nickname"'
+)
 
+declare -A __manifest_api_cache
+
+__manifest_api_file="$__manifest_api_repo_root/kaitos.json"
 
 : <<'DOC'
   Gets a particular key from the kaitos manifest.
 
   Usage: manifest_get <key>
 DOC
-  function manifest_get() {
-    local key="$1"
-    local path="${__manifest_schema["$key"]}"
+function manifest_get() {
+  local key="$1"
+  local path="${__manifest_api_schema["$key"]}"
 
-    if [[ -z "$path" ]]; then
-      log "Unknown kaitos.json key: '$key'"
-      return 1
-    fi
+  if [[ -z "$path" ]]; then
+    log "Unknown kaitos.json key: '$key'"
+    return 1
+  fi
 
-    if [[ -z "${__cache[$path]+isset}" ]]; then
-        __cache["$path"]=$(jq "$path" < "$__manifest_file")
-    fi
+  if [[ -z "${__manifest_api_cache[$path]+isset}" ]]; then
+    __manifest_api_cache["$path"]=$(jq -r "$path" < "$__manifest_api_file")
+  fi
 
-    echo "${__cache[$path]}"
-  }
+  echo "${__manifest_api_cache[$path]}"
+}
 
 : <<'DOC'
   Sets a particular key in the kaitos manifest.
 
   Usage: manifest_set <key> <value>
 DOC
-  function manifest_set() {
-    local key="$1"
-    local value="$2"
-    local path="${__manifest_schema["$key"]}"
+function manifest_set() {
+  local key="$1"
+  local value="$2"
+  local path="${__manifest_api_schema["$key"]}"
 
-    mkdir -p "$__repo_root/temp"
+  if [[ -z "$path" ]]; then
+    log "Unknown kaitos.json key: '$key'"
+    return 1
+  fi
 
-    if [[ -z "$path" ]]; then
-      log "Unknown kaitos.json key: '$key'"
-      return 1
-    fi
+  local temp_file
+  temp_file="$(mktemp)"
 
-    jq \
-      --arg v "$value" \
-      "$path = (\$v | tonumber? // \$v)" \
-      "$__manifest_file" > "$__repo_root/temp/kaitos.json"
+  jq \
+    --arg v "$value" \
+    "$path = (\$v | tonumber? // \$v)" \
+    "$__manifest_api_file" > "$temp_file"
 
-    mv "$__repo_root/temp/kaitos.json" "$__manifest_file"
+  mv "$temp_file" "$__manifest_api_file"
 
-    rm -rf "$__repo_root/temp"
-
-    __cache["$path"]="$value"
-  }
+  __manifest_api_cache["$path"]="$value"
 }
-
-__file_scope__
-unset -f __file_scope__

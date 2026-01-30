@@ -1,8 +1,8 @@
 {
   "name": "kaitos-toolchain",
-  "latest": "0.0.2-dev.1",
+  "latest": "0.0.1",
   "stable": "0.0.1",
-  "releases": 1,
+  "releases": 0,
   "series": "Early Development",
-  "release-nickname": "Bulbasaur"
+  "release-nickname": "Ivysaur"
 }
