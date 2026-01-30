@@ -174,7 +174,7 @@ function plan_bump() {
   local -A version
   local major minor patch pre_type pre_inc
 
-  if ! is_valid_semver; then
+  if ! is_valid_semver "$1"; then
     log "Invalid version: $1"
     return 1
   fi
@@ -202,7 +202,7 @@ function plan_bump() {
 
   # Format and output
   if [[ -n "$pre_type" ]]; then
-    echo "$major.$minor.$patch.$pre_type.$pre_inc"
+    echo "$major.$minor.$patch-$pre_type.$pre_inc"
   else
     echo "$major.$minor.$patch"
   fi
