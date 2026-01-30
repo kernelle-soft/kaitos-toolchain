@@ -3,7 +3,7 @@ set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 
 USAGE="$(cat <<EOF
-Intelligently bump the VERSION file based on the project's current version.
+Intelligently bump the git version based on the latest version tag.
 
 Usage: "bump_git_version.sh [flags...]"
 
