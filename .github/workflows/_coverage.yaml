@@ -25,6 +25,7 @@ jobs:
         run: ./scripts/chores/cicd_coverage.sh
 
       - name: Upload Go Coverage
+        if: hashFiles('./coverage/go_coverage.xml') != ''
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -34,6 +35,7 @@ jobs:
           verbose: true
       
       - name: Upload Rust Coverage
+        if: hashFiles('./coverage/rust_coverage.xml') != ''
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

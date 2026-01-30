@@ -48,11 +48,11 @@ function parse_args() {
 }
 
 function has_go_changes() {
-  ! git diff --name-only origin/main...HEAD -- go/
+  ! git diff --quiet origin/main...HEAD -- go/
 }
 
 function has_rust_changes() {
-  ! git diff --name-only origin/main...HEAD -- crates/
+  ! git diff --quiet origin/main...HEAD -- crates/
 }
 
 function run_go_coverage() {
@@ -70,7 +70,10 @@ function run_go_coverage() {
 
 function run_rust_coverage() {
   log_banner "Rust Coverage"
-  cargo llvm-cov --cobertura --output-path "$REPO_ROOT/coverage/rust_coverage.xml"
+  cargo llvm-cov \
+    --cobertura \
+    --manifest-path "$REPO_ROOT/crates/Cargo.toml" \
+    --output-path "$REPO_ROOT/coverage/rust_coverage.xml"
 }
 
 main "$@"

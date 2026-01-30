@@ -108,7 +108,7 @@ function should_install_command() {
 }
 
 function is_check() {
- [[ $FLAG_CHECK = true ]]
+  [[ $FLAG_CHECK = true ]]
 }
 
 function should_uninstall() {

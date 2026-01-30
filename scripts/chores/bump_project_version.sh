@@ -49,7 +49,7 @@ function get_release_name() {
     return 0
   fi
 
-  jq .series_name "$PROJECT_MANIFEST"
+  jq -r '.series_name' "$PROJECT_MANIFEST"
 }
 
 function is_before_v1() {
@@ -58,9 +58,10 @@ function is_before_v1() {
 
 function get_pokemon_name() {
   local pokemon_name index api_response
-  index="$(jq .successful_releases < "$PROJECT_MANIFEST")"
+  index="$(jq -r .successful_releases < "$PROJECT_MANIFEST")"
   api_response="$(curl -s "https://pokeapi.co/api/v2/pokemon/$index")"
-  pokemon_name="$(jq -r '.name' <<< "$api_response" | sed 's/.*/\u&/')"
+  pokemon_name="$(jq -r '.name' <<< "$api_response")"
+  pokemon_name="${pokemon_name^}"
 
   echo "$pokemon_name"
 }
