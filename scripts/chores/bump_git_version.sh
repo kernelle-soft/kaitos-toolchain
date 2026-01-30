@@ -20,7 +20,7 @@ Flags:
   --dry-run        Output the planned version bump without creating a tag
 
 Notes:
-  When using a pre-release flag on an existing release version, you can also specify which release version you're planning on targeting with the bump. Pre-release versions always target a future release version.
+  When using a pre-release flag on an existing release version, you can also pair it with --major or --minor for the version you're planning on targeting with the bump; otherwise, --patch is assumed. Pre-release versions always target a future release version.
 
   Running the script without any flags will automatically bump the version on the smallest existing granularity--the script will never graduate beyond that granularity until you graduate the version yourself.
 
