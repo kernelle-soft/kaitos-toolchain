@@ -1,0 +1,29 @@
+name: Create Release
+
+on:
+  workflow_call:
+
+# TODO
+jobs:
+  check-prerelease:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: echo "check prerelease"
+
+  create-notes:
+    runs-on: ubuntu-24.04
+    needs: check-prerelease
+    steps:
+      - run: echo "notes"
+
+  upload-release:
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    run: |
+      gh release create "${{steps.tag.outputs.version }}" \
+        --title "${{ steps.tag.outputs.version }}" \
+        --generate-notes \
+        --prerelease
+
+    

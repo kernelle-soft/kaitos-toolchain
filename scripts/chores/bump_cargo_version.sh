@@ -20,7 +20,7 @@ ARG_VERSION=""
 REGEX_SEMVER='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
 
 source "$REPO_ROOT/scripts/shared/log.func.sh"
-source "$REPO_ROOT/scripts/shared/get_current_version.func.sh"
+source "$REPO_ROOT/scripts/shared/git/latest_version.func.sh"
 
 PATH_CARGO_WORKSPACE="$REPO_ROOT/crates/Cargo.toml"
 
@@ -32,7 +32,7 @@ function main() {
   if [[ -n "$ARG_VERSION" ]]; then
     current_version="$ARG_VERSION"
   else
-    current_version="$(get_current_version)"
+    current_version="$(latest_version)"
   fi
   new_version_line="$(format_version_line "$current_version")"
   old_version_line="$(get_cargo_workspace_version)"

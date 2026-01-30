@@ -1,0 +1,43 @@
+name: Run Tests and Upload Coverage
+
+on:
+  workflow_call:
+
+jobs:
+  coverage:
+    name: Test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Coverage Tooling
+        run: ./scripts/chores/cicd_install_tools.sh
+
+      - name: Run Tests
+        run: ./scripts/chores/cicd_coverage.sh
+
+      - name: Upload Go Coverage
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/go_coverage.xml
+          flags: go
+          fail_ci_if_error: true
+          verbose: true
+      
+      - name: Upload Rust Coverage
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/rust_coverage.xml
+          flags: rust
+          fail_ci_if_error: true
+          verbose: true

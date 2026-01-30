@@ -18,6 +18,7 @@ source "$REPO_ROOT/scripts/shared/log_banner.func.sh"
 
 function main() {
   parse_args "$@"
+  mkdir -p "$REPO_ROOT/coverage" "$REPO_ROOT/temp"
 
   if has_go_changes; then
     run_go_coverage
@@ -47,11 +48,11 @@ function parse_args() {
 }
 
 function has_go_changes() {
-  git diff --name-only origin/main...HEAD -- go/ 1>&2 2>/dev/null
+  ! git diff --name-only origin/main...HEAD -- go/
 }
 
 function has_rust_changes() {
-  git diff --name-only origin/main...HEAD -- crates/ 1>&2 2>/dev/null
+  ! git diff --name-only origin/main...HEAD -- crates/
 }
 
 function run_go_coverage() {
@@ -61,13 +62,15 @@ function run_go_coverage() {
   path_cobertura="$REPO_ROOT/coverage/go_coverage.xml"
 
   log_banner "Go Coverage"
+
+  cd "$REPO_ROOT/go"
   go test -coverprofile="$path_tempfile" ./...
   gocover-cobertura < "$path_tempfile" > "$path_cobertura"
 }
 
 function run_rust_coverage() {
   log_banner "Rust Coverage"
-  cargo llvm-cov --output-path "$REPO_ROOT/coverage/rust_coverage.xml"
+  cargo llvm-cov --cobertura --output-path "$REPO_ROOT/coverage/rust_coverage.xml"
 }
 
 main "$@"

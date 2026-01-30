@@ -6,7 +6,7 @@
   If there is no previous tag, this returns "0.0.0". Otherwise, it will get the current tag
   with the leading 'v' stripped.
 DOC
-function get_current_version() {
+function latest_version() {
   local latest_tag semver
 
   latest_tag="$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")"
