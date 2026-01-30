@@ -21,6 +21,17 @@ function compare_versions() {
   local -A left right
   local result
 
+  if [[ -z "$1" && -n "$2" ]]; then
+    echo 1
+    return
+  elif [[ -n "$1" && -z "$2" ]]; then
+    echo -1
+    return
+  elif [[ -z "$1" && -z "$2" ]]; then
+    echo 0
+    return
+  fi
+
   parse_version "$1" left
   parse_version "$2" right
 

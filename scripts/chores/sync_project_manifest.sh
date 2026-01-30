@@ -49,8 +49,21 @@ function parse_args() {
 }
 
 function get_pokemon_name() {
-  local pokemon_name api_response
-  api_response="$(curl -s "https://pokeapi.co/api/v2/pokemon/$(manifest_get releases)")"
+  local url pokemon_name api_response release_count
+
+  release_count="$(manifest_get releases)"
+  if [[ -z  "$release_count" || $((release_count == 0)) ]]; then
+    echo ""
+    return
+  fi
+
+  url="https://pokeapi.co/api/v2/pokemon/$release_count"
+  if ! api_response="$(curl -s "$url")"; then
+    log "Failed to get response from PokeAPI"
+    echo ""
+    return
+  fi
+
   pokemon_name="$(jq -r '.name' <<< "$api_response")"
   pokemon_name="${pokemon_name^}" # Uppercase first letter.
 
