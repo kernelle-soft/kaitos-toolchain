@@ -5,17 +5,30 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 USAGE="$(cat <<EOF
 
 Flags:
-  -h, --help      Show this help text.
+  -p, --prerelease    Use pre-release formatting
+  -h, --help          Show this help text.
 
 EOF
 )"
 
 source "$REPO_ROOT/scripts/shared/log.func.sh"
+source "$REPO_ROOT/scripts/shared/manifest.api.sh"
+
+FLAG_PRERELEASE=false
 
 function main() {
   parse_args "$@"
+  local tag series nickname
 
-  
+  tag="v$(manifest_get latest)"
+  series="$(manifest_get series)"
+  nickname="$(manifest_get release-nickname)"
+
+  if [[ $FLAG_PRERELEASE = true ]]; then
+    echo "$series: $tag"
+  else
+    echo "$series: $tag - $nickname"
+  fi
 }
 
 : <<'DOC'
@@ -25,7 +38,8 @@ DOC
 function parse_args() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      -h|--help)  log "$USAGE" && exit 0;;
+      -p|--prerelease)  FLAG_PRERELEASE=true;;
+      -h|--help)        log "$USAGE" && exit 0;;
       *)
         log "Unknown option: $1"
         log "$USAGE"

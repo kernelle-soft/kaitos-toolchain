@@ -48,6 +48,9 @@ function parse_args() {
   done
 }
 
+: <<'DOC'
+  Gets the release nickname for the latest release using the release count to index into the Pokedex.
+DOC
 function get_pokemon_name() {
   local url pokemon_name api_response release_count
 
@@ -70,6 +73,9 @@ function get_pokemon_name() {
   echo "$pokemon_name"
 }
 
+: <<'DOC'
+  Plans the latest version bump based on the latest version in git and the latest version in the manifest.
+DOC
 function plan_latest_version_bump() {
   local manifest_latest git_latest result
   git_latest="$(latest_version)"
@@ -84,6 +90,9 @@ function plan_latest_version_bump() {
   echo "$manifest_latest"
 }
 
+: <<'DOC'
+  Plans the releases bump based on the latest release version in git and the latest release version in the manifest.
+DOC
 function plan_releases_bump() {
   local manifest_releases git_stable manifest_stable
 

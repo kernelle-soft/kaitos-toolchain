@@ -54,6 +54,10 @@ function parse_args() {
   done
 }
 
+: <<'DOC'
+  Formats the date string in the format of 
+  "Month Day, Year Hour:Minute AM/PM Timezone"
+DOC
 function get_formatted_date() {
   local -A _date
   local y mon d suf h min ampm tz
@@ -72,6 +76,9 @@ function get_formatted_date() {
   echo "$mon $d$suf, $y $h:$min $ampm $tz"
 }
 
+: <<'DOC'
+  Gets the release notes for the latest tag, including prerelease notes.
+DOC
 function get_notes() {
   local org repo tag notes
 
