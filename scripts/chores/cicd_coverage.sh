@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Orchestrates running coverage and saving the data out as a Cobertura file. Not generally for manual use.
@@ -13,7 +13,6 @@ Flags:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/log.func.sh"
 source "$REPO_ROOT/scripts/shared/log_banner.func.sh"
 
 function main() {

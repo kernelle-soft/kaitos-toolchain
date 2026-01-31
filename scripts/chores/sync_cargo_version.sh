@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Pulls the latest version of the repository from git and applies it to the Cargo workspace version.
@@ -19,7 +19,6 @@ EOF
 ARG_VERSION=""
 REGEX_SEMVER='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
 
-source "$REPO_ROOT/scripts/shared/log.func.sh"
 source "$REPO_ROOT/scripts/shared/git/latest_version.func.sh"
 
 PATH_CARGO_WORKSPACE="$REPO_ROOT/crates/Cargo.toml"

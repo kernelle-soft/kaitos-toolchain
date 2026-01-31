@@ -1,0 +1,10 @@
+name: Setup Environment
+description: Sources .envrc and exports CI_ENVRC for scripts
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        REPO_ROOT="$(git rev-parse --show-toplevel)"
+        echo "CI_ENVRC=source $REPO_ROOT/.envrc" >> "$GITHUB_ENV"

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Creates release notes for the latest tag marked in the project manifest (kaitos.json)
@@ -13,7 +13,6 @@ Flags:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/log.func.sh"
 source "$REPO_ROOT/scripts/shared/get_date.func.sh"
 source "$REPO_ROOT/scripts/shared/manifest.api.sh"
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -eo pipefail
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Installer for the ${TOOLCHAIN_NAME} game development framework.

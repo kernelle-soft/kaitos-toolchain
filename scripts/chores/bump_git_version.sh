@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Intelligently bump the git version based on the latest version tag.
@@ -32,7 +32,6 @@ Notes:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/log.func.sh"
 source "$REPO_ROOT/scripts/shared/git/latest_version.func.sh"
 source "$REPO_ROOT/scripts/shared/git/parse_version.func.sh"
 source "$REPO_ROOT/scripts/shared/git/is_valid_semver.func.sh"

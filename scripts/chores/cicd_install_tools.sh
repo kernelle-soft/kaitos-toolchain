@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Automatic installer for 3rd party tools. Intended for CI/CD use.
@@ -20,7 +20,6 @@ Notes:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/log.func.sh"
 source "$REPO_ROOT/scripts/shared/log_banner.func.sh"
 
 FLAG_CHECK=false

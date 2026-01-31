@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Orchestrates unit testing for the project. Not generally for manual use.
@@ -18,7 +18,6 @@ Notes:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/log.func.sh"
 source "$REPO_ROOT/scripts/shared/log_banner.func.sh"
 
 FLAG_RUST=true

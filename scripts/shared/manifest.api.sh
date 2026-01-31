@@ -4,9 +4,8 @@
 API for getting and setting info in the project manifest (kaitos.json)
 DOC
 
-__manifest_api_repo_root="$(git rev-parse --show-toplevel)"
-source "$__manifest_api_repo_root/scripts/shared/log.func.sh"
-
+eval "${CI_ENVRC:-}"
+__manifest_api_repo_root="$REPO_ROOT"
 declare -A __manifest_api_schema=(
   [org]=".org"
   [repo]=".repo"

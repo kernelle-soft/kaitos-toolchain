@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 
@@ -9,8 +9,6 @@ Flags:
 
 EOF
 )"
-
-source "$REPO_ROOT/scripts/shared/log.func.sh"
 
 function main() {
   parse_args "$@"

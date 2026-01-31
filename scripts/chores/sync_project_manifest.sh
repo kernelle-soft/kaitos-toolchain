@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Syncs up the project manifest (kaitos.json) based on the latest in git.
@@ -13,7 +13,6 @@ Flags:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/log.func.sh"
 source "$REPO_ROOT/scripts/shared/git/latest_version.func.sh"
 source "$REPO_ROOT/scripts/shared/git/latest_release_version.func.sh"
 source "$REPO_ROOT/scripts/shared/git/parse_version.func.sh"
