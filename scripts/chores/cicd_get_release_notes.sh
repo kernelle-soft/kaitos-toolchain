@@ -31,7 +31,7 @@ function main() {
     exit 1
   fi
 
-  echo "$formatted_date"
+  echo "Released on $formatted_date"
   echo ""
   echo "$notes"
 }
@@ -83,7 +83,7 @@ function get_notes() {
     return 1
   fi
 
-  if ! tag="$(manifest_get latest)"; then
+  if ! tag="v$(manifest_get latest)"; then
     return 1
   fi
 
