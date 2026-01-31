@@ -17,7 +17,7 @@ declare __get_date__months=(
 
 function get_date() {
   local str_date
-  local -n _date="$1"
+  local -n __d__="$1"
   local year month day hours_24 hours_12 ampm minutes seconds
   local day_suffix
 
@@ -30,7 +30,7 @@ function get_date() {
   minutes="${str_date%%:*}"; str_date="${str_date#*:}"
   seconds="${str_date%%Z*}";
 
-  _date=(
+  __d__=(
     [year]="$year"
     [month]="${__get_date__months[$((month - 1))]}"
     [day]="$day"
