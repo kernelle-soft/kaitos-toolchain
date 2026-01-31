@@ -11,4 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/envrc
-      - run: ./scripts/chores/cicd_create_release.sh
+      - run: |
+          echo "TODO: build step"
+      - run: |
+          ./scripts/chores/cicd_create_release.sh

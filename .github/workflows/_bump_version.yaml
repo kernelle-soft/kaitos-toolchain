@@ -1,6 +1,12 @@
 name: Bump Project Version
 on:
   workflow_call:
+    inputs:
+      bump_type:
+        description: 'Version bump type (patch, minor, major, dev, alpha, beta, rc, release)'
+        required: false
+        type: string
+        default: ''
 
 permissions:
   contents: write
@@ -20,7 +26,11 @@ jobs:
       - name: Plan Version Bump
         id: plan
         run: |
-          VERSION=$(./scripts/chores/bump_git_version.sh --dry-run)
+          BUMP_FLAG=""
+          if [[ -n "${{ inputs.bump_type }}" ]]; then
+            BUMP_FLAG="--${{ inputs.bump_type }}"
+          fi
+          VERSION=$(./scripts/chores/bump_git_version.sh $BUMP_FLAG --dry-run)
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Sync Cargo Workspace
