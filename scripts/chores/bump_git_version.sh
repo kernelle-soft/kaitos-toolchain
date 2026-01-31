@@ -353,5 +353,4 @@ function perform_bump() {
   echo "Bumped to version '$version'"
 }
 
-# TODO - retest this file. Lots of refactoring done yesterday.
 main "$@"

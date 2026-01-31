@@ -3,35 +3,61 @@ name: Create Release
 on:
   workflow_call:
 
-# TODO
 jobs:
-  check-prerelease:
+  check_prerelease:
     runs-on: ubuntu-24.04
     steps:
-      - run: echo "check prerelease"
+      - run: |
+          source "./scripts/shared/git/latest_version.func.sh"
+          source "./scripts/shared/git/get_version_type.func.sh"
+          echo release_type="$(get_version_type $(latest_version))" \
+            >> "$GITHUB_OUTPUT"
 
-  create-title:
-    runs-on: ubuntu-24.04
-    steps:
-      - run: echo "title"
-
-  create-notes:
-    runs-on: ubuntu-24.04
-    steps:
-      - run: echo "notes"
-
-  upload-release:
+  create_title:
     runs-on: ubuntu-24.04
     needs:
-      - check-prerelease
-      - create-title
-      - create-notes
+      - check_prerelease
+    steps:
+      - run: |
+          echo "title=$(./scripts/chores/cicd_get_release_title.sh)" \
+            >> "$GITHUB_OUTPUT"
+
+  create_notes:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: |
+          echo "notes=$(./scripts/chores/cicd_get_release_notes.sh)" \
+            >> "$GITHUB_OUTPUT"
+
+  create-release:
+    runs-on: ubuntu-24.04
+    needs:
+      - create_title
+      - create_notes
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    run: |
-      gh release create "${{steps.tag.outputs.version }}" \
-        --title "${{ steps.tag.outputs.version }}" \
-        --generate-notes \
-        --prerelease
+    steps:
+      - run: |
+          source "./scripts/shared/git/latest_version.func.sh"
+          tag="$(latest_version)"
+          gh release create "$tag" \
+            --title "${{ job.create_title.outputs.title }}" \
+            --notes "${{ job.create_notes.outputs.notes }}"
+
+  create-prerelease:
+    if: ${{ job.check_prerelease.outputs.release_type == pre }}
+    runs-on: ubuntu-24.04
+    needs:
+      - create_title
+      - create_notes
+    env:
+      GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+    steps:
+      - run: |
+          source "./scripts/shared/git/latest_version.func.sh"
+          tag="$(latest_version)"
+          gh release create "$tag" \
+            --title "${{ job.create_title.outputs.title }}" \
+            --notes "${{ job.create_notes.outputs.notes }}"  
 
     

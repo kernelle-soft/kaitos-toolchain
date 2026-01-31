@@ -211,5 +211,4 @@ function gh_cli_uninstaller() {
   sudo apt update
 }
 
-# TODO: add gh CLI installer.
 main "$@"
