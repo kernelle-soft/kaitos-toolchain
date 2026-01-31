@@ -13,9 +13,10 @@ Flags:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/manifest.api.sh"
-source "$REPO_ROOT/scripts/shared/get_date.func.sh"
-source "$REPO_ROOT/scripts/shared/git/get_version_type.func.sh"
+import \
+  "$REPO_ROOT/scripts/shared/manifest.api.sh" \
+  "$REPO_ROOT/scripts/shared/get_date.func.sh" \
+  "$REPO_ROOT/scripts/shared/git/get_version_type.func.sh"
 
 function main() {
   parse_args "$@"

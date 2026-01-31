@@ -32,9 +32,10 @@ Notes:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/git/latest_version.func.sh"
-source "$REPO_ROOT/scripts/shared/git/parse_version.func.sh"
-source "$REPO_ROOT/scripts/shared/git/is_valid_semver.func.sh"
+import \
+  "$REPO_ROOT/scripts/shared/git/latest_version.func.sh" \
+  "$REPO_ROOT/scripts/shared/git/parse_version.func.sh" \
+  "$REPO_ROOT/scripts/shared/git/is_valid_semver.func.sh"
 
 REGEX_SEMVER='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
 REGEX_SEMVER_GIT_TAG="^v${REGEX_SEMVER#^}"  # ^v[0-9]+...

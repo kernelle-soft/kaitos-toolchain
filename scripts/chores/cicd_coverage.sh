@@ -13,7 +13,7 @@ Flags:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/log_banner.func.sh"
+import "$REPO_ROOT/scripts/shared/log_banner.func.sh"
 
 function main() {
   parse_args "$@"

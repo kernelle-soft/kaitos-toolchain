@@ -13,8 +13,9 @@ Flags:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/get_date.func.sh"
-source "$REPO_ROOT/scripts/shared/manifest.api.sh"
+import \
+  "$REPO_ROOT/scripts/shared/get_date.func.sh" \
+  "$REPO_ROOT/scripts/shared/manifest.api.sh"
 
 function main() {
   local formatted_date notes

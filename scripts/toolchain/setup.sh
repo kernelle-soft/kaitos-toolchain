@@ -13,7 +13,7 @@ Flags:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/log.sh"
+import "$REPO_ROOT/scripts/shared/log.sh"
 
 FLAG_CLEAN=false
 

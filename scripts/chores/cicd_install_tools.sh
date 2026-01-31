@@ -20,7 +20,7 @@ Notes:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/log_banner.func.sh"
+import "$REPO_ROOT/scripts/shared/log_banner.func.sh"
 
 FLAG_CHECK=false
 FLAG_FORCE=false

@@ -13,11 +13,12 @@ Flags:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/git/latest_version.func.sh"
-source "$REPO_ROOT/scripts/shared/git/latest_release_version.func.sh"
-source "$REPO_ROOT/scripts/shared/git/parse_version.func.sh"
-source "$REPO_ROOT/scripts/shared/git/compare_versions.func.sh"
-source "$REPO_ROOT/scripts/shared/manifest.api.sh"
+import \
+  "$REPO_ROOT/scripts/shared/git/latest_version.func.sh" \
+  "$REPO_ROOT/scripts/shared/git/latest_release_version.func.sh" \
+  "$REPO_ROOT/scripts/shared/git/parse_version.func.sh" \
+  "$REPO_ROOT/scripts/shared/git/compare_versions.func.sh" \
+  "$REPO_ROOT/scripts/shared/manifest.api.sh"
 
 
 function main() {

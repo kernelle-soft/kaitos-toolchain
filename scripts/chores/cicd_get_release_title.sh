@@ -11,7 +11,7 @@ Flags:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/manifest.api.sh"
+import "$REPO_ROOT/scripts/shared/manifest.api.sh"
 
 FLAG_PRERELEASE=false
 
