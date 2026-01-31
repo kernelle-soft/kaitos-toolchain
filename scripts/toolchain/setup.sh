@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -eo pipefail
+set -euo pipefail
 eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
@@ -12,8 +12,6 @@ Flags:
   -h, --help      Show this help text.
 EOF
 )"
-
-import "$REPO_ROOT/scripts/shared/log.sh"
 
 FLAG_CLEAN=false
 

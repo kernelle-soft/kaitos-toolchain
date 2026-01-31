@@ -12,6 +12,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - uses: ./.github/actions/envrc
 
       - name: Configure git
         run: ./scripts/chores/cicd_git_config.sh

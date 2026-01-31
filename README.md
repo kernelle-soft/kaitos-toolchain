@@ -10,6 +10,7 @@
 - Go 1.21+
 - Rust (stable)
 - Cargo
+- [direnv](https://direnv.net/) - automatically loads environment from `.envrc`
 
 ### Git Hooks
 

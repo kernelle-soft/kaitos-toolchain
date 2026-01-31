@@ -4,70 +4,11 @@ on:
   workflow_call:
 
 jobs:
-  check-release-type:
+  create_release:
     runs-on: ubuntu-24.04
-    outputs:
-      release_type:
-    steps:
-      - uses: actions/checkout@v4
-      - id: get_type
-        run: |
-          source "./scripts/shared/git/latest_version.func.sh"
-          source "./scripts/shared/git/get_version_type.func.sh"
-          echo release_type="$(get_version_type $(latest_version))" \
-            >> "$GITHUB_OUTPUT"
-
-  create-title:
-    runs-on: ubuntu-24.04
-    needs:
-      - check-release-type
-    steps:
-      - uses: actions/checkout@v4
-      - id: title
-        run: |
-          echo "title=$(./scripts/chores/cicd_get_release_title.sh)" \
-            >> "$GITHUB_OUTPUT"
-
-  create-notes:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-      - id: notes
-        run: |
-          echo "notes=$(./scripts/chores/cicd_get_release_notes.sh)" \
-            >> "$GITHUB_OUTPUT"
-
-  create-release:
-    runs-on: ubuntu-24.04
-    needs:
-      - create-title
-      - create-notes
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          source "./scripts/shared/git/latest_version.func.sh"
-          tag="$(latest_version)"
-          gh release create "$tag" \
-            --title "${{ job.create_title.outputs.title }}" \
-            --notes "${{ job.create_notes.outputs.notes }}"
-
-  create-prerelease:
-    if: ${{ steps.get_type.outputs.release_type == 'pre' }}
-    runs-on: ubuntu-24.04
-    needs:
-      - create_title
-      - create_notes
-    env:
-      GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          source "./scripts/shared/git/latest_version.func.sh"
-          tag="$(latest_version)"
-          gh release create "$tag" \
-            --title "${{ job.create_title.outputs.title }}" \
-            --notes "${{ job.create_notes.outputs.notes }}"  
-
-    
+      - uses: ./.github/actions/envrc
+      - run: ./scripts/chores/cicd_create_release.sh
