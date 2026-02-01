@@ -71,7 +71,7 @@ function bundle() {
   tar -czvf "$artifact_name.tar.gz" "$artifact_name"
   rm -rf "$artifact_name"
 
-  echo "artifact_name=${artifact_name}" >> "${GITHUB_OUTPUT:-/dev/null}"
+  echo "$artifact_name"
 }
 
 : <<'DOC'
