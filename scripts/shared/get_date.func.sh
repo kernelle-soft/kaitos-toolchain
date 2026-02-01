@@ -52,7 +52,7 @@ function __get_date__day_suffix() {
     suffix="st"
   elif ((day % 10 == 2)); then
     suffix="nd"
-  elif ((day%10 == 3)); then
+  elif ((day % 10 == 3)); then
     suffix="rd"
   else
     suffix="th"
