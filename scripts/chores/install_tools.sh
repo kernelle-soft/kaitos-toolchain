@@ -20,8 +20,6 @@ Notes:
 EOF
 )"
 
-import "$REPO_ROOT/scripts/shared/log.api.sh"
-
 FLAG_CHECK=false
 FLAG_FORCE=false
 FLAG_UNINSTALL=false

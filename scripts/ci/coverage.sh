@@ -13,8 +13,6 @@ Flags:
 EOF
 )"
 
-import "$REPO_ROOT/scripts/shared/log.api.sh"
-
 function main() {
   parse_args "$@"
   mkdir -p "$REPO_ROOT/coverage" "$REPO_ROOT/temp"
