@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+: <<'DOC'
+API for logging output to stderr.
+DOC
+
+function log() {
+  echo "${1:-}" >&2
+}
 
 function log_banner() {
   local msg="${1:-}"

@@ -20,8 +20,8 @@ ARG_ARTIFACTS=()
 
 import \
   "$REPO_ROOT/scripts/shared/manifest.api.sh" \
-  "$REPO_ROOT/scripts/shared/get_date.func.sh" \
-  "$REPO_ROOT/scripts/shared/git/get_version_type.func.sh"
+  "$REPO_ROOT/scripts/shared/versions.api.sh" \
+  "$REPO_ROOT/scripts/shared/get_date.func.sh"
 
 function main() {
   parse_args "$@"

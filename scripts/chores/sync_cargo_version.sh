@@ -19,7 +19,7 @@ EOF
 ARG_VERSION=""
 REGEX_SEMVER='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
 
-import "$REPO_ROOT/scripts/shared/git/latest_version.func.sh"
+import "$REPO_ROOT/scripts/shared/versions.api.sh"
 
 PATH_CARGO_WORKSPACE="$REPO_ROOT/crates/Cargo.toml"
 

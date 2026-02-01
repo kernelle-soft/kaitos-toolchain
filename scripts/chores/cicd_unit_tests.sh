@@ -18,7 +18,7 @@ Notes:
 EOF
 )"
 
-import "$REPO_ROOT/scripts/shared/log_banner.func.sh"
+import "$REPO_ROOT/scripts/shared/log.api.sh"
 
 FLAG_RUST=true
 FLAG_GO=true
