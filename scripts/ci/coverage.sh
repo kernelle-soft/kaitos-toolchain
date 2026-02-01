@@ -27,7 +27,7 @@ function main() {
 }
 
 : <<'DOC'
-  Parses CLI flags. 
+  Parses CLI flags.
   See USAGE for flag descriptions.
 DOC
 function parse_args() {
@@ -44,11 +44,21 @@ function parse_args() {
   done
 }
 
+function is_main_branch() {
+  local branch
+  branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+  [[ "$branch" == "main" || "$branch" == "master" ]]
+}
+
 function has_go_changes() {
+  # Always run coverage on main branch
+  is_main_branch && return 0
   ! git diff --quiet origin/main...HEAD -- go/ 2>/dev/null
 }
 
 function has_rust_changes() {
+  # Always run coverage on main branch
+  is_main_branch && return 0
   ! git diff --quiet origin/main...HEAD -- crates/ 2>/dev/null
 }
 

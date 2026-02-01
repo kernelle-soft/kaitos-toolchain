@@ -68,14 +68,14 @@ function bundle() {
 
   cd "$REPO_ROOT"
   mv dist "$artifact_name"
-  tar -czvf "$artifact_name.tar.gz" "$artifact_name"
+  tar -czvf "$artifact_name.tar.gz" "$artifact_name" >&2
   rm -rf "$artifact_name"
 
   echo "$artifact_name"
 }
 
 : <<'DOC'
-  Parses CLI flags. 
+  Parses CLI flags.
   See USAGE for flag descriptions.
 DOC
 function parse_args() {
