@@ -27,8 +27,8 @@ FLAG_FORCE=false
 FLAG_UNINSTALL=false
 
 declare -A INSTALLERS=(
-  [cargo-llvm-cov]="cargo install cargo-llvm-cov"
-  [gocover-cobertura]="go install github.com/boumenot/gocover-cobertura@latest"
+  [cargo-llvm-cov]="cargo install cargo-llvm-cov --version 0.6.24"
+  [gocover-cobertura]="go install github.com/boumenot/gocover-cobertura@v1.4.0"
   [gh]="gh_cli_installer"
 )
 
