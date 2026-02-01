@@ -61,14 +61,20 @@ function get_pokemon_name() {
 
   url="https://pokeapi.co/api/v2/pokemon/$release_count"
   if ! api_response="$(curl -s "$url")"; then
-    log "Failed to get response from PokeAPI"
-    echo ""
+    log "Failed to get response from PokeAPI, using fallback"
+    echo "Unown"
     return
   fi
 
   pokemon_name="$(jq -r '.name' <<< "$api_response")"
-  pokemon_name="${pokemon_name^}" # Uppercase first letter.
+  
+  if [[ -z "$pokemon_name" || "$pokemon_name" == "null" ]]; then
+    log "Invalid response from PokeAPI, using fallback"
+    echo "Unown"
+    return
+  fi
 
+  pokemon_name="${pokemon_name^}" # Uppercase first letter.
   echo "$pokemon_name"
 }
 
