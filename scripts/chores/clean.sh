@@ -37,8 +37,11 @@ function main() {
   [[ $FLAG_COVERAGE = true ]] && \
     rm -rf "$REPO_ROOT/coverage/"
 
-  [[ $FLAG_RUST = true ]] && \
-    rm -rf "$REPO_ROOT/crates/target/"
+  if [[ $FLAG_RUST = true ]]; then
+    shopt -s globstar nullglob
+    rm -rf "$REPO_ROOT"/crates/**/target/
+    shopt -u globstar nullglob
+  fi
 
   [[ $FLAG_GO = true ]] && \
     rm -f "$REPO_ROOT/go/kaitos"

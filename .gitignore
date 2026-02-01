@@ -8,7 +8,7 @@ build/
 temp/
 tmp/
 coverage/
-crates/target/
+**/target/
 go/kaitos
 
 # Release bundles
