@@ -136,7 +136,6 @@ function get_notes() {
 
   echo "Released on $formatted_date"
   echo ""
-  echo "$()"
   echo "$notes"
 }
 
