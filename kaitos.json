@@ -1,9 +1,9 @@
 {
   "repo": "kaitos-toolchain",
   "org": "kernelle-soft",
-  "latest": "0.0.1",
-  "stable": "",
-  "releases": 0,
+  "latest": "0.0.2-dev.1",
+  "stable": "0.0.1",
+  "releases": 1,
   "series": "Early Development",
-  "release-nickname": ""
+  "release-nickname": "Bulbasaur"
 }
