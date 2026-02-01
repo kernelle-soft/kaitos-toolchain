@@ -14,7 +14,7 @@ changelog:
       labels: [feature, enhancement]
 
     - title: "New Language Features"
-      labels: [vertex, edge, flair, variables, dsl]
+      labels: [vertex, edge, flair, vsave, dsl]
 
     - title: "Runtime Changes"
       labels: [vm, ecs, runtime, performance]
