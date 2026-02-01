@@ -3,7 +3,7 @@ set -euo pipefail
 eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
-Automatic installer for 3rd party tools.
+Automatic installer for 3rd party developer tools. This is useful for setting up a new machine or for CI/CD setup. Who wants to mess around manually installing all these tools with a crappy README, amiright?
 
 Usage: install_tools.sh [flags...]
 
@@ -27,12 +27,14 @@ FLAG_UNINSTALL=false
 declare -A INSTALLERS=(
   [cargo-llvm-cov]="cargo install cargo-llvm-cov --version 0.6.24"
   [gocover-cobertura]="go install github.com/boumenot/gocover-cobertura@v1.4.0"
+  [shfmt]="go install mvdan.cc/sh/v3/cmd/shfmt@v3.12.0"
   [gh]="gh_cli_installer"
 )
 
 declare -A UNINSTALLERS=(
   [cargo-llvm-cov]="cargo uninstall -v cargo-llvm-cov"
   [gocover-cobertura]="rm -f \$(which gocover-cobertura) || true"
+  [shfmt]="rm -f \$(which shfmt) || true"
   [gh]="gh_cli_uninstaller"
 )
 
