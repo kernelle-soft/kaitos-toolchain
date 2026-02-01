@@ -47,11 +47,13 @@ function parse_args() {
 }
 
 function has_go_changes() {
-  ! git diff --quiet origin/main...HEAD -- go/
+  # Fallback to always true if origin/main isn't available (e.g., shallow clone)
+  ! git diff --quiet origin/main...HEAD -- go/ 2>/dev/null || return 0
 }
 
 function has_rust_changes() {
-  ! git diff --quiet origin/main...HEAD -- crates/
+  # Fallback to always true if origin/main isn't available (e.g., shallow clone)
+  ! git diff --quiet origin/main...HEAD -- crates/ 2>/dev/null || return 0
 }
 
 function run_go_coverage() {
