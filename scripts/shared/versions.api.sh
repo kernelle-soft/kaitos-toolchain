@@ -85,7 +85,7 @@ function get_release_type() {
   local -A ver
   parse_version "$1" ver
 
-  if [[ -z "${ver[pre_type]}" ]]; then
+  if [[ -n "${ver[pre_type]}" ]]; then
     echo "${ver[pre_type]}"
     return
   fi
