@@ -4,6 +4,8 @@ export POKE_START="<!--POKE_INFO_START-->"
 export POKE_END="<!--POKE_INFO_END-->"
 
 function generate_pokedex_entry() {
+  local -n __poke_info__="$1"
+
   cat <<EOF
 $POKE_START
 <div id="poke-info" align="center">
@@ -14,10 +16,10 @@ $POKE_START
   </h3>
   <img
     id="pokemon-img"
-    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/2.gif"
+    src="${__poke_info__[image]}"
   />
   <br>
-  <span id="pokemon-name"><b>Release #2: v0.0.2 - Ivysaur</b></span>
+  <span id="pokemon-name"><b>Release #${__poke_info__[release_number]}: ${__poke_info__[tag]} - ${__poke_info__[name]}</b></span>
   <br>
   <img
     id="rust-runtime-coverage"
@@ -29,7 +31,7 @@ $POKE_START
   />
   <br>
   <span>Base Stats</span>
-  <table>
+  <table align="center">
     <tr>
       <th>Lang</th>
       <th>Lines of Code</th>
@@ -38,20 +40,20 @@ $POKE_START
     </tr>
     <tr>
       <td>Go</td>
-      <td>293</td>
-      <td>11%</td>
+      <td>${__poke_info__[go_loc]}</td>
+      <td>${__poke_info__[go_unit_coverage]}</td>
       <td>Branch</td>
     </tr>
     <tr>
       <td>Rust</td>
-      <td>31
-      <td>11%</td>
+      <td>${__poke_info__[rust_loc]}</td>
+      <td>${__poke_info__[rust_unit_coverage]}</td>
       <td>Branch</td>
     </tr>
     <tr>
       <td>Bash</td>
-      <td>2827</td>
-      <td>0%</td>
+      <td>${__poke_info__[bash_loc]}</td>
+      <td>${__poke_info__[bash_unit_coverage]}</td>
       <td>Line</td>
     </tr>
   </table>
