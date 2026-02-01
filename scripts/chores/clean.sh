@@ -31,11 +31,13 @@ function main() {
   rm -rf "$REPO_ROOT"/kaitos-*-linux-*
   rm -rf "$REPO_ROOT"/kaitos-*.tar.gz
 
-  [[ $FLAG_BUILD = true ]] && \
+  if [[ $FLAG_BUILD = true ]]; then
     rm -rf "$REPO_ROOT/build/" "$REPO_ROOT/dist/"
+  fi
 
-  [[ $FLAG_COVERAGE = true ]] && \
+  if [[ $FLAG_COVERAGE = true ]]; then
     rm -rf "$REPO_ROOT/coverage/"
+  fi
 
   if [[ $FLAG_RUST = true ]]; then
     shopt -s globstar nullglob
@@ -43,8 +45,9 @@ function main() {
     shopt -u globstar nullglob
   fi
 
-  [[ $FLAG_GO = true ]] && \
+  if [[ $FLAG_GO = true ]]; then
     rm -f "$REPO_ROOT/go/kaitos"
+  fi
 }
 
 : <<'DOC'
