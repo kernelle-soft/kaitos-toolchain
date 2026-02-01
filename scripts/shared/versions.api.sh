@@ -114,7 +114,7 @@ function compare_versions() {
 
   # Compare major.minor.patch
   # Major
-  result="$(__versions_api__compare_components "${left[major]}" "${right[major]}")"    
+  result="$(__versions_api__compare_components "${left[major]}" "${right[major]}")"
   if [[ "$result" -ne 0 ]]; then
     echo "$result"
     return
