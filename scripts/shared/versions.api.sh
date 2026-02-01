@@ -147,7 +147,7 @@ function __versions_api__compare_components() {
     echo 1
   else
     echo 0
-  fi  
+  fi
 }
 
 function __versions_api__compare_prerelease_type() {
