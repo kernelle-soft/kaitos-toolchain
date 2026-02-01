@@ -28,14 +28,14 @@ declare -A INSTALLERS=(
   [cargo-llvm-cov]="cargo install cargo-llvm-cov --version 0.6.24"
   [gocover-cobertura]="go install github.com/boumenot/gocover-cobertura@v1.4.0"
   [gh]="gh_cli_installer"
-  [tokei]=""
+  [tokei]="cargo install tokei --version 14.0.0"
 )
 
 declare -A UNINSTALLERS=(
   [cargo-llvm-cov]="cargo uninstall -v cargo-llvm-cov"
   [gocover-cobertura]="rm -f \$(which gocover-cobertura) || true"
   [gh]="gh_cli_uninstaller"
-  [tokei]=""
+  [tokei]="cargo uninstall -v tokei"
 )
 
 function main() {
@@ -208,14 +208,6 @@ function gh_cli_uninstaller() {
 
   # Refresh apt sources
   sudo apt update
-}
-
-function tokei_installer() {
-
-}
-
-function tokei_uninstaller() {
-  
 }
 
 main "$@"

@@ -26,7 +26,7 @@
   />
   <br>
   <span>Base Stats</span>
-  <table>
+  <table align="center">
     <tr>
       <th>Lang</th>
       <th>Lines of Code</th>
@@ -41,7 +41,7 @@
     </tr>
     <tr>
       <td>Rust</td>
-      <td>31
+      <td>31</td>
       <td>11%</td>
       <td>Branch</td>
     </tr>
