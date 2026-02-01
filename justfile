@@ -1,5 +1,5 @@
 # Hack to pass through stuff set up in .envrc
-set shell := ["bash", "-c", "source .envrc && eval \"$1\"", "-"]
+set shell := ["bash", "-c", "unset __ENVRC_LOADED; . ./.envrc && $1", "-"]
 
 clean:
   ./scripts/chores/clean.sh

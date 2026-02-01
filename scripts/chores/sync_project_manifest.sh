@@ -25,6 +25,8 @@ function main() {
   manifest_set releases "$(plan_releases_bump)"
   manifest_set stable "$(latest_release_version)"
   manifest_set release-nickname "$(get_pokemon_name)"
+
+  log "Synced project manifest to $(manifest_get latest)"
 }
 
 : <<'DOC'
