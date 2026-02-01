@@ -39,7 +39,9 @@ jobs:
             "${{ steps.plan.outputs.version }}"
 
       - name: Sync Project Manifest
-        run: ./scripts/chores/sync_project_manifest.sh
+        run: |
+          ./scripts/chores/sync_project_manifest.sh \
+            "${{ steps.plan.outputs.version }}"
 
       - name: Commit Version Bump
         run: |
