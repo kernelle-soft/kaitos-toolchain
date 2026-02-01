@@ -3,7 +3,7 @@ name: Build Release Artifacts
 on:
   workflow_call:
     outputs:
-      artifact_name:
+      artifact:
         description: 'Name of the uploaded artifact'
         value: ${{ jobs.build.outputs.artifact }}
 
@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     outputs:
-      artifact_name: ${{ steps.build.outputs.artifact }}
+      artifact: ${{ steps.build.outputs.artifact }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/envrc

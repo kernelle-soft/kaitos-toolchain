@@ -20,9 +20,9 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.build.outputs.artifact_name }}
+          name: ${{ needs.build.outputs.artifact }}
 
       - name: Create release
         run: |
           ./scripts/ci/create_release.sh \
-            "${{ needs.build.outputs.artifact_name }}.tar.gz"
+            "${{ needs.build.outputs.artifact }}.tar.gz"

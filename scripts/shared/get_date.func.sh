@@ -1,38 +1,20 @@
 #!/usr/bin/env bash
 
-declare __get_date__months=(
-  "January"
-  "February"
-  "March"
-  "April"
-  "May"
-  "June"
-  "July"
-  "August"
-  "September"
-  "October"
-  "November"
-  "December"
-)
-
 function get_date() {
-  local str_date
   local -n __d__="$1"
-  local year month day hours_24 hours_12 ampm minutes seconds
-  local day_suffix
+  local year month month_name day hours_24 minutes seconds
 
-  str_date="$(date -u +"%Y-%-m-%-dT%-H:%M:%SZ")"
-
-  year="${str_date%%-*}"; str_date="${str_date#*-}"
-  month="${str_date%%-*}"; str_date="${str_date#*-}"
-  day="${str_date%%T*}"; str_date="${str_date#*T}"
-  hours_24="${str_date%%:*}"; str_date="${str_date#*:}"
-  minutes="${str_date%%:*}"; str_date="${str_date#*:}"
-  seconds="${str_date%%Z*}";
+  year="$(date -u +%Y)"
+  month="$(date -u +%-m)"
+  month_name="$(date -u +%B)"
+  day="$(date -u +%-d)"
+  hours_24="$(date -u +%-H)"
+  minutes="$(date -u +%M)"
+  seconds="$(date -u +%S)"
 
   __d__=(
     [year]="$year"
-    [month]="${__get_date__months[$((month - 1))]}"
+    [month]="$month_name"
     [day]="$day"
     [day_suffix]="$(__get_date__day_suffix "$day")"
     [hours_24]="$hours_24"
