@@ -27,7 +27,7 @@ jobs:
         id: plan
         run: |
           BUMP_FLAG="${{ inputs.bump_type && format('--{0}', inputs.bump_type) || '' }}"
-          VERSION=$(./scripts/chores/bump_git_version.sh $BUMP_FLAG --dry-run)
+          VERSION=$(./scripts/chores/bump_git_version.sh "$BUMP_FLAG" --dry-run)
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Sync Cargo Workspace
