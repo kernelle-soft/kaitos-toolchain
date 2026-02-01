@@ -26,10 +26,7 @@ jobs:
       - name: Plan Version Bump
         id: plan
         run: |
-          BUMP_FLAG=""
-          if [[ -n "${{ inputs.bump_type }}" ]]; then
-            BUMP_FLAG="--${{ inputs.bump_type }}"
-          fi
+          BUMP_FLAG="${{ inputs.bump_type && format('--{0}', inputs.bump_type) || '' }}"
           VERSION=$(./scripts/chores/bump_git_version.sh $BUMP_FLAG --dry-run)
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 

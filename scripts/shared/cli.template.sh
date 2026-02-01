@@ -5,7 +5,7 @@ eval "${CI_ENVRC:-}"
 USAGE="$(cat <<EOF
 
 Flags:
-  -h, --help      Show this help text.
+  -h, --help        Show this help text.
 
 EOF
 )"

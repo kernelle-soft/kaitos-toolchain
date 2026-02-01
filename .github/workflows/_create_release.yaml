@@ -4,14 +4,25 @@ on:
   workflow_call:
 
 jobs:
-  create_release:
+  build:
+    uses: ./.github/workflows/_build.yaml
+    secrets: inherit
+
+  release:
     runs-on: ubuntu-24.04
+    needs: [build]
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/envrc
-      - run: |
-          echo "TODO: build step"
-      - run: |
-          ./scripts/chores/cicd_create_release.sh
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.artifact_name }}
+
+      - name: Create release
+        run: |
+          ./scripts/chores/cicd_create_release.sh \
+            "${{ needs.build.outputs.artifact_name }}.tar.gz"

@@ -5,13 +5,18 @@ eval "${CI_ENVRC:-}"
 USAGE="$(cat <<EOF
 Creates a GitHub release for the latest tag marked in the project manifest (kaitos.json)
 
-Usage: cicd_create_release.sh [-h,--help]
+Usage: cicd_create_release.sh [-h,--help] [artifact...]
+
+Arguments:
+  artifact        Optional artifact files to attach to the release.
 
 Flags:
   -h, --help      Show this help text.
 
 EOF
 )"
+
+ARG_ARTIFACTS=()
 
 import \
   "$REPO_ROOT/scripts/shared/manifest.api.sh" \
@@ -43,7 +48,8 @@ function main() {
   gh release create "$tag" \
     --title "$title" \
     --notes "$notes" \
-    $prerelease_flag
+    $prerelease_flag \
+    ${ARG_ARTIFACTS[@]+"${ARG_ARTIFACTS[@]}"}
 }
 
 : <<'DOC'
@@ -54,10 +60,13 @@ function parse_args() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
       -h|--help)  log "$USAGE" && exit 0;;
-      *)
+      -*)
         log "Unknown option: $1"
         log "$USAGE"
         exit 1
+        ;;
+      *)
+        ARG_ARTIFACTS+=("$1")
         ;;
     esac
     shift
