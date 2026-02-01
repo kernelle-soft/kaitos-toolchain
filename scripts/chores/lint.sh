@@ -19,9 +19,7 @@ Notes:
 EOF
 )"
 
-import \
-  "$REPO_ROOT/scripts/shared/lint_go.func.sh" \
-  "$REPO_ROOT/scripts/shared/lint_rust.func.sh"
+import "$REPO_ROOT/scripts/shared/lint.api.sh"
 
 FLAG_RUST=true
 FLAG_GO=true
