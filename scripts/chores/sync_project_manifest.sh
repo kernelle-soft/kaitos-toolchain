@@ -54,7 +54,7 @@ function get_pokemon_name() {
   local url pokemon_name api_response release_count
 
   release_count="$(manifest_get releases)"
-  if [[ -z  "$release_count" || $((release_count == 0)) ]]; then
+  if [[ -z  "$release_count" || $release_count == "0" ]]; then
     echo ""
     return
   fi
