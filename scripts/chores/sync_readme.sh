@@ -3,7 +3,12 @@ set -euo pipefail
 eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
-Syncs up the README to the current project manifest and version
+Syncs up the README to the current project manifest and version.
+
+This script updates the README with:
+  - Pokemon sprite and name based on release count
+  - Lines of code from tokei
+  - Coverage percentages from Codecov (requires CODECOV_TOKEN)
 
 Flags:
   -h, --help        Show this help text.
@@ -12,51 +17,39 @@ EOF
 )"
 
 function main() {
-  local -A pokemon
+  # shellcheck disable=SC2034
+  # - using namerefs throughout function, shellcheck doesn't catch that.
+  local -A poke_info
   parse_args "$@"
 
-  get_pokemon pokemon
+  log "Gathering pokedex entry data..."
+  get_pokedex_entry poke_info
 
+  log "Updating README..."
+  update_readme poke_info
 
+  log "README sync complete."
 }
 
-
 : <<'DOC'
-Pulls down information on a given pokemon based on the number of successful releases of this project.
+  Updates the README's pokedex section with new content.
+  Uses awk to replace everything between POKE_START and POKE_END markers.
 DOC
-function get_pokemon() {
-  local url api_response release_count static_image_url
-  local -A __poke__
+function update_readme() {
+  local -n __poke__="$1"
+  local readme_file new_content tmp_file
 
-  static_image_url="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown"
+  readme_file="$REPO_ROOT/README.md"
+  tmp_file="$(mktemp)"
+  new_content="$(generate_pokedex_entry __poke__)"
 
-  release_count="$(manifest_get releases)"
-  if [[ -z  "$release_count" || $release_count == "0" ]]; then
-    __poke__[idx]="???"
-    __poke__[name]="Unown"
-    __poke__[image]="$static_image_url/unown-question.gif"
-    return
-  fi
+  awk -v new_content="$new_content" -v start="$POKE_START" -v end="$POKE_END" '
+    $0 ~ start { in_block = 1; print new_content; next }
+    $0 ~ end   { in_block = 0; next }
+    !in_block  { print }
+  ' "$readme_file" > "$tmp_file"
 
-  url="https://pokeapi.co/api/v2/pokemon/$release_count"
-  if ! api_response="$(curl -s "$url")"; then
-    log "Failed to get response from PokeAPI, using fallback"
-    __poke__[idx]="???"
-    __poke__[name]="Unown"
-    __poke__[image]="$static_image_url/unown-o.gif"
-    return
-  fi
-
-  __poke__[idx]="$release_count"
-  __poke__[name]="$(jq '.name' <<< "$api_response")"
-  __poke__[image]="$(jq '.sprites.other.showdown.front_default' <<< "$api_response")"
-  if [[ -z "${__poke__[image]}" ]]; then
-    __poke__[image]="$(jq '.sprites.front_default' <<< "$api_response")"
-  fi
-
-  if [[ -z "${__poke__[image]}" ]]; then
-    __poke__[image]="$static_image_url/unown-x.gif"
-  fi
+  mv "$tmp_file" "$readme_file"
 }
 
 : <<'DOC'

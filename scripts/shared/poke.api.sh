@@ -61,3 +61,129 @@ $POKE_START
 $POKE_END
 EOF
 }
+
+: <<'DOC'
+  Populates a nameref associative array with all data needed for generate_pokedex_entry.
+
+  Usage:
+    local -A poke_info
+    get_pokedex_entry poke_info
+DOC
+function get_pokedex_entry() {
+  local -n __poke_info__="$1"
+
+  __poke_api__get_pokemon __poke_info__
+  __poke_api__get_loc __poke_info__
+  __poke_api__get_coverage __poke_info__
+}
+
+# ════════════════════════════════════════════════════════════════════════════
+# Internal helpers
+# ════════════════════════════════════════════════════════════════════════════
+
+__poke_api__sprite_base="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown"
+
+: <<'DOC'
+  Fetches Pokemon info from PokeAPI based on release count.
+  Sets: release_number, name, image, tag
+DOC
+function __poke_api__get_pokemon() {
+  local -n __out__="$1"
+  local api_response release_count url
+
+  release_count="$(manifest_get releases)"
+  __out__[tag]="v$(manifest_get stable)"
+
+  if [[ -z "$release_count" || "$release_count" == "0" ]]; then
+    __out__[release_number]="???"
+    __out__[name]="Unown"
+    __out__[image]="$__poke_api__sprite_base/unown-question.gif"
+    return
+  fi
+
+  __out__[release_number]="$release_count"
+
+  url="https://pokeapi.co/api/v2/pokemon/$release_count"
+  if ! api_response="$(curl -sf "$url")"; then
+    log "Failed to get response from PokeAPI, using fallback"
+    __out__[name]="Unown"
+    __out__[image]="$__poke_api__sprite_base/unown-o.gif"
+    return
+  fi
+
+  # Extract name (capitalize first letter)
+  __out__[name]="$(jq -r '.name | split("") | .[0] |= ascii_upcase | join("")' <<< "$api_response")"
+  if [[ -z "${__out__[name]:-}" ]]; then
+    __out__[name]="Unown"
+  fi
+
+  # Extract image (prefer showdown animated sprite, fall back to default)
+  __out__[image]="$(jq -r '.sprites.other.showdown.front_default // empty' <<< "$api_response")"
+  if [[ -z "${__out__[image]:-}" ]]; then
+    __out__[image]="$(jq -r '.sprites.front_default // empty' <<< "$api_response")"
+  fi
+
+  # Global image fallback if both image paths fail.
+  if [[ -z "${__out__[image]:-}" ]]; then
+    __out__[image]="$__poke_api__sprite_base/unown-x.gif"
+  fi
+}
+
+: <<'DOC'
+  Gets lines of code from tokei.
+  Sets: go_loc, rust_loc, bash_loc
+DOC
+function __poke_api__get_loc() {
+  local -n __out__="$1"
+  local tokei_json
+
+  tokei_json="$(tokei --output json "$REPO_ROOT")"
+
+  __out__[go_loc]="$(jq -r '.Go.code // 0' <<< "$tokei_json")"
+  __out__[rust_loc]="$(jq -r '.Rust.code // 0' <<< "$tokei_json")"
+  __out__[bash_loc]="$(jq -r '.Bash.code // 0' <<< "$tokei_json")"
+}
+
+: <<'DOC'
+  Fetches coverage percentages from Codecov API.
+  Requires CODECOV_TOKEN environment variable.
+  Sets: go_unit_coverage, rust_unit_coverage, bash_unit_coverage
+DOC
+function __poke_api__get_coverage() {
+  local -n __out__="$1"
+  local org repo codecov_base
+
+  org="$(manifest_get org)"
+  repo="$(manifest_get repo)"
+  codecov_base="https://api.codecov.io/api/v2/github/$org/repos/$repo/totals"
+
+  if [[ -n "${CODECOV_TOKEN:-}" ]]; then
+    __out__[go_unit_coverage]="$(__poke_api__fetch_coverage "$codecov_base" "go")"
+    __out__[rust_unit_coverage]="$(__poke_api__fetch_coverage "$codecov_base" "rust")"
+  else
+    log "CODECOV_TOKEN not set, coverage will show N/A"
+    __out__[go_unit_coverage]="N/A"
+    __out__[rust_unit_coverage]="N/A"
+  fi
+
+  # TODO - actually add bash coverage
+  __out__[bash_unit_coverage]="0%"  # No bash coverage tooling
+}
+
+: <<'DOC'
+  Fetches coverage for a specific flag from Codecov.
+  Outputs the coverage percentage or "N/A" on failure.
+
+  Usage: __poke_api__fetch_coverage <base_url> <flag>
+DOC
+function __poke_api__fetch_coverage() {
+  local base_url="$1"
+  local flag="$2"
+  local result
+
+  if result="$(curl -sf -H "Authorization: Bearer $CODECOV_TOKEN" "$base_url/?flag=$flag")"; then
+    jq -r '(.totals.coverage // 0 | floor | tostring) + "%"' <<< "$result"
+  else
+    echo "N/A"
+  fi
+}
