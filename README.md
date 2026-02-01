@@ -1,5 +1,5 @@
-![Rust Branch Coverage](https://codecov.io/gh/kernelle-soft/kaitos-toolchain/branch/main/graph/badge.svg?flag=rust)
-![Go Branch Coverage](https://codecov.io/gh/kernelle-soft/kaitos-toolchain/branch/main/graph/badge.svg?flag=go)
+![Rust Coverage](https://img.shields.io/codecov/c/github/kernelle-soft/kaitos-toolchain?flag=rust&label=Runtime)
+![Go Coverage](https://img.shields.io/codecov/c/github/kernelle-soft/kaitos-toolchain?flag=go&label=CLI)
 
 # Kaitos Toolchain
 

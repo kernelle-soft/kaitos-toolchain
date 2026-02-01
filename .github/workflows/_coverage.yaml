@@ -37,7 +37,7 @@ jobs:
           flags: go
           fail_ci_if_error: true
           verbose: true
-      
+
       - name: Upload Rust Coverage
         if: hashFiles('./coverage/rust_coverage.xml') != ''
         uses: codecov/codecov-action@v5

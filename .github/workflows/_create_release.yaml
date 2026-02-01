@@ -15,6 +15,9 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main # make sure to get HEAD, instead of triggering commit
+
       - uses: ./.github/actions/envrc
 
       - name: Download artifact

@@ -31,10 +31,10 @@ function main() {
   tag="v$(manifest_get latest)"
   version_type="$(get_version_type "$tag")"
 
-  if [[ "$version_type" == "release" ]]; then
-    prerelease_flag=""
-  else
+  if [[ "$version_type" == "prerelease" ]]; then
     prerelease_flag="--prerelease"
+  else
+    prerelease_flag=""
   fi
 
   title="$(get_title "$tag" "$version_type")"
@@ -53,7 +53,7 @@ function main() {
 }
 
 : <<'DOC'
-  Parses CLI flags. 
+  Parses CLI flags.
   See USAGE for flag descriptions.
 DOC
 function parse_args() {
@@ -115,7 +115,7 @@ function get_notes() {
 }
 
 : <<'DOC'
-  Formats the date string in the format of 
+  Formats the date string in the format of
   "Month Day, Year Hour:Minute AM/PM Timezone"
 DOC
 function get_formatted_date() {
