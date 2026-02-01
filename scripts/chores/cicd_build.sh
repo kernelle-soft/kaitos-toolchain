@@ -69,6 +69,7 @@ function bundle() {
   cd "$REPO_ROOT"
   mv dist "$artifact_name"
   tar -czvf "$artifact_name.tar.gz" "$artifact_name"
+  rm -rf "$artifact_name"
 
   echo "artifact_name=${artifact_name}" >> "${GITHUB_OUTPUT:-/dev/null}"
 }

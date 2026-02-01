@@ -6,7 +6,7 @@ DOC
 
 eval "${CI_ENVRC:-}"
 __manifest_api_repo_root="$REPO_ROOT"
-declare -A __manifest_api_schema=(
+declare -gA __manifest_api_schema=(
   [org]=".org"
   [repo]=".repo"
   [latest]=".latest"
@@ -16,7 +16,7 @@ declare -A __manifest_api_schema=(
   [release-nickname]='."release-nickname"'
 )
 
-declare -A __manifest_api_cache
+declare -gA __manifest_api_cache
 
 __manifest_api_file="$__manifest_api_repo_root/kaitos.json"
 

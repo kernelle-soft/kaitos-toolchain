@@ -3,5 +3,14 @@
 
 # Build artifacts
 bin/
+dist/
+build/
 temp/
+tmp/
 coverage/
+crates/target/
+go/kaitos
+
+# Release bundles
+kaitos-*-linux-*
+*.tar.gz

@@ -5,13 +5,13 @@ on:
     outputs:
       artifact_name:
         description: 'Name of the uploaded artifact'
-        value: ${{ jobs.build.outputs.artifact_name }}
+        value: ${{ jobs.build.outputs.artifact }}
 
 jobs:
   build:
     runs-on: ubuntu-24.04
     outputs:
-      artifact_name: ${{ steps.build.outputs.artifact_name }}
+      artifact_name: ${{ steps.build.outputs.artifact }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/envrc
@@ -27,7 +27,7 @@ jobs:
       - name: Build and package
         id: build
         run: |
-          echo "artifact=$(./scripts/chores/build.sh)" \
+          echo "artifact=$(./scripts/chores/cicd_build.sh)" \
             >> "$GITHUB_OUTPUT"
 
       - name: Upload artifact
