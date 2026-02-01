@@ -14,6 +14,9 @@ jobs:
       artifact: ${{ steps.build.outputs.artifact }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+
       - uses: ./.github/actions/envrc
 
       - name: Set up Go
