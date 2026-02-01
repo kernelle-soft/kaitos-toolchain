@@ -220,17 +220,29 @@ function latest_release_version() {
 : <<'DOC'
   Gets the latest pre-release version tag from git (has a - suffix).
   Matches tags like v1.0.0-alpha, v1.0.0-rc1, v0.5.0-beta.1
-  Returns empty string if no pre-release tags exist.
+  Returns the version without the 'v' prefix, or empty string if no pre-release tags exist.
 DOC
 function latest_prerelease_version() {
-  git tag --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+-' | head -1
+  local latest_tag semver
+
+  latest_tag="$(git tag --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+-' | head -1)"
+
+  # Strip leading 'v' if there is one
+  semver="${latest_tag#v}"
+  echo "$semver"
 }
 
 : <<'DOC'
   Gets the latest v0.x.x release version tag from git (genesis/unfinished).
   Matches tags like v0.0.1, v0.5.0 but not v0.1.0-alpha.
-  Returns empty string if no v0.x.x release tags exist.
+  Returns the version without the 'v' prefix, or empty string if no v0.x.x release tags exist.
 DOC
 function latest_zero_version() {
-  git tag --sort=-v:refname | grep -E '^v0\.[0-9]+\.[0-9]+$' | head -1
+  local latest_tag semver
+
+  latest_tag="$(git tag --sort=-v:refname | grep -E '^v0\.[0-9]+\.[0-9]+$' | head -1)"
+
+  # Strip leading 'v' if there is one
+  semver="${latest_tag#v}"
+  echo "$semver"
 }
