@@ -67,12 +67,18 @@ EOF
 
   Usage:
     local -A poke_info
-    get_pokedex_entry poke_info
+    get_pokedex_entry poke_info [version]
+
+  Arguments:
+    poke_info   Nameref to associative array to populate
+    version     Optional version string (e.g., "0.1.0"). If not provided,
+                pulls from manifest.
 DOC
 function get_pokedex_entry() {
   local -n __poke_info__="$1"
+  local version="${2:-}"
 
-  __poke_api__get_pokemon __poke_info__
+  __poke_api__get_pokemon __poke_info__ "$version"
   __poke_api__get_loc __poke_info__
   __poke_api__get_coverage __poke_info__
 }
@@ -86,13 +92,23 @@ __poke_api__sprite_base="https://raw.githubusercontent.com/PokeAPI/sprites/maste
 : <<'DOC'
   Fetches Pokemon info from PokeAPI based on release count.
   Sets: release_number, name, image, tag
+
+  Arguments:
+    out       Nameref to associative array
+    version   Optional version override (uses manifest if empty)
 DOC
 function __poke_api__get_pokemon() {
   local -n __out__="$1"
+  local version="${2:-}"
   local api_response release_count url
 
   release_count="$(manifest_get releases)"
-  __out__[tag]="v$(manifest_get stable)"
+
+  if [[ -n "$version" ]]; then
+    __out__[tag]="v${version#v}"  # Normalize: strip v if present, then add it
+  else
+    __out__[tag]="v$(manifest_get stable)"
+  fi
 
   if [[ -z "$release_count" || "$release_count" == "0" ]]; then
     __out__[release_number]="???"

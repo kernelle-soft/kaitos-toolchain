@@ -10,11 +10,19 @@ This script updates the README with:
   - Lines of code from tokei
   - Coverage percentages from Codecov (requires CODECOV_TOKEN)
 
+Usage: sync_readme.sh [options] [version]
+
+Arguments:
+  version           Optional version tag (e.g., 0.1.0). If not provided,
+                    pulls from manifest.
+
 Flags:
   -h, --help        Show this help text.
 
 EOF
 )"
+
+ARG_VERSION=""
 
 function main() {
   # shellcheck disable=SC2034
@@ -23,7 +31,7 @@ function main() {
   parse_args "$@"
 
   log "Gathering pokedex entry data..."
-  get_pokedex_entry poke_info
+  get_pokedex_entry poke_info "$ARG_VERSION"
 
   log "Updating README..."
   update_readme poke_info
@@ -60,10 +68,13 @@ function parse_args() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
       -h|--help)  log "$USAGE" && exit 0;;
-      *)
+      -*)
         log "Unknown option: $1"
         log "$USAGE"
         exit 1
+        ;;
+      *)
+        ARG_VERSION="$1"
         ;;
     esac
     shift
