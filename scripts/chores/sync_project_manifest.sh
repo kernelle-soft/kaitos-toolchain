@@ -37,7 +37,6 @@ function main() {
   manifest_set latest "$latest_version"
   manifest_set releases "$(plan_releases_bump)"
   manifest_set stable "$(latest_release_version)"
-  manifest_set release-nickname "$(get_pokemon_name)"
 
   log "Synced project manifest to $(manifest_get latest)"
 }
@@ -61,37 +60,6 @@ function parse_args() {
     esac
     shift
   done
-}
-
-: <<'DOC'
-  Gets the release nickname for the latest release using the release count to index into the Pokedex.
-DOC
-function get_pokemon_name() {
-  local url pokemon_name api_response release_count
-
-  release_count="$(manifest_get releases)"
-  if [[ -z  "$release_count" || $release_count == "0" ]]; then
-    echo ""
-    return
-  fi
-
-  url="https://pokeapi.co/api/v2/pokemon/$release_count"
-  if ! api_response="$(curl -s "$url")"; then
-    log "Failed to get response from PokeAPI, using fallback"
-    echo "Unown"
-    return
-  fi
-
-  pokemon_name="$(jq -r '.name' <<< "$api_response")"
-
-  if [[ -z "$pokemon_name" || "$pokemon_name" == "null" ]]; then
-    log "Invalid response from PokeAPI, using fallback"
-    echo "Unown"
-    return
-  fi
-
-  pokemon_name="${pokemon_name^}" # Uppercase first letter.
-  echo "$pokemon_name"
 }
 
 : <<'DOC'

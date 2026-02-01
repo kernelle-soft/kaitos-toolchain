@@ -12,8 +12,9 @@ declare -gA __manifest_api_schema=(
   [latest]=".latest"
   [stable]=".stable"
   [releases]=".releases"
-  [series]=".series"
-  [release-nickname]='."release-nickname"'
+  [major_name]='.naming.major'
+  [minor_name]='.naming.minor'
+  [patch_name]='.naming.patch'
 )
 
 declare -gA __manifest_api_cache

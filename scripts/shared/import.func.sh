@@ -8,5 +8,3 @@ function import() {
         source "$script"
     done
 }
-
-export -f import

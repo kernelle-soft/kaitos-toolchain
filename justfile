@@ -23,3 +23,6 @@ bump *args:
   ./scripts/chores/bump_git_version.sh {{args}}
   ./scripts/chores/sync_cargo_version.sh
   ./scripts/chores/sync_project_manifest.sh
+
+release *args:
+  ./scripts/ci/create_release.sh {{args}}
