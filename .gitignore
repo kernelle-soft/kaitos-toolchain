@@ -1,2 +1,16 @@
+# Personal configs
+.cursor/
+
+# Build artifacts
 bin/
+dist/
+build/
 temp/
+tmp/
+coverage/
+**/target/
+go/kaitos
+
+# Release bundles
+kaitos-*-linux-*
+*.tar.gz

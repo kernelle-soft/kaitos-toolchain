@@ -1,0 +1,41 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - dev
+          - alpha
+          - beta
+          - rc
+          - release
+      skip_validation:
+        description: 'Skip lint and tests'
+        type: boolean
+        default: false
+
+jobs:
+  validate:
+    if: ${{ !inputs.skip_validation }}
+    uses: ./.github/workflows/_validate_release.yaml
+    secrets: inherit
+
+  bump:
+    needs: [validate]
+    if: ${{ always() && (needs.validate.result == 'success' || inputs.skip_validation) }}
+    uses: ./.github/workflows/_bump_version.yaml
+    with:
+      bump_type: ${{ inputs.bump_type }}
+    secrets: inherit
+
+  release:
+    needs: [bump]
+    uses: ./.github/workflows/_create_release.yaml
+    secrets: inherit

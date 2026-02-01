@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Pulls the latest version of the repository from git and applies it to the Cargo workspace version.
 
-Usage: bump_cargo_version.sh [version]
+Usage: sync_cargo_version.sh [version]
 
 Arguments:
   version     Optional semver version to use (e.g., 1.2.3 or 1.0.0-rc.1)
@@ -19,8 +19,7 @@ EOF
 ARG_VERSION=""
 REGEX_SEMVER='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
 
-source "$REPO_ROOT/scripts/shared/log.func.sh"
-source "$REPO_ROOT/scripts/shared/get_current_version.func.sh"
+import "$REPO_ROOT/scripts/shared/versions.api.sh"
 
 PATH_CARGO_WORKSPACE="$REPO_ROOT/crates/Cargo.toml"
 
@@ -32,7 +31,7 @@ function main() {
   if [[ -n "$ARG_VERSION" ]]; then
     current_version="$ARG_VERSION"
   else
-    current_version="$(get_current_version)"
+    current_version="$(latest_version)"
   fi
   new_version_line="$(format_version_line "$current_version")"
   old_version_line="$(get_cargo_workspace_version)"

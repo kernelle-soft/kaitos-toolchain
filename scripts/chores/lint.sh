@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
-Handler for checking project linting in CI/CD & commit hooks. Not generally for manual use. 
+Handler for checking project linting in CI/CD & commit hooks.
 
-Usage: cicd_check_lint.sh [flags...]
+Usage: lint.sh [flags...]
 
 Flags:
   -h,--help     Show this help text.
@@ -19,8 +19,7 @@ Notes:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/lint_go.func.sh"
-source "$REPO_ROOT/scripts/shared/lint_rust.func.sh"
+import "$REPO_ROOT/scripts/shared/lint.api.sh"
 
 FLAG_RUST=true
 FLAG_GO=true

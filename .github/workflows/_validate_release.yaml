@@ -1,14 +1,13 @@
-name: Pull Request
-
+name: Validate Release
 on:
-  pull_request:
-    branches: [main]
+  workflow_call:
 
 jobs:
   lint:
     uses: ./.github/workflows/_lint.yaml
     secrets: inherit
-
+  
   coverage:
     uses: ./.github/workflows/_coverage.yaml
     secrets: inherit
+

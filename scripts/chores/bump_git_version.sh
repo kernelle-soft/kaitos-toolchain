@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
-Intelligently bump the VERSION file based on the project's current version.
+Intelligently bump the git version based on the latest version tag.
 
 Usage: "bump_git_version.sh [flags...]"
 
@@ -20,7 +20,7 @@ Flags:
   --dry-run        Output the planned version bump without creating a tag
 
 Notes:
-  When using a pre-release flag on an existing release version, you can also specify which release version you're planning on targeting with the bump. Pre-release versions always target a future release version.
+  When using a pre-release flag on an existing release version, you can also pair it with --major or --minor for the version you're planning on targeting with the bump; otherwise, --patch is assumed. Pre-release versions always target a future release version.
 
   Running the script without any flags will automatically bump the version on the smallest existing granularity--the script will never graduate beyond that granularity until you graduate the version yourself.
 
@@ -32,8 +32,7 @@ Notes:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/log.func.sh"
-source "$REPO_ROOT/scripts/shared/get_current_version.func.sh"
+import "$REPO_ROOT/scripts/shared/versions.api.sh"
 
 REGEX_SEMVER='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
 REGEX_SEMVER_GIT_TAG="^v${REGEX_SEMVER#^}"  # ^v[0-9]+...
@@ -63,12 +62,12 @@ function main() {
   fi
 
   if ! needs_version_bump; then
-    current_version="$(get_current_version)"
+    current_version="$(latest_version)"
     log "HEAD is already tagged with version '$current_version'"
     exit 1
   fi
 
-  current_version="$(get_current_version)"
+  current_version="$(latest_version)"
   if ! planned_version="$(plan_bump "$current_version")"; then
     exit 1
   fi
@@ -148,36 +147,19 @@ function prerelease_flags_valid() {
 }
 
 : <<'DOC'
-  Parses a semver string into its components using namerefs.
-  Usage: parse_version "1.2.3-alpha.4" major minor patch pre_type pre_inc
-DOC
-function parse_version() {
-  local ver="$1"
-  local -n _major=$2 _minor=$3 _patch=$4 _pre_type=$5 _pre_inc=$6
-
-  _major="${ver%%.*}"; ver="${ver#*.}"
-  _minor="${ver%%.*}"; ver="${ver#*.}"
-  _patch="${ver%%-*}"
-  _pre_type=""
-  _pre_inc=""
-
-  if [[ "$ver" == *-* ]]; then
-    local pre="${ver#*-}"
-    _pre_type="${pre%%.*}"
-    _pre_inc="${pre##*.}"
-  fi
-}
-
-: <<'DOC'
   Applies a release bump (major/minor/patch) based on flags.
-  Usage: apply_release_bump major minor patch
+  Usage: apply_release_bump version_array
 DOC
 function apply_release_bump() {
-  local -n _major=$1 _minor=$2 _patch=$3
+  local -n _version=$1
   case "$(get_release_type)" in
-    major) _major="$((_major + 1))"; _minor=0; _patch=0 ;;
-    minor) _minor="$((_minor + 1))"; _patch=0 ;;
-    patch) _patch="$((_patch + 1))" ;;
+    major) 
+      _version[major]="$((_version[major] + 1))"; 
+      _version[minor]=0; 
+      _version[patch]=0
+      ;;
+    minor) _version[minor]="$((_version[minor] + 1))"; _version[patch]=0 ;;
+    patch) _version[patch]="$((_version[patch] + 1))" ;;
   esac
 }
 
@@ -186,29 +168,38 @@ function apply_release_bump() {
   Outputs the new version string.
 DOC
 function plan_bump() {
-  local major minor patch prerelease_type prerelease_increment
+  local -A version
+  local major minor patch pre_type pre_inc
 
-  if [[ ! "$1" =~ $REGEX_SEMVER ]]; then
+  if ! is_valid_semver "$1"; then
     log "Invalid version: $1"
     return 1
   fi
 
-  parse_version "$1" major minor patch prerelease_type prerelease_increment
+  parse_version "$1" version
 
   if is_bumping_prerelease; then
-    plan_prerelease_bump major minor patch prerelease_type prerelease_increment
-  elif is_bumping_release || is_releasing_prerelease "$prerelease_type"; then
-    apply_release_bump major minor patch
-    prerelease_type=""
-    prerelease_increment=""
+    plan_prerelease_bump version
+  elif is_bumping_release || is_releasing_prerelease "${version[pre_type]}"; then
+    apply_release_bump version
+    version[pre_type]=""
+    version[pre_inc]=""
   else
     # Auto-bump smallest unit
-    plan_auto_bump prerelease_type prerelease_increment patch
+    plan_auto_bump version
   fi
 
+  # Assign to temp vars for better readability
+  # of the final format strings.
+  major="${version[major]}"
+  minor="${version[minor]}"
+  patch="${version[patch]}"
+  pre_type="${version[pre_type]}"
+  pre_inc="${version[pre_inc]}"
+
   # Format and output
-  if [[ -n "$prerelease_type" ]]; then
-    echo "$major.$minor.$patch-$prerelease_type.$prerelease_increment"
+  if [[ -n "$pre_type" ]]; then
+    echo "$major.$minor.$patch-$pre_type.$pre_inc"
   else
     echo "$major.$minor.$patch"
   fi
@@ -216,44 +207,39 @@ function plan_bump() {
 
 : <<'DOC'
 Helper function that plans the pre-release bump based on current version and flags.
-Uses namerefs to modify the input variables 1-5.
+Uses nameref to modify the version array.
 
-Usage: plan_prerelease_bump major minor patch pre_type pre_inc
-  major - The major version number
-  minor - The minor version number
-  patch - The patch version number
-  pre_type - The pre-release type (dev, alpha, beta, rc)
-  pre_inc - The pre-release increment (1, 2, 3, etc)
+Usage: plan_prerelease_bump version_array
 DOC
 function plan_prerelease_bump() {
   local target_type
-  local -n _major="$1" _minor="$2" _patch="$3" _prerelease_type="$4" _prerelease_increment="$5"
-  target_type="$(compare_prerelease_types "$(get_target_prerelease_type)" "$_prerelease_type")"
+  local -n _version="$1"
+  target_type="$(compare_prerelease_types "$(get_target_prerelease_type)" "${_version[pre_type]}")"
 
-  if [[ "$target_type" != "$_prerelease_type" ]]; then
-    if [[ -z "$_prerelease_type" ]] && ! is_bumping_release; then
-      _patch="$((_patch + 1))"
+  if [[ "$target_type" != "${_version[pre_type]}" ]]; then
+    if [[ -z "${_version[pre_type]}" ]] && ! is_bumping_release; then
+      _version[patch]="$((_version[patch] + 1))"
     fi
 
     if is_bumping_release; then
-      apply_release_bump "$1" "$2" "$3"
+      apply_release_bump "$1"
     fi
 
-    _prerelease_type="$target_type"
-    _prerelease_increment=1
+    _version[pre_type]="$target_type"
+    _version[pre_inc]=1
   else
     # Same pre-release type, just increment
-    _prerelease_increment="$((_prerelease_increment + 1))"
+    _version[pre_inc]="$((_version[pre_inc] + 1))"
   fi
 }
 
 function plan_auto_bump() {
-  local -n _prerelease_type="$1" _prerelease_increment="$2" _patch="$3"
+  local -n _version="$1"
 
-  if [[ -n "$_prerelease_type" ]]; then
-    _prerelease_increment="$((_prerelease_increment + 1))"
+  if [[ -n "${_version[pre_type]}" ]]; then
+    _version[pre_inc]="$((_version[pre_inc] + 1))"
   else
-    _patch="$((_patch + 1))"
+    _version[patch]="$((_version[patch] + 1))"
   fi
 }
 

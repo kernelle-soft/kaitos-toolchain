@@ -1,0 +1,53 @@
+name: Bump Project Version
+on:
+  workflow_call:
+    inputs:
+      bump_type:
+        description: 'Version bump type (patch, minor, major, dev, alpha, beta, rc, release)'
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/envrc
+
+      - name: Configure git
+        run: ./scripts/ci/git_config.sh
+
+      - name: Plan Version Bump
+        id: plan
+        run: |
+          BUMP_FLAG="${{ inputs.bump_type && format('--{0}', inputs.bump_type) || '' }}"
+          VERSION=$(./scripts/chores/bump_git_version.sh "$BUMP_FLAG" --dry-run)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Sync Cargo Workspace
+        run: |
+          ./scripts/chores/sync_cargo_version.sh \
+            "${{ steps.plan.outputs.version }}"
+
+      - name: Sync Project Manifest
+        run: ./scripts/chores/sync_project_manifest.sh
+
+      - name: Commit Version Bump
+        run: |
+          ./scripts/ci/git_commit.sh -a \
+            -m "chore: bump to v${{ steps.plan.outputs.version }} [skip ci]"
+
+      - name: Create Version Tag
+        run: |
+          git tag \
+            -a "v${{ steps.plan.outputs.version }}" \
+            -m "v${{ steps.plan.outputs.version }}"
+
+      - name: Push changes and tags
+        run: git push origin main --follow-tags

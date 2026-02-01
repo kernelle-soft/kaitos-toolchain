@@ -3,8 +3,8 @@ pre-commit:
   commands:
     gofmt:
       glob: "go/**/*.go"
-      run: bash -c '. scripts/shared/lint_go.func.sh && lint_go {staged_files}'
+      run: bash -c '. scripts/shared/lint.api.sh && lint_go {staged_files}'
 
     rustfmt:
       glob: "crates/**/*.rs"
-      run: bash -c '. scripts/shared/lint_rust.func.sh && lint_rust'
+      run: bash -c '. scripts/shared/lint.api.sh && lint_rust'

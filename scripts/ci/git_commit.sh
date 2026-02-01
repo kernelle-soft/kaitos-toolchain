@@ -1,19 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Handler for CI/CD git operations. Not generally for manual use.
 
-Usage: cicd_git_commit.sh [flags...]
+Usage: git_commit.sh [flags...]
 
 Flags:
   -a, --all      Commit all changed files, including added and deleted files.
   -m, --message  Supply a custom git message.
 EOF
 )"
-
-source "$REPO_ROOT/scripts/shared/log.func.sh"
 
 FLAG_ALL=false
 STR_COMMIT_MSG="$(cat <<EOF

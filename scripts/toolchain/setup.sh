@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -eo pipefail
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+set -euo pipefail
+eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Installer for the ${TOOLCHAIN_NAME} game development framework.
@@ -13,11 +13,9 @@ Flags:
 EOF
 )"
 
-source "$REPO_ROOT/scripts/shared/log.sh"
-
 FLAG_CLEAN=false
 
-TOOLCHAIN_NAME="${TOOLCHAIN_NAME?:tool}"
+TOOLCHAIN_NAME="${TOOLCHAIN_NAME:-tool}"
 PATH_CONFIG="$HOME/.config/$TOOLCHAIN_NAME"
 PATH_SHARE="$HOME/.local/share/$TOOLCHAIN_NAME"
 PATH_BIN="$HOME/.local/bin"
