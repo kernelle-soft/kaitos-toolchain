@@ -21,7 +21,7 @@ jobs:
       - uses: ./.github/actions/envrc
 
       - name: Configure git
-        run: ./scripts/chores/cicd_git_config.sh
+        run: ./scripts/ci/git_config.sh
 
       - name: Plan Version Bump
         id: plan
@@ -40,7 +40,7 @@ jobs:
 
       - name: Commit Version Bump
         run: |
-          ./scripts/chores/cicd_git_commit.sh -a \
+          ./scripts/ci/git_commit.sh -a \
             -m "chore: bump to v${{ steps.plan.outputs.version }} [skip ci]"
 
       - name: Create Version Tag

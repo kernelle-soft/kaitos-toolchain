@@ -5,7 +5,7 @@ eval "${CI_ENVRC:-}"
 USAGE="$(cat <<EOF
 Orchestrates running coverage and saving the data out as a Cobertura file. Not generally for manual use.
 
-Usage: cicd_coverage.sh [flags...]
+Usage: coverage.sh [flags...]
 
 Flags:
   -h, --help      Show this help text.

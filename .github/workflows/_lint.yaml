@@ -22,4 +22,4 @@ jobs:
           components: rustfmt
 
       - name: Check formatting
-        run: ./scripts/chores/cicd_check_lint.sh
+        run: ./scripts/chores/lint.sh

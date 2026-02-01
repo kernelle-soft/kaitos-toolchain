@@ -3,9 +3,9 @@ set -euo pipefail
 eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
-Automatic installer for 3rd party tools. Intended for CI/CD use.
+Automatic installer for 3rd party tools.
 
-Usage: cicd_install_tools.sh [flags...]
+Usage: install_tools.sh [flags...]
 
 Flags:
   -c, --check       Do an install check without actually installing

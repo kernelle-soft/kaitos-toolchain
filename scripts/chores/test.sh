@@ -3,9 +3,9 @@ set -euo pipefail
 eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
-Orchestrates unit testing for the project. Not generally for manual use.
+Orchestrates unit testing for the project.
 
-Usage: unit_tests.sh [flags...]
+Usage: test.sh [flags...]
 
 Flags:
   -h, --help          Shows this help text

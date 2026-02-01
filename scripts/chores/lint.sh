@@ -3,9 +3,9 @@ set -euo pipefail
 eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
-Handler for checking project linting in CI/CD & commit hooks. Not generally for manual use. 
+Handler for checking project linting in CI/CD & commit hooks.
 
-Usage: cicd_check_lint.sh [flags...]
+Usage: lint.sh [flags...]
 
 Flags:
   -h,--help     Show this help text.

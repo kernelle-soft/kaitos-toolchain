@@ -5,7 +5,7 @@ eval "${CI_ENVRC:-}"
 USAGE="$(cat <<EOF
 Handler for CI/CD git operations. Not generally for manual use.
 
-Usage: cicd_git_commit.sh [flags...]
+Usage: git_commit.sh [flags...]
 
 Flags:
   -a, --all      Commit all changed files, including added and deleted files.

@@ -20,10 +20,10 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install Coverage Tooling
-        run: ./scripts/chores/cicd_install_tools.sh
+        run: ./scripts/chores/install_tools.sh
 
       - name: Run Tests
-        run: ./scripts/chores/cicd_coverage.sh
+        run: ./scripts/ci/coverage.sh
 
       - name: Upload Go Coverage
         if: hashFiles('./coverage/go_coverage.xml') != ''

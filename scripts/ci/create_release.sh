@@ -5,7 +5,7 @@ eval "${CI_ENVRC:-}"
 USAGE="$(cat <<EOF
 Creates a GitHub release for the latest tag marked in the project manifest (kaitos.json)
 
-Usage: cicd_create_release.sh [-h,--help] [artifact...]
+Usage: create_release.sh [-h,--help] [artifact...]
 
 Arguments:
   artifact        Optional artifact files to attach to the release.
