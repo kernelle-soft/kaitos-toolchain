@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+eval "${CI_ENVRC:-}"
+
+import "$REPO_ROOT/scripts/shared/manifest.api.sh"
 
 export POKE_START="<!--POKE_INFO_START-->"
 export POKE_END="<!--POKE_INFO_END-->"

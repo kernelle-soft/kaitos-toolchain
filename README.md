@@ -11,10 +11,10 @@
   </h3>
   <img
     id="pokemon-img"
-    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/2.gif"
+    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/1.gif"
   />
   <br>
-  <span id="pokemon-name"><b>Release #2: v0.0.2 - Ivysaur</b></span>
+  <span id="pokemon-name"><b>Release #1: v0.0.1 - Bulbasaur</b></span>
   <br>
   <img
     id="rust-runtime-coverage"
@@ -35,19 +35,19 @@
     </tr>
     <tr>
       <td>Go</td>
-      <td>293</td>
-      <td>11%</td>
+      <td>235</td>
+      <td>N/A</td>
       <td>Branch</td>
     </tr>
     <tr>
       <td>Rust</td>
-      <td>31</td>
-      <td>11%</td>
+      <td>27</td>
+      <td>N/A</td>
       <td>Branch</td>
     </tr>
     <tr>
       <td>Bash</td>
-      <td>2827</td>
+      <td>0</td>
       <td>0%</td>
       <td>Line</td>
     </tr>

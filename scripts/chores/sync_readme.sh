@@ -22,6 +22,9 @@ Flags:
 EOF
 )"
 
+import \
+  "$REPO_ROOT/scripts/shared/poke.api.sh"
+
 ARG_VERSION=""
 
 function main() {
