@@ -8,13 +8,13 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check for assignee
-        if: join(github.event.pull_request.assignees.*.login) == 0
+        if: join(github.event.pull_request.assignees.*.login) == ''
         run: |
           echo "ERROR: PR must have at least one assignee"
           exit 1
 
       - name: Check for labels
-        if: join(github.event.pull_request.labels.*.name, '') == 0
+        if: join(github.event.pull_request.labels.*.name, '') == ''
         run: |
           echo "ERROR: PR must have at least one label"
           exit 1
