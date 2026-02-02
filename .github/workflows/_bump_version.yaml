@@ -27,8 +27,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install Additional Tools
-        run: ./scripts/chores/install_tools.sh \
-          tokei
+        run: ./scripts/chores/install_tools.sh tokei
 
       - name: Plan Version Bump
         id: plan

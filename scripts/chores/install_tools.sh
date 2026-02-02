@@ -9,12 +9,13 @@ Usage: install_tools.sh [flags...] [tools...]
 
 Arguments:
   tools...          OPTIONAL. A list of tools to install. Must be one of
-                    the tools listed in INSTALLERS
+                    the tools listed in INSTALLERS. If no tools are
+                    specified, all available tools will be installed
 
 Flags:
   -c, --check       Do an install check without actually installing
   -f, --force       Force re-installation.
-  -u, --uninstall   Uninstall all tools.
+  -u, --uninstall   Uninstall specified tools.
   -h, --help        Show this help text.
 
 Notes:
@@ -94,7 +95,7 @@ function parse_args() {
           exit 1
         fi
 
-        read -r trimmed <<< "$1"
+        trimmed="$(echo "$1" | xargs)"
         ARG_TOOLS+=("$trimmed")
         ;;
     esac
