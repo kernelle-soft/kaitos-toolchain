@@ -38,6 +38,11 @@ function parse_version() {
   local -n __result__=$2
   local major minor patch pre_type="" pre_inc=""
 
+  if ! is_valid_semver "$__ver__"; then
+    warn "'$__ver__' is not a valid semver version for this project"
+    return 1
+  fi
+
   major="${__ver__%%.*}"; __ver__="${__ver__#*.}"
   minor="${__ver__%%.*}"; __ver__="${__ver__#*.}"
   patch="${__ver__%%-*}"
@@ -59,6 +64,9 @@ function parse_version() {
 # Validation
 # ============================================================================
 
+: <<'DOC'
+Checks whether the provided string is valid project semver
+DOC
 function is_valid_semver() {
   local version="$1"
   local regex_semver='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
@@ -70,17 +78,32 @@ function is_valid_semver() {
   ]]
 }
 
-function get_version_type() {
-  local version="$1"
-  if [[ $version =~ ^v?0\. ]]; then
-    echo "zero"
-  elif [[ $version =~ - ]]; then
-    echo "prerelease"
-  else
-    echo "release"
-  fi
+: <<'DOC'
+Checks whether or not the semver version passed is a release version
+
+Example:
+- 1.0.0 -> true
+- 0.4.2 -> true
+- 12.20.0-alpha.1 -> false
+- 1.0.0-rc.20 -> true
+DOC
+function is_release_version() {
+  local -A version
+  parse_version "$1" version
+  [[ -z "${version[pre_type]}" ]]
 }
 
+: <<'DOC'
+Gets the type of release this version represents
+
+Example:
+- 1.0.0 -> major
+- 1.4.0 -> minor
+- 1.4.2 -> patch
+- 1.4.3-dev.1 -> dev
+- 1.4.3-alpha.1 -> alpha
+- etc
+DOC
 function get_release_type() {
   local -A ver
   parse_version "$1" ver
