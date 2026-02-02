@@ -31,10 +31,10 @@ FLAG_UNINSTALL=false
 ARG_TOOLS=()
 
 declare -A INSTALLERS=(
-  [cargo-llvm-cov]="cargo install cargo-llvm-cov --version 0.6.24"
+  [cargo-llvm-cov]="cargo binstall -y --locked cargo-llvm-cov@0.6.24"
   [gocover-cobertura]="go install github.com/boumenot/gocover-cobertura@v1.4.0"
   [gh]="gh_cli_installer"
-  [tokei]="cargo install tokei --version 14.0.0"
+  [tokei]="cargo binstall -y --locked tokei@14.0.0"
 )
 
 declare -A UNINSTALLERS=(

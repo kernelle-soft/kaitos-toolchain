@@ -1,0 +1,53 @@
+name: Setup Dependencies
+description: Sets up Go, Rust, and other Project Dependencies
+
+inputs:
+  go:
+    description: 'Set up Go with caching'
+    required: false
+    default: 'true'
+  go-version:
+    description: 'Go version to install'
+    required: false
+    default: '1.23'
+  rust:
+    description: 'Set up Rust with caching'
+    required: false
+    default: 'true'
+  rust-toolchain:
+    description: 'Rust toolchain to install'
+    required: false
+    default: 'stable'
+  rust-components:
+    description: 'Additional Rust components (comma-separated)'
+    required: false
+    default: ''
+  cargo-binstall:
+    description: 'Install cargo-binstall for faster tool installation'
+    required: false
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Go
+      if: inputs.go == 'true'
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ inputs.go-version }}
+        cache: true
+
+    - name: Set up Rust
+      if: inputs.rust == 'true'
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: ${{ inputs.rust-toolchain }}
+        components: ${{ inputs.rust-components }}
+
+    - name: Cache Rust
+      if: inputs.rust == 'true'
+      uses: Swatinem/rust-cache@v2
+
+    - name: Install cargo-binstall
+      if: inputs.rust == 'true' && inputs.cargo-binstall == 'true'
+      uses: cargo-bins/cargo-binstall@main
