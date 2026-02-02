@@ -23,7 +23,6 @@ import \
   "$REPO_ROOT/scripts/shared/versions.api.sh" \
   "$REPO_ROOT/scripts/shared/manifest.api.sh"
 
-
 function main() {
   parse_args "$@"
 
@@ -36,7 +35,12 @@ function main() {
 
   manifest_set latest "$latest_version"
   manifest_set releases "$(plan_releases_bump)"
-  manifest_set stable "$(latest_release_version)"
+
+  if is_release_version "$latest_version"; then
+    manifest_set stable "$latest_version"
+  else
+    manifest_set stable "$(latest_release_version)"
+  fi
 
   log "Synced project manifest to $(manifest_get latest)"
 }
