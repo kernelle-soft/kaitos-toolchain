@@ -165,7 +165,7 @@ function __poke_api__get_loc() {
 
 : <<'DOC'
   Fetches coverage percentages from Codecov API.
-  Requires CODECOV_TOKEN environment variable.
+  Requires CODECOV_API_TOKEN environment variable.
   Sets: go_unit_coverage, rust_unit_coverage, bash_unit_coverage
 DOC
 function __poke_api__get_coverage() {
