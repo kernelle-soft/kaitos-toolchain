@@ -85,7 +85,7 @@ Example:
 - 1.0.0 -> true
 - 0.4.2 -> true
 - 12.20.0-alpha.1 -> false
-- 1.0.0-rc.20 -> true
+- 1.0.0-rc.20 -> false
 DOC
 function is_release_version() {
   local -A version
