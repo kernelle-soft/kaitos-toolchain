@@ -5,7 +5,11 @@ eval "${CI_ENVRC:-}"
 USAGE="$(cat <<EOF
 Automatic installer for 3rd party developer tools. This is useful for setting up a new machine or for CI/CD setup. Who wants to mess around manually installing all these tools with a crappy README, amiright?
 
-Usage: install_tools.sh [flags...]
+Usage: install_tools.sh [flags...] [tools...]
+
+Arguments:
+  tools...          OPTIONAL. A list of tools to install. Must be one of
+                    the tools listed in INSTALLERS
 
 Flags:
   -c, --check       Do an install check without actually installing
@@ -23,6 +27,7 @@ EOF
 FLAG_CHECK=false
 FLAG_FORCE=false
 FLAG_UNINSTALL=false
+ARG_TOOLS=()
 
 declare -A INSTALLERS=(
   [cargo-llvm-cov]="cargo install cargo-llvm-cov --version 0.6.24"
@@ -41,6 +46,12 @@ declare -A UNINSTALLERS=(
 function main() {
   parse_args "$@"
   validate_flags
+
+  # If no tools were specified from args,
+  # then install all available tools.
+  if (( ${#ARG_TOOLS[@]} == 0 )); then
+    ARG_TOOLS=("${!INSTALLERS[@]}")
+  fi
 
   if is_check; then
     run_check
@@ -70,14 +81,27 @@ function parse_args() {
       -f|--force)       FLAG_FORCE=true;;
       -u|--uninstall)   FLAG_UNINSTALL=true;;
       -h|--help)        log "$USAGE" && exit 0;;
-      *)
+      -*)
         log "Unknown option: $1"
         log "$USAGE"
         exit 1
         ;;
+      *)
+        if ! has_installer_for "$1"; then
+          log "No installer for tool '$1'"
+          log "$USAGE"
+          exit 1
+        fi
+        ARG_TOOLS+=("$1")
+        ;;
     esac
     shift
   done
+}
+
+function has_installer_for() {
+  local tool="$1"
+  [[ -v "INSTALLERS[$tool]" ]]
 }
 
 function validate_flags() {
@@ -126,7 +150,7 @@ function run_check() {
   log "Installed?   Command"
   log "$line"
 
-  for cmd in "${!INSTALLERS[@]}"; do
+  for cmd in "${ARG_TOOLS[@]}"; do
     local report=""
     if command_exists "$cmd"; then
       report="$before🗹$after$cmd"
@@ -138,7 +162,7 @@ function run_check() {
 }
 
 function run_uninstallers() {
-  for cmd in "${!UNINSTALLERS[@]}"; do
+  for cmd in "${ARG_TOOLS[@]}"; do
     if command_exists "$cmd"; then
       log "Uninstalling $cmd..."
       eval "${UNINSTALLERS[$cmd]}"
@@ -147,7 +171,7 @@ function run_uninstallers() {
 }
 
 function run_installers() {
-  for cmd in "${!INSTALLERS[@]}"; do
+  for cmd in "${ARG_TOOLS[@]}"; do
     if should_install_command "$cmd"; then
       log "Installing $cmd..."
       eval "${INSTALLERS[$cmd]}"
