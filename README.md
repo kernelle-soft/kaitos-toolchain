@@ -14,7 +14,7 @@
     src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/1.gif"
   />
   <br>
-  <span id="pokemon-name"><b>Release #1: v0.0.2-dev.2 - Bulbasaur</b></span>
+  <span id="pokemon-name"><b>Release #1: v0.0.1 - Bulbasaur</b></span>
   <br>
   <img
     id="rust-runtime-coverage"
@@ -36,18 +36,18 @@
     <tr>
       <td>Go</td>
       <td>235</td>
-      <td>N/A</td>
+      <td>10%</td>
       <td>Branch</td>
     </tr>
     <tr>
       <td>Rust</td>
       <td>27</td>
-      <td>N/A</td>
+      <td>10%</td>
       <td>Branch</td>
     </tr>
     <tr>
       <td>Bash</td>
-      <td>2137</td>
+      <td>2132</td>
       <td>0%</td>
       <td>Line</td>
     </tr>
