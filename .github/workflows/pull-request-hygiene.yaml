@@ -1,7 +1,14 @@
 name: Check PR Hygiene
 on:
   pull_request:
-    types: [opened, labeled, unlabeled, assigned, unassigned]
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - labeled
+      - unlabeled
+      - assigned
+      - unassigned
 
 jobs:
   check-requirements:
