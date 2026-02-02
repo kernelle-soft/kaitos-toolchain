@@ -47,6 +47,7 @@ declare -A UNINSTALLERS=(
   [tokei]="cargo uninstall -v tokei"
   [cargo-llvm-cov]="cargo uninstall -v cargo-llvm-cov"
   [cargo-audit]="cargo uninstall -v cargo-audit"
+  [cargo-binstall]="cargo uninstall -v cargo-binstall"
 )
 
 function main() {
