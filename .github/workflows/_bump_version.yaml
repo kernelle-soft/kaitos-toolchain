@@ -29,12 +29,12 @@ jobs:
 
       - uses: ./.github/actions/envrc
 
-      - name: Configure git
-        run: ./scripts/ci/git_config.sh
-
       - uses: ./.github/actions/setup
         with:
           go: false
+
+      - name: Configure git
+        run: ./scripts/ci/git_config.sh
 
       - name: Install Additional Tools
         run: ./scripts/chores/install_tools.sh tokei
