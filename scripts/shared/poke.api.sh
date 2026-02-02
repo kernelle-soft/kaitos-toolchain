@@ -26,11 +26,11 @@ $POKE_START
   <br>
   <img
     id="rust-runtime-coverage"
-    src="https://img.shields.io/codecov/c/github/kernelle-soft/kaitos-toolchain?flag=rust&label=Runtime"
+    src="https://img.shields.io/codecov/c/github/kernelle-soft/kaitos-toolchain?flag=rust&label=Rust"
   />
   <img
     id="go-cli-coverage"
-    src="https://img.shields.io/codecov/c/github/kernelle-soft/kaitos-toolchain?flag=go&label=CLI"
+    src="https://img.shields.io/codecov/c/github/kernelle-soft/kaitos-toolchain?flag=go&label=Go"
   />
   <br>
   <span>Base Stats</span>
@@ -160,7 +160,7 @@ function __poke_api__get_loc() {
 
   __out__[go_loc]="$(jq -r '.Go.code // 0' <<< "$tokei_json")"
   __out__[rust_loc]="$(jq -r '.Rust.code // 0' <<< "$tokei_json")"
-  __out__[bash_loc]="$(jq -r '.Bash.code // 0' <<< "$tokei_json")"
+  __out__[bash_loc]="$(jq -r '.Shell.code // 0' <<< "$tokei_json")"
 }
 
 : <<'DOC'
@@ -200,7 +200,7 @@ function __poke_api__fetch_coverage() {
   local flag="$2"
   local result
 
-  if result="$(curl -sf -H "Authorization: Bearer $CODECOV_TOKEN" "$base_url/?flag=$flag")"; then
+  if result="$(curl -sf -H "Authorization: Bearer $CODECOV_API_TOKEN" "$base_url/?flag=$flag")"; then
     jq -r '(.totals.coverage // 0 | floor | tostring) + "%"' <<< "$result"
   else
     echo "N/A"

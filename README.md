@@ -18,11 +18,11 @@
   <br>
   <img
     id="rust-runtime-coverage"
-    src="https://img.shields.io/codecov/c/github/kernelle-soft/kaitos-toolchain?flag=rust&label=Runtime"
+    src="https://img.shields.io/codecov/c/github/kernelle-soft/kaitos-toolchain?flag=rust&label=Rust"
   />
   <img
     id="go-cli-coverage"
-    src="https://img.shields.io/codecov/c/github/kernelle-soft/kaitos-toolchain?flag=go&label=CLI"
+    src="https://img.shields.io/codecov/c/github/kernelle-soft/kaitos-toolchain?flag=go&label=Go"
   />
   <br>
   <span>Base Stats</span>
@@ -36,18 +36,18 @@
     <tr>
       <td>Go</td>
       <td>235</td>
-      <td>N/A</td>
+      <td>10%</td>
       <td>Branch</td>
     </tr>
     <tr>
       <td>Rust</td>
       <td>27</td>
-      <td>N/A</td>
+      <td>10%</td>
       <td>Branch</td>
     </tr>
     <tr>
       <td>Bash</td>
-      <td>0</td>
+      <td>2114</td>
       <td>0%</td>
       <td>Line</td>
     </tr>
