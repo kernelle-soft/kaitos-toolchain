@@ -1,4 +1,4 @@
-name: Check PR Hygiene
+name: Pull Request Hygiene
 on:
   pull_request:
     types:
