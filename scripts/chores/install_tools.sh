@@ -41,8 +41,8 @@ declare -A INSTALLERS=(
 )
 
 declare -A UNINSTALLERS=(
-  [gocover-cobertura]="rm -f \$(which gocover-cobertura) || true"
-  [govulncheck]="rm -f \$(which govulncheck) || true"
+  [gocover-cobertura]="rm -f \$(command -v gocover-cobertura) || true"
+  [govulncheck]="rm -f \$(command -v govulncheck) || true"
   [gh]="gh_cli_uninstaller"
   [tokei]="cargo uninstall -v tokei"
   [cargo-llvm-cov]="cargo uninstall -v cargo-llvm-cov"
