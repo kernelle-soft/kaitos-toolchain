@@ -49,7 +49,7 @@ FLAG_DRY_RUN=false
 
 function main() {
   local current_version planned_version
-  
+
   parse_args "$@"
   if ! release_flags_valid; then
     log "Only one release flag may be specified at a time. Use --help for more information."
@@ -83,7 +83,7 @@ function main() {
 }
 
 : <<'DOC'
-  Parses CLI flags. 
+  Parses CLI flags.
   See USAGE for flag descriptions.
 DOC
 function parse_args() {
@@ -117,7 +117,7 @@ function parse_args() {
 DOC
 function needs_version_bump() {
   # Always bump when specific flags are provided.
-  if is_bumping_prerelease || is_bumping_release; then
+  if is_bumping_prerelease || is_bumping_release || [[ $FLAG_RELEASE = true ]]; then
     return 0
   fi
 
@@ -153,9 +153,9 @@ DOC
 function apply_release_bump() {
   local -n _version=$1
   case "$(get_release_type)" in
-    major) 
-      _version[major]="$((_version[major] + 1))"; 
-      _version[minor]=0; 
+    major)
+      _version[major]="$((_version[major] + 1))";
+      _version[minor]=0;
       _version[patch]=0
       ;;
     minor) _version[minor]="$((_version[minor] + 1))"; _version[patch]=0 ;;
@@ -244,18 +244,18 @@ function plan_auto_bump() {
 }
 
 function is_bumping_release() {
-  [[ 
-    $FLAG_MAJOR = true || 
-    $FLAG_MINOR = true || 
+  [[
+    $FLAG_MAJOR = true ||
+    $FLAG_MINOR = true ||
     $FLAG_PATCH = true
   ]]
 }
 
 function is_bumping_prerelease() {
-  [[ 
-    $FLAG_DEV = true || 
-    $FLAG_ALPHA = true || 
-    $FLAG_BETA = true || 
+  [[
+    $FLAG_DEV = true ||
+    $FLAG_ALPHA = true ||
+    $FLAG_BETA = true ||
     $FLAG_RC = true
   ]]
 }
