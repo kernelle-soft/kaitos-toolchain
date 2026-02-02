@@ -56,8 +56,8 @@ $POKE_START
     <tr>
       <td>Bash</td>
       <td>${__poke_info__[bash_loc]}</td>
-      <td>${__poke_info__[bash_unit_coverage]}</td>
-      <td>Line</td>
+      <td>N/A</td>
+      <td>N/A</td>
     </tr>
   </table>
 </div>
@@ -179,9 +179,6 @@ function __poke_api__get_coverage() {
     __out__[go_unit_coverage]="N/A"
     __out__[rust_unit_coverage]="N/A"
   fi
-
-  # TODO - actually add bash coverage
-  __out__[bash_unit_coverage]="0%"  # No bash coverage tooling
 }
 
 : <<'DOC'
