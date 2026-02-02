@@ -176,11 +176,11 @@ function __poke_api__get_coverage() {
   repo="$(manifest_get repo)"
   codecov_base="https://api.codecov.io/api/v2/github/$org/repos/$repo/totals"
 
-  if [[ -n "${CODECOV_TOKEN:-}" ]]; then
+  if [[ -n "${CODECOV_API_TOKEN:-}" ]]; then
     __out__[go_unit_coverage]="$(__poke_api__fetch_coverage "$codecov_base" "go")"
     __out__[rust_unit_coverage]="$(__poke_api__fetch_coverage "$codecov_base" "rust")"
   else
-    log "CODECOV_TOKEN not set, coverage will show N/A"
+    log "CODECOV_API_TOKEN not set, coverage will show N/A"
     __out__[go_unit_coverage]="N/A"
     __out__[rust_unit_coverage]="N/A"
   fi
