@@ -23,7 +23,10 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install Coverage Tooling
-        run: ./scripts/chores/install_tools.sh
+        run: |
+          ./scripts/chores/install_tools.sh \
+            cargo-llvm-cov \
+            gocover-cobertura
 
       - name: Run Tests
         run: ./scripts/ci/coverage.sh
