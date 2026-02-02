@@ -22,6 +22,10 @@ inputs:
     description: 'Additional Rust components (comma-separated)'
     required: false
     default: ''
+  cargo-binstall:
+    description: 'Install cargo-binstall for faster tool installation'
+    required: false
+    default: 'true'
 
 runs:
   using: composite
@@ -43,3 +47,7 @@ runs:
     - name: Cache Rust
       if: inputs.rust == 'true'
       uses: Swatinem/rust-cache@v2
+
+    - name: Install cargo-binstall
+      if: inputs.rust == 'true' && inputs.cargo-binstall == 'true'
+      uses: cargo-bins/cargo-binstall@main
