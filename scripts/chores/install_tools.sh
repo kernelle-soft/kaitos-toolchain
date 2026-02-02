@@ -14,7 +14,7 @@ Flags:
   -h, --help        Show this help text.
 
 Notes:
-  To add another command to the installer, add the install and uninstall commands 
+  To add another command to the installer, add the install and uninstall commands
   to the INSTALLERS and UNINSTALLERS array in the script.
 
 EOF
@@ -28,12 +28,14 @@ declare -A INSTALLERS=(
   [cargo-llvm-cov]="cargo install cargo-llvm-cov --version 0.6.24"
   [gocover-cobertura]="go install github.com/boumenot/gocover-cobertura@v1.4.0"
   [gh]="gh_cli_installer"
+  [tokei]="cargo install tokei --version 14.0.0"
 )
 
 declare -A UNINSTALLERS=(
   [cargo-llvm-cov]="cargo uninstall -v cargo-llvm-cov"
   [gocover-cobertura]="rm -f \$(which gocover-cobertura) || true"
   [gh]="gh_cli_uninstaller"
+  [tokei]="cargo uninstall -v tokei"
 )
 
 function main() {
@@ -58,7 +60,7 @@ function main() {
 }
 
 : <<'DOC'
-  Parses CLI flags. 
+  Parses CLI flags.
   See USAGE for flag descriptions.
 DOC
 function parse_args() {
@@ -79,9 +81,9 @@ function parse_args() {
 }
 
 function validate_flags() {
-  if [[ 
-    $FLAG_UNINSTALL = true && 
-    ($FLAG_FORCE = true || $FLAG_CHECK = true) 
+  if [[
+    $FLAG_UNINSTALL = true &&
+    ($FLAG_FORCE = true || $FLAG_CHECK = true)
   ]]; then
     log "ERROR: -u,--uninstall is not valid when paired with other flags."
     exit 1
@@ -95,8 +97,8 @@ function should_install_command() {
     return 1
   fi
 
-  if [[ $FLAG_CHECK = true ]]; then 
-    return 1 
+  if [[ $FLAG_CHECK = true ]]; then
+    return 1
   fi
 
   if [[ $FLAG_FORCE = true ]]; then

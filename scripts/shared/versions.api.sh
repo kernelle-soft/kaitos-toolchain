@@ -34,27 +34,25 @@ declare -A __versions_api__precedence=(
     echo "${version[pre_inc]}"    # 4
 DOC
 function parse_version() {
-  local ver="$1"
-  local -n _result=$2
+  local __ver__="$1"
+  local -n __result__=$2
   local major minor patch pre_type="" pre_inc=""
 
-  major="${ver%%.*}"; ver="${ver#*.}"
-  minor="${ver%%.*}"; ver="${ver#*.}"
-  patch="${ver%%-*}"
+  major="${__ver__%%.*}"; __ver__="${__ver__#*.}"
+  minor="${__ver__%%.*}"; __ver__="${__ver__#*.}"
+  patch="${__ver__%%-*}"
 
-  if [[ "$ver" == *-* ]]; then
-    local pre="${ver#*-}"
+  if [[ "$__ver__" == *-* ]]; then
+    local pre="${__ver__#*-}"
     pre_type="${pre%%.*}"
     pre_inc="${pre##*.}"
   fi
 
-  _result=(
-    [major]="$major"
-    [minor]="$minor"
-    [patch]="$patch"
-    [pre_type]="$pre_type"
-    [pre_inc]="$pre_inc"
-  )
+  __result__[major]="$major"
+  __result__[minor]="$minor"
+  __result__[patch]="$patch"
+  __result__[pre_type]="$pre_type"
+  __result__[pre_inc]="$pre_inc"
 }
 
 # ============================================================================
@@ -67,7 +65,7 @@ function is_valid_semver() {
   local regex_semver_git_tag="^v${regex_semver#^}"  # ^v[0-9]+...
 
   [[
-    "$version" =~ $regex_semver || 
+    "$version" =~ $regex_semver ||
     "$version" =~ $regex_semver_git_tag
   ]]
 }
@@ -83,6 +81,24 @@ function get_version_type() {
   fi
 }
 
+function get_release_type() {
+  local -A ver
+  parse_version "$1" ver
+
+  if [[ -n "${ver[pre_type]}" ]]; then
+    echo "${ver[pre_type]}"
+    return
+  fi
+
+  if ((ver[patch] > 0)); then
+    echo "patch"
+  elif ((ver[minor] > 0)); then
+    echo "minor"
+  else
+    echo "major"
+  fi
+}
+
 # ============================================================================
 # Comparison
 # ============================================================================
@@ -91,7 +107,7 @@ function get_version_type() {
   Compares two semver strings. This also accounts for prerelease precedence and increments:
     - dev.1 < dev.2
     - dev.2 < alpha.2 < beta.2 < rc.1
-  
+
   Returns: -1 if left > right, 1 if left < right, 0 if equal.
 DOC
 function compare_versions() {
@@ -211,7 +227,7 @@ function latest_release_version() {
   local latest_tag semver
 
   latest_tag="$(git tag --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1)"
-  
+
   # Strip leading 'v' if there is one
   semver="${latest_tag#v}"
   echo "$semver"

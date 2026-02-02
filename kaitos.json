@@ -4,6 +4,9 @@
   "latest": "0.0.2-dev.1",
   "stable": "0.0.1",
   "releases": 1,
-  "series": "Early Development",
-  "release-nickname": "Bulbasaur"
+  "naming": {
+    "major": "Early Development",
+    "minor": "Core Project Infrastructure",
+    "patch": "Release Naming Changes"
+  }
 }

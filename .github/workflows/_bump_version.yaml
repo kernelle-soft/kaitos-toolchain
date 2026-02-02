@@ -43,6 +43,11 @@ jobs:
           ./scripts/chores/sync_project_manifest.sh \
             "${{ steps.plan.outputs.version }}"
 
+      - name: Sync README
+        run: |
+          ./scripts/chores/sync_readme.sh \
+            "${{ steps.plan.outputs.version }}"
+
       - name: Commit Version Bump
         run: |
           ./scripts/ci/git_commit.sh -a \

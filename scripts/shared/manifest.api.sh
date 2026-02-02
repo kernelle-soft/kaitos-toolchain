@@ -1,24 +1,24 @@
 #!/usr/bin/env bash
+eval "${CI_ENVRC:-}"
 
 : <<'DOC'
 API for getting and setting info in the project manifest (kaitos.json)
 DOC
 
-eval "${CI_ENVRC:-}"
 __manifest_api_repo_root="$REPO_ROOT"
+__manifest_api_file="$__manifest_api_repo_root/kaitos.json"
+
+declare -gA __manifest_api_cache
 declare -gA __manifest_api_schema=(
   [org]=".org"
   [repo]=".repo"
   [latest]=".latest"
   [stable]=".stable"
   [releases]=".releases"
-  [series]=".series"
-  [release-nickname]='."release-nickname"'
+  [major_name]='.naming.major'
+  [minor_name]='.naming.minor'
+  [patch_name]='.naming.patch'
 )
-
-declare -gA __manifest_api_cache
-
-__manifest_api_file="$__manifest_api_repo_root/kaitos.json"
 
 : <<'DOC'
   Gets a particular key from the kaitos manifest.

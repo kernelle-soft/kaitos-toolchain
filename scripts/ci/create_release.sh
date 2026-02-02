@@ -11,12 +11,14 @@ Arguments:
   artifact        Optional artifact files to attach to the release.
 
 Flags:
+  -d, --dry-run   Puts together a dry run of a release for review
   -h, --help      Show this help text.
 
 EOF
 )"
 
 ARG_ARTIFACTS=()
+FLAG_DRY_RUN=false
 
 import \
   "$REPO_ROOT/scripts/shared/manifest.api.sh" \
@@ -26,23 +28,38 @@ import \
 function main() {
   parse_args "$@"
 
-  local tag title notes version_type prerelease_flag
+  local tag title notes prerelease_flag
+  local -A version
 
   tag="v$(manifest_get latest)"
-  version_type="$(get_version_type "$tag")"
+  parse_version "$tag" version
 
-  if [[ "$version_type" == "prerelease" ]]; then
+  if [[ -n "${version[pre_type]}" ]]; then
     prerelease_flag="--prerelease"
   else
     prerelease_flag=""
   fi
 
-  title="$(get_title "$tag" "$version_type")"
+  title="$(get_title "$tag")"
   notes="$(get_notes "$tag")"
 
-  log "Creating release for $tag"
-  log "  Type: $version_type"
-  log "  Title: $title"
+  if [[ $FLAG_DRY_RUN = true ]]; then
+    log "Dry-Run for Release $tag"
+    log "  Title: $title"
+
+    if [[ -n "$prerelease_flag" ]]; then
+      log "  Type: Prerelease"
+    else
+      log "  Type: Release"
+    fi
+
+    log "Notes:"
+    log "$notes"
+
+    log "Artifacts:"
+    log ${ARG_ARTIFACTS[@]+"${ARG_ARTIFACTS[@]}"}
+    exit 0
+  fi
 
   # shellcheck disable=SC2086
   gh release create "$tag" \
@@ -59,6 +76,7 @@ DOC
 function parse_args() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
+      -d|--dry-run)   FLAG_DRY_RUN=true;;
       -h|--help)  log "$USAGE" && exit 0;;
       -*)
         log "Unknown option: $1"
@@ -74,23 +92,30 @@ function parse_args() {
 }
 
 : <<'DOC'
-  Generates the release title.
-  For full releases: "Series: vX.Y.Z - Nickname"
-  For prereleases:   "Series: vX.Y.Z-pre.N"
+  Generates the release title based on the context of development.
 DOC
 function get_title() {
-  local tag="$1"
-  local version_type="$2"
-  local series nickname
+  local tag major_name minor_name patch_name
 
-  series="$(manifest_get series)"
-  nickname="$(manifest_get release-nickname)"
+  tag="$1"
+  major_name="$(manifest_get major_name)"
+  minor_name="$(manifest_get minor_name)"
+  patch_name="$(manifest_get patch_name)"
 
-  if [[ "$version_type" == "release" ]]; then
-    echo "$series: $tag - $nickname"
-  else
-    echo "$series: $tag"
-  fi
+  case "$(get_release_type "$tag")" in
+    patch)
+      echo "$tag: $patch_name - $minor_name"
+      ;;
+    minor)
+      echo "$tag: $minor_name"
+      ;;
+    major)
+      echo "$tag: $major_name"
+      ;;
+    *)
+      echo "$tag"
+      ;;
+  esac
 }
 
 : <<'DOC'
