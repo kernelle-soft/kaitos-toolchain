@@ -62,6 +62,8 @@ jobs:
         run: |
           ./scripts/chores/sync_readme.sh \
             "${{ steps.plan.outputs.version }}"
+        env:
+          CODECOV_API_TOKEN: ${{ secrets.CODECOV_API_TOKEN }}
 
       - name: Commit Version Bump
         run: |

@@ -106,12 +106,7 @@ function __poke_api__get_pokemon() {
   local api_response release_count url
 
   release_count="$(manifest_get releases)"
-
-  if [[ -n "$version" ]]; then
-    __out__[tag]="v${version#v}"  # Normalize: strip v if present, then add it
-  else
-    __out__[tag]="v$(manifest_get stable)"
-  fi
+  __out__[tag]="v$(manifest_get stable)"
 
   if [[ -z "$release_count" || "$release_count" == "0" ]]; then
     __out__[release_number]="???"
