@@ -75,6 +75,7 @@ function main() {
   See USAGE for flag descriptions.
 DOC
 function parse_args() {
+  local trimmed
   while [[ $# -gt 0 ]]; do
     case "$1" in
       -c|--check)       FLAG_CHECK=true;;
@@ -92,7 +93,9 @@ function parse_args() {
           log "$USAGE"
           exit 1
         fi
-        ARG_TOOLS+=("$1")
+
+        read -r trimmed <<< "$1"
+        ARG_TOOLS+=("$trimmed")
         ;;
     esac
     shift
