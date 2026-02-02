@@ -57,7 +57,7 @@ function main() {
     log "$notes"
 
     log "Artifacts:"
-    log "${ARG_ARTIFACTS[@]}"
+    log ${ARG_ARTIFACTS[@]+"${ARG_ARTIFACTS[@]}"}
     exit 0
   fi
 
