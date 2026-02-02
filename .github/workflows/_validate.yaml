@@ -6,7 +6,11 @@ jobs:
   lint:
     uses: ./.github/workflows/_lint.yaml
     secrets: inherit
-  
+
+  security:
+    uses: ./.github/workflows/_security.yaml
+    secrets: inherit
+
   coverage:
     uses: ./.github/workflows/_coverage.yaml
     secrets: inherit

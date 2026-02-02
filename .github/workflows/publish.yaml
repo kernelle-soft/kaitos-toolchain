@@ -7,7 +7,7 @@ on:
 
 jobs:
   validate:
-    uses: ./.github/workflows/_validate_release.yaml
+    uses: ./.github/workflows/_validate.yaml
     secrets: inherit
 
   bump:

@@ -5,10 +5,6 @@ on:
     branches: [main]
 
 jobs:
-  lint:
-    uses: ./.github/workflows/_lint.yaml
-    secrets: inherit
-
-  coverage:
-    uses: ./.github/workflows/_coverage.yaml
+  validate:
+    uses: ./.github/workflows/_validate.yaml
     secrets: inherit

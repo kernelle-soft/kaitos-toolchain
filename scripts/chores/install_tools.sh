@@ -31,17 +31,22 @@ FLAG_UNINSTALL=false
 ARG_TOOLS=()
 
 declare -A INSTALLERS=(
-  [cargo-llvm-cov]="cargo binstall -y --locked cargo-llvm-cov@0.6.24"
   [gocover-cobertura]="go install github.com/boumenot/gocover-cobertura@v1.4.0"
+  [govulncheck]="go install golang.org/x/vuln/cmd/govulncheck@v1.1.4"
   [gh]="gh_cli_installer"
+  [cargo-binstall]="cargo install cargo-binstall --version 1.17.4"
   [tokei]="cargo binstall -y --locked tokei@14.0.0"
+  [cargo-llvm-cov]="cargo binstall -y --locked cargo-llvm-cov@0.6.24"
+  [cargo-audit]="cargo binstall -y --locked cargo-audit@0.22.0"
 )
 
 declare -A UNINSTALLERS=(
-  [cargo-llvm-cov]="cargo uninstall -v cargo-llvm-cov"
   [gocover-cobertura]="rm -f \$(which gocover-cobertura) || true"
+  [govulncheck]="rm -f \$(which govulncheck) || true"
   [gh]="gh_cli_uninstaller"
   [tokei]="cargo uninstall -v tokei"
+  [cargo-llvm-cov]="cargo uninstall -v cargo-llvm-cov"
+  [cargo-audit]="cargo uninstall -v cargo-audit"
 )
 
 function main() {
