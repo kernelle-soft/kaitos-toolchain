@@ -11,15 +11,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/envrc
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
+      - uses: ./.github/actions/setup
         with:
-          go-version: '1.23'
-
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt
+          rust-components: rustfmt
 
       - name: Check formatting
         run: ./scripts/chores/lint.sh

@@ -32,8 +32,9 @@ jobs:
       - name: Configure git
         run: ./scripts/ci/git_config.sh
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+      - uses: ./.github/actions/setup
+        with:
+          go: false
 
       - name: Install Additional Tools
         run: ./scripts/chores/install_tools.sh tokei
