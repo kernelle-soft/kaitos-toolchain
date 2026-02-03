@@ -1,9 +1,9 @@
 {
   "repo": "kaitos-toolchain",
   "org": "kernelle-soft",
-  "latest": "0.0.5",
-  "stable": "0.0.5",
-  "releases": 4,
+  "latest": "0.0.7-dev.1",
+  "stable": "0.0.6",
+  "releases": 6,
   "naming": {
     "major": "Early Development",
     "minor": "Core Project Infrastructure",

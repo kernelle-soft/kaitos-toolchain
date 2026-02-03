@@ -11,10 +11,10 @@
   </h3>
   <img
     id="pokemon-img"
-    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/4.gif"
+    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/6.gif"
   />
   <br>
-  <span id="pokemon-name"><b>Release #4: v0.0.5 - Charmander</b></span>
+  <span id="pokemon-name"><b>Release #6: v0.0.6 - Charizard</b></span>
   <br>
   <img
     id="rust-runtime-coverage"
@@ -52,7 +52,7 @@
     </tr>
     <tr>
       <td>Bash</td>
-      <td>2167</td>
+      <td>2176</td>
       <td>N/A</td>
       <td>N/A</td>
     </tr>
