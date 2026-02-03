@@ -11,10 +11,10 @@
   </h3>
   <img
     id="pokemon-img"
-    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/6.gif"
+    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/7.gif"
   />
   <br>
-  <span id="pokemon-name"><b>Release #6: v0.0.6 - Charizard</b></span>
+  <span id="pokemon-name"><b>Release #7: v0.0.7 - Squirtle</b></span>
   <br>
   <img
     id="rust-runtime-coverage"
@@ -35,26 +35,18 @@
     <tr>
       <th>Lang</th>
       <th>Lines of Code</th>
-      <th>Unit Test Coverage</th>
-      <th>Coverage Type</th>
     </tr>
     <tr>
       <td>Go</td>
       <td>235</td>
-      <td>N/A</td>
-      <td>Branch</td>
     </tr>
     <tr>
       <td>Rust</td>
       <td>27</td>
-      <td>N/A</td>
-      <td>Branch</td>
     </tr>
     <tr>
       <td>Bash</td>
-      <td>2176</td>
-      <td>N/A</td>
-      <td>N/A</td>
+      <td>2168</td>
     </tr>
   </table>
 </div>
