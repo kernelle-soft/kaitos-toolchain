@@ -41,13 +41,13 @@
     <tr>
       <td>Go</td>
       <td>235</td>
-      <td>10%</td>
+      <td>N/A</td>
       <td>Branch</td>
     </tr>
     <tr>
       <td>Rust</td>
       <td>27</td>
-      <td>10%</td>
+      <td>N/A</td>
       <td>Branch</td>
     </tr>
     <tr>
