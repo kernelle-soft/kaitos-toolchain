@@ -11,10 +11,10 @@
   </h3>
   <img
     id="pokemon-img"
-    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/2.gif"
+    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/3.gif"
   />
   <br>
-  <span id="pokemon-name"><b>Release #2: v0.0.3 - Ivysaur</b></span>
+  <span id="pokemon-name"><b>Release #3: v0.0.4 - Venusaur</b></span>
   <br>
   <img
     id="rust-runtime-coverage"
@@ -23,6 +23,11 @@
   <img
     id="go-cli-coverage"
     src="https://img.shields.io/codecov/c/github/kernelle-soft/kaitos-toolchain?flag=go&label=Go"
+  />
+  <img
+    id="security-checks"
+    src="https://github.com/kernelle-soft/kaitos-toolchain/actions/workflows/_security.yaml/badge.svg?branch=main"
+    alt="Security Checks"
   />
   <br>
   <span>Base Stats</span>
@@ -47,9 +52,9 @@
     </tr>
     <tr>
       <td>Bash</td>
-      <td>2159</td>
-      <td>0%</td>
-      <td>Line</td>
+      <td>2167</td>
+      <td>N/A</td>
+      <td>N/A</td>
     </tr>
   </table>
 </div>
