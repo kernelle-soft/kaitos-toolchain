@@ -21,8 +21,12 @@ test-rust:
 
 bump *args:
   ./scripts/chores/bump_git_version.sh {{args}}
+  just sync
+
+sync:
   ./scripts/chores/sync_cargo_version.sh
   ./scripts/chores/sync_project_manifest.sh
+  ./scripts/chores/sync_readme.sh
 
 release *args:
   ./scripts/ci/create_release.sh {{args}}

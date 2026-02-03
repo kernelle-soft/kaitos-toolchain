@@ -11,10 +11,10 @@
   </h3>
   <img
     id="pokemon-img"
-    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/3.gif"
+    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/4.gif"
   />
   <br>
-  <span id="pokemon-name"><b>Release #3: v0.0.4 - Venusaur</b></span>
+  <span id="pokemon-name"><b>Release #4: v0.0.4 - Charmander</b></span>
   <br>
   <img
     id="rust-runtime-coverage"
