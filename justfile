@@ -23,10 +23,14 @@ bump *args:
   ./scripts/chores/bump_git_version.sh {{args}}
   just sync
 
-sync:
-  ./scripts/chores/sync_cargo_version.sh
-  ./scripts/chores/sync_project_manifest.sh
-  ./scripts/chores/sync_readme.sh
+sync_cargo *args:
+  ./scripts/chores/sync_cargo_version.sh {{args}}
+
+sync_manifest *args:
+  ./scripts/chores/sync_project_manifest.sh {{args}}
+
+sync_readme *args:
+  ./scripts/chores/sync_readme.sh {{args}}
 
 release *args:
   ./scripts/ci/create_release.sh {{args}}

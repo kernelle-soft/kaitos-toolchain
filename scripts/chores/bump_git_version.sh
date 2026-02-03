@@ -32,7 +32,9 @@ Notes:
 EOF
 )"
 
-import "$REPO_ROOT/scripts/shared/versions.api.sh"
+import \
+  "$REPO_ROOT/scripts/shared/versions.api.sh" \
+  "$REPO_ROOT/scripts/shared/manifest.api.sh"
 
 REGEX_SEMVER='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
 REGEX_SEMVER_GIT_TAG="^v${REGEX_SEMVER#^}"  # ^v[0-9]+...
@@ -67,7 +69,6 @@ function main() {
     exit 1
   fi
 
-  current_version="$(latest_version)"
   if ! planned_version="$(plan_bump "$current_version")"; then
     exit 1
   fi
@@ -169,7 +170,14 @@ function apply_release_bump() {
 DOC
 function plan_bump() {
   local -A version
+  local current_version
   local major minor patch pre_type pre_inc
+
+  # If kaitos.json is ahead, use that version
+  if current_version="$(use_project_manifest)"; then
+    echo "$current_version"
+    return 0
+  fi
 
   if ! is_valid_semver "$1"; then
     log "Invalid version: $1"
@@ -202,6 +210,27 @@ function plan_bump() {
     echo "$major.$minor.$patch-$pre_type.$pre_inc"
   else
     echo "$major.$minor.$patch"
+  fi
+}
+
+: <<'DOC'
+Picks the latest version specified in the project using "latest wins" as a philosophy.
+
+If someone has bumped the version in the project manifest ahead of git, then
+use that tag. Otherwise, the git tag is considered latest.
+DOC
+function use_project_manifest() {
+  local git_latest manifest_latest comparison
+  git_latest="$(latest_version)"
+  manifest_latest="$(manifest_get latest)"
+
+  comparison="$(compare_versions "$git_latest" "$manifest_latest")"
+  if ((comparison > 0)); then
+    echo "$manifest_latest"
+    return 0
+  else
+    echo "$git_latest"
+    return 1
   fi
 }
 
