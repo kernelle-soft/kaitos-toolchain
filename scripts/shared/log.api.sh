@@ -12,6 +12,14 @@ function warn() {
   echo "WARN: ${1:-}" >&2
 }
 
+function error() {
+  echo "ERROR: ${1:-}" >&2
+}
+
+function fatal() {
+  echo "FATAL: ${1:-}" >&2
+}
+
 function log_banner() {
   local msg="${1:-}"
   local min_width=40
