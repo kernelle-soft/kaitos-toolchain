@@ -15,7 +15,7 @@ updates:
   schedule:
     interval: weekly
 
-- package-ecosystem: "go"
+- package-ecosystem: "gomod"
   directory: "go/"
   assignees:
     - jerrod-storm
