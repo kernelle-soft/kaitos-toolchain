@@ -21,7 +21,6 @@ test-rust:
 
 bump *args:
   ./scripts/chores/bump_git_version.sh {{args}}
-  just sync
 
 sync_cargo *args:
   ./scripts/chores/sync_cargo_version.sh {{args}}
