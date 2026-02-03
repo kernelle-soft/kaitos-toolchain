@@ -43,26 +43,18 @@ $POKE_START
     <tr>
       <th>Lang</th>
       <th>Lines of Code</th>
-      <th>Unit Test Coverage</th>
-      <th>Coverage Type</th>
     </tr>
     <tr>
       <td>Go</td>
       <td>${__poke_info__[go_loc]}</td>
-      <td>${__poke_info__[go_unit_coverage]}</td>
-      <td>Branch</td>
     </tr>
     <tr>
       <td>Rust</td>
       <td>${__poke_info__[rust_loc]}</td>
-      <td>${__poke_info__[rust_unit_coverage]}</td>
-      <td>Branch</td>
     </tr>
     <tr>
       <td>Bash</td>
       <td>${__poke_info__[bash_loc]}</td>
-      <td>N/A</td>
-      <td>N/A</td>
     </tr>
   </table>
 </div>
