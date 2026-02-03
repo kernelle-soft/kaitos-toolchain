@@ -1,0 +1,32 @@
+name: Security Checks
+on:
+  workflow_call:
+
+jobs:
+  go:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/envrc
+      - uses: ./.github/actions/setup
+        with:
+          rust: false
+      - name: Additional Tools
+        run: ./scripts/chores/install_tools.sh govulncheck
+
+      - name: Go Security
+        run: cd go && govulncheck ./...
+
+  rust:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/envrc
+      - uses: ./.github/actions/setup
+        with:
+          go: false
+      - name: Additional Tools
+        run: ./scripts/chores/install_tools.sh cargo-audit
+
+      - name: Rust Security
+        run: cargo audit -f crates/Cargo.lock

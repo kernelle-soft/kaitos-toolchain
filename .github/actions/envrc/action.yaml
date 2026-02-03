@@ -8,3 +8,4 @@ runs:
       run: |
         REPO_ROOT="$(git rev-parse --show-toplevel)"
         echo "CI_ENVRC=source $REPO_ROOT/.envrc" >> "$GITHUB_ENV"
+        echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"

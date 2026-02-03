@@ -32,6 +32,11 @@ $POKE_START
     id="go-cli-coverage"
     src="https://img.shields.io/codecov/c/github/kernelle-soft/kaitos-toolchain?flag=go&label=Go"
   />
+  <img
+    id="security-checks"
+    src="https://github.com/kernelle-soft/kaitos-toolchain/actions/workflows/_security.yaml/badge.svg?branch=main"
+    alt="Security Checks"
+  />
   <br>
   <span>Base Stats</span>
   <table align="center">
