@@ -69,7 +69,7 @@ function main() {
     exit 1
   fi
 
-  if ! planned_version="$(plan_bump "$current_version")"; then
+  if ! planned_version="$(plan_bump)"; then
     exit 1
   fi
 
@@ -173,18 +173,19 @@ function plan_bump() {
   local current_version
   local major minor patch pre_type pre_inc
 
-  # If kaitos.json is ahead, use that version
+  # If kaitos.json is ahead, use that version directly.
+  # Otherwise, current_version holds the git latest.
   if current_version="$(use_project_manifest)"; then
     echo "$current_version"
     return 0
   fi
 
-  if ! is_valid_semver "$1"; then
-    log "Invalid version: $1"
+  if ! is_valid_semver "$current_version"; then
+    log "Invalid version: $current_version"
     return 1
   fi
 
-  parse_version "$1" version
+  parse_version "$current_version" version
 
   if is_bumping_prerelease; then
     plan_prerelease_bump version
