@@ -1,0 +1,42 @@
+version: 2
+updates:
+- package-ecosystem: "cargo"
+  directory: "crates/"
+  assignees:
+    - jerrod-storm
+  labels:
+    - dependencies
+    - rust
+    - chore
+  ignore:
+    - dependency-name: "*"
+      update-types:
+        - version-update:semver-major
+  schedule:
+    interval: weekly
+
+- package-ecosystem: "go"
+  directory: "go/"
+  assignees:
+    - jerrod-storm
+  labels:
+    - dependencies
+    - go
+    - chore
+  ignore:
+    - dependency-name: "*"
+      update-types:
+        - version-update:semver-major
+  schedule:
+    interval: weekly
+
+- package-ecosystem: "github-actions"
+  directory: "/"
+  assignees:
+    - jerrod-storm
+  labels:
+    - dependencies
+    - ci
+    - chore
+  schedule:
+    interval: monthly
