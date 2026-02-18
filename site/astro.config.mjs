@@ -8,7 +8,7 @@ import mdx from '@astrojs/mdx';
 export default defineConfig({
     integrations: [starlight({
         title: 'Kaitos Toolchain',
-        social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
+        social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/kernelle-soft/kaitos-toolchain' }],
         sidebar: [
             {
                 label: 'Guides',
