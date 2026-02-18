@@ -11,8 +11,9 @@ Flags:
   -a, --all         Do all optional cleanup.
   -b, --build       Delete the build folder.
   -c, --coverage    Delete the coverage folder.
+  -d, --docs        Clean up the build artifacts for the docsite.
   -g, --go          Delete any local go builds.
-  -r, --rust        Delete rust target folders. 
+  -r, --rust        Delete rust target folders.
   -h, --help        Show this help text.
 
 EOF
@@ -22,6 +23,7 @@ FLAG_BUILD=false
 FLAG_COVERAGE=false
 FLAG_RUST=false
 FLAG_GO=false
+FLAG_DOCS=false
 
 function main() {
   parse_args "$@"
@@ -48,10 +50,16 @@ function main() {
   if [[ $FLAG_GO = true ]]; then
     rm -f "$REPO_ROOT/go/kaitos"
   fi
+
+  if [[ $FLAG_DOCS = true ]]; then
+    rm -rf \
+      "$REPO_ROOT/site/.astro" \
+      "$REPO_ROOT/site/dist"
+  fi
 }
 
 : <<'DOC'
-  Parses CLI flags. 
+  Parses CLI flags.
   See USAGE for flag descriptions.
 DOC
 function parse_args() {
@@ -62,12 +70,16 @@ function parse_args() {
         FLAG_COVERAGE=true
         FLAG_RUST=true
         FLAG_GO=true
+        FLAG_DOCS=true
         ;;
       -b|--build)
         FLAG_BUILD=true
         ;;
       -c|--coverage)
         FLAG_COVERAGE=true
+        ;;
+      -d|--docs)
+        FLAG_DOCS=true
         ;;
       -g|--go)
         FLAG_GO=true
