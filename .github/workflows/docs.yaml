@@ -25,10 +25,12 @@ jobs:
         with:
           node-version-file: ./.nvmrc
       - uses: pnpm/action-setup@v4
-      - working-directory: ./site
-        run: |
-          pnpm install
-          pnpm run build
+      - name: Install Dependencies
+        working-directory: ./site
+        run: pnpm install
+      - name: Build Static Site
+        working-directory: ./site
+        run: pnpm run build
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./site/dist

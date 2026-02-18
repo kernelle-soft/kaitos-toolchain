@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths-ignore:
-      - ./site/**
+      - site/**
 
 jobs:
   validate:
