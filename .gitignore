@@ -1,5 +1,6 @@
 # Personal configs
 .cursor/
+.vscode/
 
 # Build artifacts
 bin/
@@ -14,3 +15,8 @@ go/kaitos
 # Release bundles
 kaitos-*-linux-*
 *.tar.gz
+
+# Docs Stuff
+.astro/
+node_modules/
+pnpm-debug.log*
