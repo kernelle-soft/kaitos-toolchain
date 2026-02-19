@@ -28,8 +28,12 @@ __compile_api__RUST_MANIFEST_PATH="$REPO_ROOT/crates/Cargo.toml"
     - 1 if the go binary is not compiled successfully.
 DOC
 function compile_go() {
-  local -n __opts__="$1"
   local context output_path args
+  if [[ -z "${1:-}" ]]; then
+    local -A __opts__=()
+  else
+    local -n __opts__="$1"
+  fi
 
   context="dev"
   if [[ ${__opts__[release]} = true ]]; then
@@ -69,8 +73,12 @@ function compile_go() {
       The path to the target directory. Default is $REPO_ROOT/crates/target.
 DOC
 function compile_rust() {
-  local -n __opts__="$1"
   local context args target_dir output_dir target_lib_dir
+  if [[ -z "${1:-}" ]]; then
+    local -A __opts__=()
+  else
+    local -n __opts__="$1"
+  fi
 
   context="debug"
   if [[ ${__opts__[release]} = true ]]; then
