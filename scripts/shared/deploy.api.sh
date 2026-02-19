@@ -34,6 +34,9 @@ function deploy_system() {
   if [[ -z "${1:-}" ]]; then
     local -A __opts__=()
   else
+    # The branch above allows invocation with or without args,
+    # so the difference in local var declaration is intentional.
+    # shellcheck disable=2178
     local -n __opts__="$1"
   fi
 
@@ -61,8 +64,7 @@ function deploy_local() {
 
 : <<'DOC'
   Creates a versioned tarball from a source directory.
-  Only meaningful for release + local builds. Requires manifest.api.sh
-  to be sourced (uses manifest_get for versioning).
+  Requires manifest.api.sh to be sourced (uses manifest_get for versioning).
 
   Usage:
     declare -A options
@@ -90,17 +92,21 @@ DOC
 function bundle() {
   import "$REPO_ROOT/scripts/shared/manifest.api.sh"
 
-  local source_dir version arch artifact_name
+  local source_dir version os arch artifact_name
   if [[ -z "${1:-}" ]]; then
     local -A __opts__=()
   else
+    # The branch above allows invocation with or without args,
+    # so the difference in local var declaration is intentional.
+    # shellcheck disable=2178
     local -n __opts__="$1"
   fi
 
   source_dir="${__opts__[source_dir]:-$__deploy_api__DEFAULT_SOURCE_DIR}"
   version="$(manifest_get latest)"
+  os="$(uname -s | tr '[:upper:]' '[:lower:]')"
   arch="$(uname -m)"
-  artifact_name="kaitos-${version}-linux-${arch}"
+  artifact_name="kaitos-${version}-${os}-${arch}"
 
   tar -czvf "${artifact_name}.tar.gz" \
     --transform "s,^\.,${artifact_name}," \

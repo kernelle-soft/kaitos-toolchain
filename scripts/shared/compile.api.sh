@@ -32,6 +32,9 @@ function compile_go() {
   if [[ -z "${1:-}" ]]; then
     local -A __opts__=()
   else
+    # The branch above allows invocation with or without args,
+    # so the difference in local var declaration is intentional.
+    # shellcheck disable=2178
     local -n __opts__="$1"
   fi
 
@@ -77,6 +80,9 @@ function compile_rust() {
   if [[ -z "${1:-}" ]]; then
     local -A __opts__=()
   else
+    # The branch above allows invocation with or without args,
+    # so the difference in local var declaration is intentional.
+    # shellcheck disable=2178
     local -n __opts__="$1"
   fi
 

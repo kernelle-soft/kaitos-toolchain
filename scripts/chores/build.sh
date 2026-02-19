@@ -8,13 +8,36 @@ Orchestrates compilation and deployment of Kaitos.
 Usage: build.sh [flags...]
 
 Flags:
-  -R, --release       Build in release mode (optimized, enables bundling)
-  -l, --local         Deploy to dist/ instead of system XDG locations
-  -r, --rust-only     Build only the Rust binaries
-  -g, --go-only       Build only the Go binary
-  -h, --help          Show this help text
+  -d, --debug
+    Compile for debugging. This is the default build behavior.
 
-Default: dev mode, system deploy (debug build installed to XDG locations)
+  -r, --release
+    Compile for release
+
+  -p, --project
+    Deploy the build artifacts at the project level (in dist/)
+
+  -s, --system
+    Deploy the build artifacts at the system level (XDG compliance).
+    This is the default no-arg behavior for deployment.
+
+  -R, --rust-only
+    Only compile Rust code
+
+  -G, --go-only
+    Only compile Go code
+
+  -b, --bundle
+    Produce a bundle of the compiled artifacts for distribution.
+
+    The archive will have the following structure:
+    kaitos-<version>-<platform>-<arch>.tar.gz/
+      - kaitos (Go binary, entrypoint bin)
+      - lib/
+        - libgodot.so
+
+  -h, --help
+    Show this help text
 EOF
 )"
 
@@ -22,39 +45,45 @@ import \
   "$REPO_ROOT/scripts/shared/compile.api.sh" \
   "$REPO_ROOT/scripts/shared/deploy.api.sh"
 
-FLAG_RUST=true
 FLAG_GO=true
+FLAG_RUST=true
 FLAG_RELEASE=false
-FLAG_LOCAL=false
+FLAG_DEPLOY_TO_SYSTEM=true
+FLAG_BUNDLE_ARTIFACTS=false
 
 function main() {
   parse_args "$@"
 
   declare -A compile_opts=()
   if [[ $FLAG_RELEASE = true ]]; then
+    # shellcheck disable=SC2034
     compile_opts[release]=true
   fi
 
   mkdir -p "$REPO_ROOT/dist"
 
   if [[ $FLAG_GO = true ]] && ! compile_go compile_opts; then
-    log "Ran into issues compiling go..."
+    error "Ran into issues compiling go..."
     exit 1
   fi
 
   if [[ $FLAG_RUST = true ]] && ! compile_rust compile_opts; then
-    log "Ran into issues compiling rust..."
+    error "Ran into issues compiling rust..."
     exit 1
   fi
 
-  if [[ $FLAG_LOCAL = true ]]; then
-    deploy_local
-    if [[ $FLAG_RELEASE = true ]]; then
-      bundle
+  if [[ $FLAG_BUNDLE_ARTIFACTS = true ]]; then
+    bundle
+  fi
+
+  if [[ $FLAG_DEPLOY_TO_SYSTEM = true ]]; then
+    if ! deploy_system; then
+      error "Ran into issues deploying artifacts to your system..."
+      exit 1
     fi
   else
-    if ! deploy_system; then
-      log "Ran into issues deploying to system..."
+    if ! deploy_local; then
+      error "Ran into issues deploying artifacts at the project level..."
       exit 1
     fi
   fi
@@ -67,17 +96,26 @@ DOC
 function parse_args() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      -R|--release)
+      -d|--debug)
+        FLAG_RELEASE=false
+        ;;
+      -r|--release)
         FLAG_RELEASE=true
         ;;
-      -l|--local)
-        FLAG_LOCAL=true
+      -p|--project)
+        FLAG_DEPLOY_TO_SYSTEM=false
         ;;
-      -g|--go-only)
+      -s|--system)
+        FLAG_DEPLOY_TO_SYSTEM=true
+        ;;
+      -R|--rust-only)
+        FLAG_GO=false
+        ;;
+      -G|--go-only)
         FLAG_RUST=false
         ;;
-      -r|--rust-only)
-        FLAG_GO=false
+      -b|--bundle)
+        FLAG_BUNDLE_ARTIFACTS=true
         ;;
       -h|--help)
         log "$USAGE"
