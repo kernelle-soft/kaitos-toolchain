@@ -39,7 +39,7 @@ function compile_go() {
   fi
 
   context="dev"
-  if [[ ${__opts__[release]} = true ]]; then
+  if [[ "${__opts__[release]:-}" = true ]]; then
     context="release"
   fi
 
@@ -87,7 +87,7 @@ function compile_rust() {
   fi
 
   context="debug"
-  if [[ ${__opts__[release]} = true ]]; then
+  if [[ "${__opts__[release]:-}" = true ]]; then
     context="release"
   fi
 
