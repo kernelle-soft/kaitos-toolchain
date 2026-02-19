@@ -3,75 +3,61 @@ set -euo pipefail
 eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
-This CLI is used to orchestrate the release build of Kaitos.
+Orchestrates compilation and deployment of Kaitos.
 
 Usage: build.sh [flags...]
 
 Flags:
-  -r, --rust-only     Do a release build of only the rust binaries
-  -g, --go-only       Do a release build of only the go binary
-  -h, --help          Show this help text.
+  -R, --release       Build in release mode (optimized, enables bundling)
+  -l, --local         Deploy to dist/ instead of system XDG locations
+  -r, --rust-only     Build only the Rust binaries
+  -g, --go-only       Build only the Go binary
+  -h, --help          Show this help text
 
-Notes:
-  This script builds for the current system's OS and architecture.
+Default: dev mode, system deploy (debug build installed to XDG locations)
 EOF
 )"
 
-import "$REPO_ROOT/scripts/shared/manifest.api.sh"
+import \
+  "$REPO_ROOT/scripts/shared/compile.api.sh" \
+  "$REPO_ROOT/scripts/shared/deploy.api.sh"
 
 FLAG_RUST=true
 FLAG_GO=true
+FLAG_RELEASE=false
+FLAG_LOCAL=false
 
 function main() {
   parse_args "$@"
 
+  declare -A compile_opts=()
+  if [[ $FLAG_RELEASE = true ]]; then
+    compile_opts[release]=true
+  fi
+
   mkdir -p "$REPO_ROOT/dist"
 
-  if [[ $FLAG_GO = true ]] && ! build_go; then
-    log "Ran into issues building go..."
+  if [[ $FLAG_GO = true ]] && ! compile_go compile_opts; then
+    log "Ran into issues compiling go..."
     exit 1
   fi
 
-  if [[ $FLAG_RUST = true ]] && ! build_rust; then
-    log "Ran into issues building rust..."
+  if [[ $FLAG_RUST = true ]] && ! compile_rust compile_opts; then
+    log "Ran into issues compiling rust..."
     exit 1
   fi
 
-  if ! bundle; then
-    log "Ran into issues bundling build artifacts..."
-    exit 1
+  if [[ $FLAG_LOCAL = true ]]; then
+    deploy_local
+    if [[ $FLAG_RELEASE = true ]]; then
+      bundle
+    fi
+  else
+    if ! deploy_system; then
+      log "Ran into issues deploying to system..."
+      exit 1
+    fi
   fi
-}
-
-function build_go() {
-  cd "$REPO_ROOT/go"
-  go build -o "$REPO_ROOT/dist/kaitos" "./cmd/kaitos.go"
-  cd "$REPO_ROOT"
-}
-
-function build_rust() {
-  cargo build \
-    --manifest-path "$REPO_ROOT/crates/Cargo.toml" \
-    --package godot \
-    --release
-
-  mkdir -p "$REPO_ROOT/dist/lib"
-  cp "$REPO_ROOT/crates/target/release/libgodot.so" \
-    "$REPO_ROOT/dist/lib/"
-}
-
-function bundle() {
-  local version artifact_name arch
-  version="$(manifest_get latest)"
-  arch="$(uname -m)"
-  artifact_name="kaitos-${version}-linux-${arch}"
-
-  cd "$REPO_ROOT"
-  mv dist "$artifact_name"
-  tar -czvf "$artifact_name.tar.gz" "$artifact_name" >&2
-  rm -rf "$artifact_name"
-
-  echo "$artifact_name"
 }
 
 : <<'DOC'
@@ -81,6 +67,12 @@ DOC
 function parse_args() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
+      -R|--release)
+        FLAG_RELEASE=true
+        ;;
+      -l|--local)
+        FLAG_LOCAL=true
+        ;;
       -g|--go-only)
         FLAG_RUST=false
         ;;
