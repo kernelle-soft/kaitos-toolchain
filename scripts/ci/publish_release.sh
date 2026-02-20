@@ -61,12 +61,12 @@ function main() {
     exit 0
   fi
 
+  # Intentionally leaving out the quotes on $prerelease_flag.
+  # Otherwise, "" will be passed explicitly if prerelease isn't set,
+  # breaking the pipeline.
   gh release create "$tag" \
     --title "$title" \
     --notes "$notes" \
-    # Intentionally leaving out quotes.
-    # Otherwise, "" will be passed explicitly if prerelease isn't set, breaking
-    # the pipeline.
     $prerelease_flag \
     ${ARG_ARTIFACTS[@]+"${ARG_ARTIFACTS[@]}"}
 }
