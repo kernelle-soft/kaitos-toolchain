@@ -1,3 +1,5 @@
+# DEPRECATED: Replaced by templates/settings.template.yaml (KAITOS-40).
+# Will be deleted when the new installer lands.
 
 toolchain_version: __TOOLCHAIN_VERSION__
 engine: __ENGINE_NAME__

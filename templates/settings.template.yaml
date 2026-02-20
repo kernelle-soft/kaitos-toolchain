@@ -1,0 +1,8 @@
+# Kaitos project settings
+# Installed to: ~/.config/kaitos/settings.yaml
+#
+# This file is user-owned. The installer will not overwrite it
+# if it already exists (use --reset-configs to force).
+
+engine: godot
+engine_version: __GODOT_VERSION__
