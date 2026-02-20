@@ -64,7 +64,7 @@ function main() {
   gh release create "$tag" \
     --title "$title" \
     --notes "$notes" \
-    $prerelease_flag \
+    "$prerelease_flag" \
     ${ARG_ARTIFACTS[@]+"${ARG_ARTIFACTS[@]}"}
 }
 
