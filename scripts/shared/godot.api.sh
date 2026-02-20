@@ -20,5 +20,5 @@ function is_valid_godot_version() {
   version="$1"
   valid_versions="$(list_engine_versions)"
 
-  [[ "$valid_versions" == *"$version" ]]
+  [[ "$valid_versions" == *"$version"* ]]
 }
