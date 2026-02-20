@@ -38,13 +38,13 @@ function compile_go() {
     local -n __opts__="$1"
   fi
 
-  context="dev"
+  context="debug"
   if [[ "${__opts__[release]:-}" = true ]]; then
     context="release"
   fi
 
   args=()
-  if [[ "$context" = dev ]]; then
+  if [[ "$context" = debug ]]; then
     args+=("-race")
     args+=("-gcflags" "all=-N -l")
   fi
