@@ -8,6 +8,7 @@ on:
         required: true
         type: choice
         options:
+          - release
           - patch
           - minor
           - major
@@ -15,7 +16,6 @@ on:
           - alpha
           - beta
           - rc
-          - release
       skip_validation:
         description: 'Skip lint and tests'
         type: boolean
