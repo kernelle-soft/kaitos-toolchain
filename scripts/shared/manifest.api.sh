@@ -2,11 +2,10 @@
 eval "${CI_ENVRC:-}"
 
 : <<'DOC'
-API for getting and setting info in the project manifest (kaitos.json)
+API for getting and setting info in the project manifest.
 DOC
 
-__manifest_api_repo_root="$KAITOSHOME"
-__manifest_api_file="$__manifest_api_repo_root/kaitos.json"
+__manifest_api_file="$KAITOSHOME/manifest.json"
 
 declare -gA __manifest_api_cache
 declare -gA __manifest_api_schema=(
@@ -33,7 +32,7 @@ function manifest_get() {
   local path="${__manifest_api_schema["$key"]}"
 
   if [[ -z "$path" ]]; then
-    log "Unknown kaitos.json key: '$key'"
+    log "Unknown manifest.json key: '$key'"
     return 1
   fi
 
@@ -55,7 +54,7 @@ function manifest_set() {
   local path="${__manifest_api_schema["$key"]}"
 
   if [[ -z "$path" ]]; then
-    log "Unknown kaitos.json key: '$key'"
+    log "Unknown manifest.json key: '$key'"
     return 1
   fi
 

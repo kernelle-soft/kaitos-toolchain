@@ -173,7 +173,7 @@ function plan_bump() {
   local current_version
   local major minor patch pre_type pre_inc
 
-  # If kaitos.json is ahead, use that version directly.
+  # If manifest is ahead, use that version directly.
   # Otherwise, current_version holds the git latest.
   if current_version="$(use_project_manifest)"; then
     echo "$current_version"

@@ -3,7 +3,7 @@ set -euo pipefail
 eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
-Syncs up the project manifest (kaitos.json) based on the latest in git.
+Syncs up the project manifest based on the latest in git.
 
 Usage: sync_project_manifest.sh [version]
 

@@ -3,7 +3,7 @@ set -euo pipefail
 eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
-Creates a GitHub release for the latest tag marked in the project manifest (kaitos.json)
+Creates a GitHub release for the latest tag marked in the project manifest
 
 Usage: publish_release.sh [-h,--help] [artifact...]
 
