@@ -38,6 +38,7 @@ declare -A INSTALLERS=(
   [tokei]="cargo binstall -y --locked --force tokei@14.0.0"
   [cargo-llvm-cov]="cargo binstall -y --locked --force cargo-llvm-cov@0.6.24"
   [cargo-audit]="cargo binstall -y --locked --force cargo-audit@0.22.0"
+  [watchexec]="cargo binstall -y --locked --force watchexec-cli@2.3.3"
 )
 
 declare -A UNINSTALLERS=(
@@ -47,6 +48,7 @@ declare -A UNINSTALLERS=(
   [tokei]="cargo uninstall -v tokei"
   [cargo-llvm-cov]="cargo uninstall -v cargo-llvm-cov"
   [cargo-audit]="cargo uninstall -v cargo-audit"
+  [watchexec]="cargo uninstall -v watchexec-cli"
   [cargo-binstall]="cargo uninstall -v cargo-binstall"
 )
 
