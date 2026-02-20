@@ -49,8 +49,6 @@ function __godot_api__platform_suffix() {
   case "$arch" in
     x86_64)  echo "linux.x86_64" ;;
     aarch64) echo "linux.arm64" ;;
-    armv7l)  echo "linux.arm32" ;;
-    i686)    echo "linux.x86_32" ;;
     *)
       fatal "Unsupported architecture: $arch"
       return 1
