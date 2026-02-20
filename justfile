@@ -26,4 +26,4 @@ build *args:
   ./scripts/chores/build.sh {{args}}
 
 release *args:
-  ./scripts/chores/build.sh --release --local --bundle {{args}}
+  ./scripts/chores/build.sh --release --bundle {{args}}
