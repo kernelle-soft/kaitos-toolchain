@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 eval "${CI_ENVRC:-}"
 
+import "$REPO_ROOT/scripts/shared/cross_platform.api.sh"
+
 __compile_api__GO_OUTPUT_PATH="$REPO_ROOT/dist/kaitos"
 __compile_api__RUST_TARGET_DIR="$REPO_ROOT/crates/target"
 __compile_api__RUST_OUTPUT_DIR="$REPO_ROOT/dist/lib"
@@ -28,7 +30,7 @@ __compile_api__RUST_MANIFEST_PATH="$REPO_ROOT/crates/Cargo.toml"
     - 1 if the go binary is not compiled successfully.
 DOC
 function compile_go() {
-  local context output_path args
+  local build_context output_path args
   if [[ -z "${1:-}" ]]; then
     local -A __opts__=()
   else
@@ -38,13 +40,13 @@ function compile_go() {
     local -n __opts__="$1"
   fi
 
-  context="debug"
+  build_context="debug"
   if [[ "${__opts__[release]:-}" = true ]]; then
-    context="release"
+    build_context="release"
   fi
 
   args=()
-  if [[ "$context" = debug ]]; then
+  if [[ "$build_context" = debug ]]; then
     args+=("-race")
     args+=("-gcflags" "all=-N -l")
   fi
@@ -76,7 +78,7 @@ function compile_go() {
       The path to the target directory. Default is $REPO_ROOT/crates/target.
 DOC
 function compile_rust() {
-  local context args target_dir output_dir target_lib_dir ext
+  local build_context args target_dir output_dir target_lib_dir
   if [[ -z "${1:-}" ]]; then
     local -A __opts__=()
   else
@@ -86,42 +88,28 @@ function compile_rust() {
     local -n __opts__="$1"
   fi
 
-  context="debug"
+  build_context="debug"
   if [[ "${__opts__[release]:-}" = true ]]; then
-    context="release"
+    build_context="release"
   fi
 
   output_dir="${__opts__[output_dir]:-$__compile_api__RUST_OUTPUT_DIR}"
-  target_lib_dir="$context"
+  target_lib_dir="$build_context"
 
   args=()
   args+=("--manifest-path" "${__opts__[manifest_path]:-$__compile_api__RUST_MANIFEST_PATH}")
 
   target_dir="${__opts__[target_dir]:-$__compile_api__RUST_TARGET_DIR}"
   args+=("--target-dir" "$target_dir")
-  if [[ "$context" = release ]]; then
+  if [[ "$build_context" = release ]]; then
     args+=("--release")
   fi
 
   cargo build --package godot "${args[@]}"
 
-  ext="$(__compile_api__get_extension)"
+  local lib_file
+  lib_file="$(shared_lib_filename godot)"
 
   mkdir -p "$output_dir"
-  cp "$target_dir/$target_lib_dir/libgodot.$ext" "$output_dir/libgodot.$ext"
-}
-
-function __compile_api__get_extension() {
-  case "$(uname -s)" in
-    Darwin)
-      echo "dylib"
-      ;;
-    # Screw Windows.
-    # MINGW*|MSYS*|CYGWIN*)
-    #   echo "dll"
-    #   ;;
-    *)
-      echo "so"
-      ;;
-  esac
+  cp "$target_dir/$target_lib_dir/$lib_file" "$output_dir/$lib_file"
 }

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 eval "${CI_ENVRC:-}"
 
+import "$REPO_ROOT/scripts/shared/cross_platform.api.sh"
+
 __deploy_api__DEFAULT_SOURCE_DIR="$REPO_ROOT/dist"
 __deploy_api__XDG_BIN_HOME="${XDG_BIN_HOME:-$HOME/.local/bin}"
 __deploy_api__XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
@@ -22,12 +24,12 @@ __deploy_api__KAITOS_LIB_DIR="$__deploy_api__XDG_DATA_HOME/kaitos/lib"
       Default is $REPO_ROOT/dist.
 
   Expects source_dir to contain:
-    - kaitos        (CLI binary)
-    - lib/libgodot.so  (Rust cdylib)
+    - kaitos                      (CLI binary)
+    - lib/<shared_lib_filename>   (Rust cdylib, platform-dependent)
 
   Deploys to:
     - $XDG_BIN_HOME/kaitos
-    - $XDG_DATA_HOME/kaitos/lib/libgodot.so
+    - $XDG_DATA_HOME/kaitos/lib/<shared_lib_filename>
 DOC
 function deploy_system() {
   local source_dir
@@ -45,8 +47,11 @@ function deploy_system() {
   mkdir -p "$__deploy_api__XDG_BIN_HOME"
   cp "$source_dir/kaitos" "$__deploy_api__XDG_BIN_HOME/kaitos"
 
+  local lib_file
+  lib_file="$(shared_lib_filename godot)"
+
   mkdir -p "$__deploy_api__KAITOS_LIB_DIR"
-  cp "$source_dir/lib/libgodot.so" "$__deploy_api__KAITOS_LIB_DIR/libgodot.so"
+  cp "$source_dir/lib/$lib_file" "$__deploy_api__KAITOS_LIB_DIR/$lib_file"
 }
 
 : <<'DOC'
