@@ -34,9 +34,13 @@ Flags:
 
     The archive will have the following structure:
     kaitos-<version>-<platform>-<arch>.tar.gz/
-      - kaitos (Go binary, entrypoint bin)
-      - lib/
-        - libgodot.{so,dylib}
+      kaitos                          CLI binary
+      lib/libgodot.{so,dylib}         Shared library
+      scripts/shared/                 Shell APIs
+      scripts/install/                Installer specific code
+      templates/                      Config and env templates
+      .envrc                          Environment bootstrap
+      manifest.json                   Project metadata
 
   -h, --help
     Show this help text
@@ -87,6 +91,7 @@ function main() {
       fi
       ;;
     bundle)
+      assemble_dist
       if ! deploy_bundle; then
         error "Ran into issues bundling artifacts..."
         exit 1
@@ -96,6 +101,24 @@ function main() {
       error "Invalid deploy target $ENUM_DEPLOY_OPTION"
       exit 1
   esac
+}
+
+: <<'DOC'
+  Copies installer scripts, templates, and metadata into dist/ so the
+  release tarball is self-contained.
+
+  The compiled artifacts (kaitos binary, lib/) are already in dist/
+  from the compile phase. This adds everything else the installer needs.
+DOC
+function assemble_dist() {
+  local dist="$KAITOSHOME/dist"
+
+  mkdir -p "$dist/scripts"
+  cp -r "$KAITOSHOME/scripts/shared"    "$dist/scripts/shared"
+  cp -r "$KAITOSHOME/scripts/install"   "$dist/scripts/install"
+  cp -r "$KAITOSHOME/templates"         "$dist/templates"
+  cp    "$KAITOSHOME/.envrc"            "$dist/.envrc"
+  cp    "$KAITOSHOME/manifest.json"     "$dist/manifest.json"
 }
 
 : <<'DOC'
