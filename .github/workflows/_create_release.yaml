@@ -27,5 +27,5 @@ jobs:
 
       - name: Create release
         run: |
-          ./scripts/ci/create_release.sh \
+          ./scripts/ci/publish_release.sh \
             "${{ needs.build.outputs.artifact }}.tar.gz"

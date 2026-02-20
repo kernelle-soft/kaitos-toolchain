@@ -3,75 +3,99 @@ set -euo pipefail
 eval "${CI_ENVRC:-}"
 
 USAGE="$(cat <<EOF
-This CLI is used to orchestrate the release build of Kaitos.
+Orchestrates compilation and deployment of Kaitos.
 
 Usage: build.sh [flags...]
 
 Flags:
-  -r, --rust-only     Do a release build of only the rust binaries
-  -g, --go-only       Do a release build of only the go binary
-  -h, --help          Show this help text.
+  Compile Args:
+  -d, --debug
+    Compile for debugging. This is the default compile behavior.
 
-Notes:
-  This script builds for the current system's OS and architecture.
+  -r, --release
+    Compile for release
+
+  -R, --rust-only
+    Only compile Rust code
+
+  -G, --go-only
+    Only compile Go code
+
+  Deployment Args:
+  -s, --system
+    Deploy the build artifacts at the system level (XDG compliance).
+    This is the default deployment behavior.
+
+  -p, --project
+    Deploy the build artifacts at the project level (in dist/)
+
+  -b, --bundle
+    Produce a bundle of the compiled artifacts for distribution instead of deploying.
+
+    The archive will have the following structure:
+    kaitos-<version>-<platform>-<arch>.tar.gz/
+      - kaitos (Go binary, entrypoint bin)
+      - lib/
+        - libgodot.{so,dylib}
+
+  -h, --help
+    Show this help text
 EOF
 )"
 
-import "$REPO_ROOT/scripts/shared/manifest.api.sh"
+import \
+  "$REPO_ROOT/scripts/shared/compile.api.sh" \
+  "$REPO_ROOT/scripts/shared/deploy.api.sh"
 
-FLAG_RUST=true
 FLAG_GO=true
+FLAG_RUST=true
+FLAG_RELEASE=false
+ENUM_DEPLOY_OPTION="system"
 
 function main() {
   parse_args "$@"
 
+  declare -A compile_opts=()
+  if [[ $FLAG_RELEASE = true ]]; then
+    # shellcheck disable=SC2034
+    compile_opts[release]=true
+  fi
+
   mkdir -p "$REPO_ROOT/dist"
 
-  if [[ $FLAG_GO = true ]] && ! build_go; then
-    log "Ran into issues building go..."
+  if [[ $FLAG_GO = true ]] && ! compile_go compile_opts; then
+    error "Ran into issues compiling go..."
     exit 1
   fi
 
-  if [[ $FLAG_RUST = true ]] && ! build_rust; then
-    log "Ran into issues building rust..."
+  if [[ $FLAG_RUST = true ]] && ! compile_rust compile_opts; then
+    error "Ran into issues compiling rust..."
     exit 1
   fi
 
-  if ! bundle; then
-    log "Ran into issues bundling build artifacts..."
-    exit 1
-  fi
-}
-
-function build_go() {
-  cd "$REPO_ROOT/go"
-  go build -o "$REPO_ROOT/dist/kaitos" "./cmd/kaitos.go"
-  cd "$REPO_ROOT"
-}
-
-function build_rust() {
-  cargo build \
-    --manifest-path "$REPO_ROOT/crates/Cargo.toml" \
-    --package godot \
-    --release
-
-  mkdir -p "$REPO_ROOT/dist/lib"
-  cp "$REPO_ROOT/crates/target/release/libgodot.so" \
-    "$REPO_ROOT/dist/lib/"
-}
-
-function bundle() {
-  local version artifact_name arch
-  version="$(manifest_get latest)"
-  arch="$(uname -m)"
-  artifact_name="kaitos-${version}-linux-${arch}"
-
-  cd "$REPO_ROOT"
-  mv dist "$artifact_name"
-  tar -czvf "$artifact_name.tar.gz" "$artifact_name" >&2
-  rm -rf "$artifact_name"
-
-  echo "$artifact_name"
+  case "$ENUM_DEPLOY_OPTION" in
+    system)
+      if ! deploy_system; then
+        error "Ran into issues deploying artifacts to your system..."
+        exit 1
+      fi
+      ;;
+    project)
+      if ! deploy_project; then
+        error "Ran into issues deploying artifacts at the project level..."
+        exit 1
+      fi
+      ;;
+    bundle)
+      if ! deploy_bundle; then
+        error "Ran into issues bundling artifacts..."
+        exit 1
+      fi
+      ;;
+    *)
+      error "Invalid deploy target $ENUM_DEPLOY_OPTION"
+      exit 1
+  esac
 }
 
 : <<'DOC'
@@ -81,11 +105,26 @@ DOC
 function parse_args() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      -g|--go-only)
+      -d|--debug)
+        FLAG_RELEASE=false
+        ;;
+      -r|--release)
+        FLAG_RELEASE=true
+        ;;
+      -p|--project)
+        ENUM_DEPLOY_OPTION="project"
+        ;;
+      -s|--system)
+        ENUM_DEPLOY_OPTION="system"
+        ;;
+      -R|--rust-only)
+        FLAG_GO=false
+        ;;
+      -G|--go-only)
         FLAG_RUST=false
         ;;
-      -r|--rust-only)
-        FLAG_GO=false
+      -b|--bundle)
+        ENUM_DEPLOY_OPTION="bundle"
         ;;
       -h|--help)
         log "$USAGE"

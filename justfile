@@ -19,5 +19,11 @@ test-all:
 bump *args:
   ./scripts/chores/bump_git_version.sh {{args}}
 
+publish *args:
+  ./scripts/ci/publish_release.sh {{args}}
+
+build *args:
+  ./scripts/chores/build.sh {{args}}
+
 release *args:
-  ./scripts/ci/create_release.sh {{args}}
+  ./scripts/chores/build.sh --release --bundle {{args}}
