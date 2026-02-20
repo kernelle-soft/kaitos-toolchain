@@ -68,7 +68,7 @@ function parse_flags() {
         ;;
       -h|--help)
         echo "$USAGE"
-        exit 1
+        exit 0
         ;;
       *)
         fatal "Unknown option: $1"
