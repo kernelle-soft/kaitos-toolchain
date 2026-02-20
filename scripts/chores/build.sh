@@ -36,7 +36,7 @@ Flags:
     kaitos-<version>-<platform>-<arch>.tar.gz/
       - kaitos (Go binary, entrypoint bin)
       - lib/
-        - libgodot.so
+        - libgodot.{so,dylib}
 
   -h, --help
     Show this help text
