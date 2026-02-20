@@ -42,6 +42,7 @@ function main() {
   fi
 
   replace_workspace_version "$old_version_line" "$new_version_line"
+  cargo update --workspace --manifest-path "$PATH_CARGO_WORKSPACE"
   log "Successfully updated Cargo.toml to '$current_version'"
 }
 
