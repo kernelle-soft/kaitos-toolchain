@@ -66,6 +66,11 @@ jobs:
         env:
           CODECOV_API_TOKEN: ${{ secrets.CODECOV_API_TOKEN }}
 
+      - name: Sync Docs Version
+        run: |
+          ./scripts/chores/sync_docs_version.sh \
+            "${{ steps.plan.outputs.version }}"
+
       - name: Commit Version Bump
         run: |
           ./scripts/ci/git_commit.sh -a \
