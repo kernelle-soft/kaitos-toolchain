@@ -8,24 +8,26 @@ Orchestrates compilation and deployment of Kaitos.
 Usage: build.sh [flags...]
 
 Flags:
+  Compile Args:
   -d, --debug
-    Compile for debugging. This is the default build behavior.
+    Compile for debugging. This is the default compile behavior.
 
   -r, --release
     Compile for release
-
-  -p, --project
-    Deploy the build artifacts at the project level (in dist/)
-
-  -s, --system
-    Deploy the build artifacts at the system level (XDG compliance).
-    This is the default no-arg behavior for deployment.
 
   -R, --rust-only
     Only compile Rust code
 
   -G, --go-only
     Only compile Go code
+
+  Deployment Args:
+  -s, --system
+    Deploy the build artifacts at the system level (XDG compliance).
+    This is the default deployment behavior.
+
+  -p, --project
+    Deploy the build artifacts at the project level (in dist/)
 
   -b, --bundle
     Produce a bundle of the compiled artifacts for distribution instead of deploying.
