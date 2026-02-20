@@ -56,9 +56,9 @@ function deploy_system() {
   Exists as a hook point for future extension (e.g. symlinking, logging).
 
   Usage:
-    deploy_local
+    deploy_project
 DOC
-function deploy_local() {
+function deploy_project() {
   :
 }
 
@@ -71,7 +71,7 @@ function deploy_local() {
     options=(
       [source_dir]="/path/to/artifacts"
     )
-    bundle options
+    deploy_bundle options
 
   Options:
     options[source_dir]: string
@@ -84,12 +84,12 @@ function deploy_local() {
 
   Dependencies:
     Imports manifest.api.sh internally rather than at the module level.
-    deploy_system and deploy_local are designed to work outside the repo
+    deploy_system and deploy_project are designed to work outside the repo
     (e.g. a curl|sh bootstrapper that only needs to place artifacts).
     Importing manifest.api.sh here keeps that dependency scoped to bundle,
     which is only used during builds where $REPO_ROOT is available.
 DOC
-function bundle() {
+function deploy_bundle() {
   import "$REPO_ROOT/scripts/shared/manifest.api.sh"
 
   local source_dir version os arch artifact_name

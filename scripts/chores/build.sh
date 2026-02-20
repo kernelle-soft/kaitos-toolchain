@@ -79,13 +79,13 @@ function main() {
       fi
       ;;
     project)
-      if ! deploy_local; then
+      if ! deploy_project; then
         error "Ran into issues deploying artifacts at the project level..."
         exit 1
       fi
       ;;
     bundle)
-      if ! bundle; then
+      if ! deploy_bundle; then
         error "Ran into issues bundling artifacts..."
         exit 1
       fi
