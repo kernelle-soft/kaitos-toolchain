@@ -24,8 +24,7 @@ EOF
 import \
   "$KAITOSHOME/scripts/shared/manifest.api.sh" \
   "$KAITOSHOME/scripts/shared/envrc.api.sh" \
-  "$KAITOSHOME/scripts/shared/godot.api.sh" \
-  "$KAITOSHOME/scripts/shared/web.api.sh"
+  "$KAITOSHOME/scripts/shared/compatibility.api.sh"
 
 __sync_envrc__ARG_GODOT_URL=""
 __sync_envrc__ARG_GODOT_VERSION=""
@@ -41,13 +40,8 @@ function main() {
     __sync_envrc__ARG_GODOT_VERSION="$(manifest_get godot_version)"
   fi
 
-  if ! is_valid_url "$__sync_envrc__ARG_GODOT_URL"; then
-    error "Godot URL '$__sync_envrc__ARG_GODOT_URL' is not valid or is unreachable."
-    exit 1
-  fi
-
-  if ! is_valid_godot_version "$__sync_envrc__ARG_GODOT_VERSION"; then
-    error "Provided version '$__sync_envrc__ARG_GODOT_VERSION' is not a valid release version of Godot."
+  if ! is_supported_engine_version godot "$__sync_envrc__ARG_GODOT_VERSION"; then
+    error "Godot version '$__sync_envrc__ARG_GODOT_VERSION' is not in the supported versions list."
     exit 1
   fi
 
