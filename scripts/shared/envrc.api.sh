@@ -18,9 +18,9 @@ declare -gA __envrc_api__schema=(
 : <<'DOC'
   Gets a particular variable from the project environment
 
-  Usage: env_get <key>
+  Usage: envrc_get <key>
 DOC
-function env_get() {
+function envrc_get() {
   local key var managed_section
 
   key="$1"
@@ -44,9 +44,9 @@ function env_get() {
 : <<'DOC'
   Sets a variable in the project environment.
 
-  Usage: env_set <key> <value>
+  Usage: envrc_set <key> <value>
 DOC
-function env_set() {
+function envrc_set() {
   local key="$1"
   local value="$2"
   local var="${__envrc_api__schema["$key"]}"
@@ -110,7 +110,7 @@ function __envrc_api__save_variables() {
 
   # Replace variable declarations and prepend new declarations.
   # We do this line-by-line since `sed` does not handle
-  # newlines gracefully. We use `sed`` despite this weakness
+  # newlines gracefully. We use `sed` despite this weakness
   # to avoid relying on multiple string editing tools across
   # the project.
   for var in "${!__variables__[@]}"; do

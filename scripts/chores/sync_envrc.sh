@@ -51,8 +51,8 @@ function main() {
     exit 1
   fi
 
-  env_set godot_url "$__sync_envrc__ARG_GODOT_URL"
-  env_set godot_version "$__sync_envrc__ARG_GODOT_VERSION"
+  envrc_set godot_url "$__sync_envrc__ARG_GODOT_URL"
+  envrc_set godot_version "$__sync_envrc__ARG_GODOT_VERSION"
 
   log "Project environment is up-to-date."
 }
