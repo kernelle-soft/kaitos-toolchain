@@ -113,6 +113,12 @@ DOC
 function assemble_dist() {
   local dist="$KAITOSHOME/dist"
 
+  rm -rf \
+    "$dist/scripts" \
+    "$dist/templates" \
+    "$dist/.envrc" \
+    "$dist/manifest.json"
+
   mkdir -p "$dist/scripts"
   cp -r "$KAITOSHOME/scripts/shared"    "$dist/scripts/shared"
   cp -r "$KAITOSHOME/scripts/install"   "$dist/scripts/install"
