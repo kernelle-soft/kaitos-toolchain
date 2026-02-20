@@ -28,33 +28,33 @@ FLAG_DOCS=false
 function main() {
   parse_args "$@"
 
-  rm -rf "$REPO_ROOT/temp"
-  rm -rf "$REPO_ROOT/tmp"
-  rm -rf "$REPO_ROOT"/kaitos-*-linux-*
-  rm -rf "$REPO_ROOT"/kaitos-*.tar.gz
+  rm -rf "$KAITOSHOME/temp"
+  rm -rf "$KAITOSHOME/tmp"
+  rm -rf "$KAITOSHOME"/kaitos-*-linux-*
+  rm -rf "$KAITOSHOME"/kaitos-*.tar.gz
 
   if [[ $FLAG_BUILD = true ]]; then
-    rm -rf "$REPO_ROOT/build/" "$REPO_ROOT/dist/"
+    rm -rf "$KAITOSHOME/build/" "$KAITOSHOME/dist/"
   fi
 
   if [[ $FLAG_COVERAGE = true ]]; then
-    rm -rf "$REPO_ROOT/coverage/"
+    rm -rf "$KAITOSHOME/coverage/"
   fi
 
   if [[ $FLAG_RUST = true ]]; then
     shopt -s globstar nullglob
-    rm -rf "$REPO_ROOT"/crates/**/target/
+    rm -rf "$KAITOSHOME"/crates/**/target/
     shopt -u globstar nullglob
   fi
 
   if [[ $FLAG_GO = true ]]; then
-    rm -f "$REPO_ROOT/go/kaitos"
+    rm -f "$KAITOSHOME/go/kaitos"
   fi
 
   if [[ $FLAG_DOCS = true ]]; then
     rm -rf \
-      "$REPO_ROOT/site/.astro" \
-      "$REPO_ROOT/site/dist"
+      "$KAITOSHOME/site/.astro" \
+      "$KAITOSHOME/site/dist"
   fi
 }
 

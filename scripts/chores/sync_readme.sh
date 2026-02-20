@@ -23,7 +23,7 @@ EOF
 )"
 
 import \
-  "$REPO_ROOT/scripts/shared/poke.api.sh"
+  "$KAITOSHOME/scripts/shared/poke.api.sh"
 
 ARG_VERSION=""
 
@@ -50,7 +50,7 @@ function update_readme() {
   local -n __poke__="$1"
   local readme_file new_content tmp_file
 
-  readme_file="$REPO_ROOT/README.md"
+  readme_file="$KAITOSHOME/README.md"
   tmp_file="$(mktemp)"
   new_content="$(generate_pokedex_entry __poke__)"
 

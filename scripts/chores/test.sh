@@ -64,7 +64,7 @@ Runs the rust unit test suite for the project.
 DOC
 function run_rust_tests() {
   log_banner "Rust Unit Tests"
-  cargo test --manifest-path "$REPO_ROOT/crates/Cargo.toml"
+  cargo test --manifest-path "$KAITOSHOME/crates/Cargo.toml"
 }
 
 : <<'DOC'
@@ -72,7 +72,7 @@ Runs the go unit test suite for the project.
 DOC
 function run_go_tests() {
   log_banner "Go Unit Tests"
-  cd "$REPO_ROOT/go" && go test -v ./...
+  cd "$KAITOSHOME/go" && go test -v ./...
 }
 
 main "$@"

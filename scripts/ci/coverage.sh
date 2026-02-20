@@ -15,7 +15,7 @@ EOF
 
 function main() {
   parse_args "$@"
-  mkdir -p "$REPO_ROOT/coverage" "$REPO_ROOT/temp"
+  mkdir -p "$KAITOSHOME/coverage" "$KAITOSHOME/temp"
 
   if has_go_changes; then
     run_go_coverage
@@ -65,12 +65,12 @@ function has_rust_changes() {
 function run_go_coverage() {
   local path_tempfile path_cobertura
 
-  path_tempfile="$REPO_ROOT/temp/go_coverage.out"
-  path_cobertura="$REPO_ROOT/coverage/go_coverage.xml"
+  path_tempfile="$KAITOSHOME/temp/go_coverage.out"
+  path_cobertura="$KAITOSHOME/coverage/go_coverage.xml"
 
   log_banner "Go Coverage"
 
-  cd "$REPO_ROOT/go"
+  cd "$KAITOSHOME/go"
   go test -coverprofile="$path_tempfile" ./...
   gocover-cobertura < "$path_tempfile" > "$path_cobertura"
 }
@@ -79,8 +79,8 @@ function run_rust_coverage() {
   log_banner "Rust Coverage"
   cargo llvm-cov \
     --cobertura \
-    --manifest-path "$REPO_ROOT/crates/Cargo.toml" \
-    --output-path "$REPO_ROOT/coverage/rust_coverage.xml"
+    --manifest-path "$KAITOSHOME/crates/Cargo.toml" \
+    --output-path "$KAITOSHOME/coverage/rust_coverage.xml"
 }
 
 main "$@"

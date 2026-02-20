@@ -18,9 +18,9 @@ EOF
 
 ARG_VERSION=""
 
-import "$REPO_ROOT/scripts/shared/versions.api.sh"
+import "$KAITOSHOME/scripts/shared/versions.api.sh"
 
-PATH_DOCS_PACKAGE="$REPO_ROOT/site/package.json"
+PATH_DOCS_PACKAGE="$KAITOSHOME/site/package.json"
 
 function main() {
   local current_version old_version

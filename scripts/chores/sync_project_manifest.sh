@@ -20,8 +20,8 @@ EOF
 ARG_VERSION=""
 
 import \
-  "$REPO_ROOT/scripts/shared/versions.api.sh" \
-  "$REPO_ROOT/scripts/shared/manifest.api.sh"
+  "$KAITOSHOME/scripts/shared/versions.api.sh" \
+  "$KAITOSHOME/scripts/shared/manifest.api.sh"
 
 function main() {
   local latest
