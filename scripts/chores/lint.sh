@@ -19,7 +19,7 @@ Notes:
 EOF
 )"
 
-import "$REPO_ROOT/scripts/shared/lint.api.sh"
+import "$KAITOSHOME/scripts/shared/lint.api.sh"
 
 FLAG_RUST=true
 FLAG_GO=true

@@ -5,7 +5,7 @@ eval "${CI_ENVRC:-}"
 API for getting and setting info in the project manifest (kaitos.json)
 DOC
 
-__manifest_api_repo_root="$REPO_ROOT"
+__manifest_api_repo_root="$KAITOSHOME"
 __manifest_api_file="$__manifest_api_repo_root/kaitos.json"
 
 declare -gA __manifest_api_cache

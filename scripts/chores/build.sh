@@ -44,8 +44,8 @@ EOF
 )"
 
 import \
-  "$REPO_ROOT/scripts/shared/compile.api.sh" \
-  "$REPO_ROOT/scripts/shared/deploy.api.sh"
+  "$KAITOSHOME/scripts/shared/compile.api.sh" \
+  "$KAITOSHOME/scripts/shared/deploy.api.sh"
 
 FLAG_GO=true
 FLAG_RUST=true
@@ -61,7 +61,7 @@ function main() {
     compile_opts[release]=true
   fi
 
-  mkdir -p "$REPO_ROOT/dist"
+  mkdir -p "$KAITOSHOME/dist"
 
   if [[ $FLAG_GO = true ]] && ! compile_go compile_opts; then
     error "Ran into issues compiling go..."

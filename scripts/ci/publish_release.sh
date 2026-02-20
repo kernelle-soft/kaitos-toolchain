@@ -21,9 +21,9 @@ ARG_ARTIFACTS=()
 FLAG_DRY_RUN=false
 
 import \
-  "$REPO_ROOT/scripts/shared/manifest.api.sh" \
-  "$REPO_ROOT/scripts/shared/versions.api.sh" \
-  "$REPO_ROOT/scripts/shared/get_date.func.sh"
+  "$KAITOSHOME/scripts/shared/manifest.api.sh" \
+  "$KAITOSHOME/scripts/shared/versions.api.sh" \
+  "$KAITOSHOME/scripts/shared/get_date.func.sh"
 
 function main() {
   parse_args "$@"

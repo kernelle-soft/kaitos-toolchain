@@ -19,9 +19,9 @@ EOF
 ARG_VERSION=""
 REGEX_SEMVER='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
 
-import "$REPO_ROOT/scripts/shared/versions.api.sh"
+import "$KAITOSHOME/scripts/shared/versions.api.sh"
 
-PATH_CARGO_WORKSPACE="$REPO_ROOT/crates/Cargo.toml"
+PATH_CARGO_WORKSPACE="$KAITOSHOME/crates/Cargo.toml"
 
 function main() {
   local current_version old_version_line new_version_line
