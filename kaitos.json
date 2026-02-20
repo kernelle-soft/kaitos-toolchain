@@ -1,7 +1,7 @@
 {
   "repo": "kaitos-toolchain",
   "org": "kernelle-soft",
-  "latest": "0.0.8-dev.7",
+  "latest": "0.0.8-dev.8",
   "stable": "0.0.7",
   "releases": 7,
   "naming": {

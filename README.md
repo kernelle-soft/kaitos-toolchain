@@ -46,7 +46,7 @@
     </tr>
     <tr>
       <td>Bash</td>
-      <td>2437</td>
+      <td>2500</td>
     </tr>
   </table>
 </div>
