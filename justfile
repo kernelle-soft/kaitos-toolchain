@@ -27,3 +27,13 @@ build *args:
 
 release *args:
   ./scripts/chores/build.sh --release --bundle {{args}}
+
+watch *args:
+  watchexec \
+    --restart \
+    --clear \
+    --exts go,rs,toml \
+    --watch go \
+    --watch crates \
+    -i 'crates/target/**' \
+    -- just build {{args}}
