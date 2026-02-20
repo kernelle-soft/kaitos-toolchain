@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# DEPRECATED: This script is being replaced by the new install system (KAITOS-40).
+# It references TOOLCHAIN_NAME and TOOLCHAIN_VERSION which have been removed
+# from .envrc. Do not use — it will be deleted when the new installer lands.
 set -euo pipefail
 eval "${CI_ENVRC:-}"
 
