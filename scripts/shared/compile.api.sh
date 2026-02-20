@@ -52,6 +52,7 @@ function compile_go() {
   fi
 
   output_path="${__opts__[output_path]:-$__compile_api__GO_OUTPUT_PATH}"
+  mkdir -p "$(dirname "$output_path")" || return 1
 
   cd "$REPO_ROOT/go" || return 1
   go build -o "$output_path" "${args[@]}" "./cmd/kaitos.go"
@@ -59,7 +60,8 @@ function compile_go() {
 }
 
 : <<'DOC'
-  Compiles the rust binary for the project.
+  Compiles the rust shared library (cdylib) for the project.
+
   Usage:
     declare -A options
     options=(
@@ -76,6 +78,10 @@ function compile_go() {
       The path to the cargo manifest. Default is $REPO_ROOT/crates/Cargo.toml.
     options[target_dir]: string
       The path to the target directory. Default is $REPO_ROOT/crates/target.
+
+  Returns:
+    - 0 if the shared library is compiled and copied successfully.
+    - non-zero if an error occurs during compilation or copying.
 DOC
 function compile_rust() {
   local build_context args target_dir output_dir target_lib_dir
