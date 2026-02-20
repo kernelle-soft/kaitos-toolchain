@@ -71,6 +71,9 @@ jobs:
           ./scripts/chores/sync_docs_version.sh \
             "${{ steps.plan.outputs.version }}"
 
+      - name: Sync Project Environment
+        run: ./scripts/chores/sync_envrc.sh
+
       - name: Commit Version Bump
         run: |
           ./scripts/ci/git_commit.sh -a \

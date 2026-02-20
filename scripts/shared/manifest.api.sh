@@ -20,6 +20,7 @@ declare -gA __manifest_api_schema=(
   [patch_name]='.naming.patch'
   [godot_version]='.engines.godot.version'
   [godot_url]='.engines.godot.url'
+  [godot_supported]='.engines.godot.supported | join(",")'
 )
 
 : <<'DOC'

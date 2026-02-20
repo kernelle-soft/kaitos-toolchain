@@ -13,7 +13,10 @@
   "engines": {
     "godot": {
       "version": "4.5.1",
-      "url": "https://github.com/godotengine/godot/releases/download"
+      "url": "https://github.com/godotengine/godot/releases/download",
+      "supported": [
+        "4.5.1"
+      ]
     }
   }
 }
