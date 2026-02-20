@@ -76,7 +76,7 @@ function compile_go() {
       The path to the target directory. Default is $REPO_ROOT/crates/target.
 DOC
 function compile_rust() {
-  local context args target_dir output_dir target_lib_dir
+  local context args target_dir output_dir target_lib_dir ext
   if [[ -z "${1:-}" ]]; then
     local -A __opts__=()
   else
@@ -105,6 +105,23 @@ function compile_rust() {
 
   cargo build --package godot "${args[@]}"
 
+  ext="$(__compile_api__get_extension)"
+
   mkdir -p "$output_dir"
-  cp "$target_dir/$target_lib_dir/libgodot.so" "$output_dir/libgodot.so"
+  cp "$target_dir/$target_lib_dir/libgodot.$ext" "$output_dir/libgodot.$ext"
+}
+
+function __compile_api__get_extension() {
+  case "$(uname -s)" in
+    Darwin)
+      echo "dylib"
+      ;;
+    # Screw Windows.
+    # MINGW*|MSYS*|CYGWIN*)
+    #   echo "dll"
+    #   ;;
+    *)
+      echo "so"
+      ;;
+  esac
 }
