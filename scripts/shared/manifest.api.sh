@@ -10,6 +10,7 @@ __manifest_api_file="$__manifest_api_repo_root/kaitos.json"
 
 declare -gA __manifest_api_cache
 declare -gA __manifest_api_schema=(
+  [command_name]='."command-name"'
   [org]=".org"
   [repo]=".repo"
   [latest]=".latest"
@@ -18,6 +19,8 @@ declare -gA __manifest_api_schema=(
   [major_name]='.naming.major'
   [minor_name]='.naming.minor'
   [patch_name]='.naming.patch'
+  [godot_version]='.engines.godot.version'
+  [godot_url]='.engines.godot.url'
 )
 
 : <<'DOC'
