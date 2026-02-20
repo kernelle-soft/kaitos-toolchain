@@ -28,7 +28,7 @@ Flags:
     Only compile Go code
 
   -b, --bundle
-    Produce a bundle of the compiled artifacts for distribution.
+    Produce a bundle of the compiled artifacts for distribution instead of deploying.
 
     The archive will have the following structure:
     kaitos-<version>-<platform>-<arch>.tar.gz/
@@ -48,8 +48,7 @@ import \
 FLAG_GO=true
 FLAG_RUST=true
 FLAG_RELEASE=false
-FLAG_DEPLOY_TO_SYSTEM=true
-FLAG_BUNDLE_ARTIFACTS=false
+ENUM_DEPLOY_OPTION="system"
 
 function main() {
   parse_args "$@"
@@ -72,21 +71,29 @@ function main() {
     exit 1
   fi
 
-  if [[ $FLAG_BUNDLE_ARTIFACTS = true ]]; then
-    bundle
-  fi
-
-  if [[ $FLAG_DEPLOY_TO_SYSTEM = true ]]; then
-    if ! deploy_system; then
-      error "Ran into issues deploying artifacts to your system..."
+  case "$ENUM_DEPLOY_OPTION" in
+    system)
+      if ! deploy_system; then
+        error "Ran into issues deploying artifacts to your system..."
+        exit 1
+      fi
+      ;;
+    project)
+      if ! deploy_local; then
+        error "Ran into issues deploying artifacts at the project level..."
+        exit 1
+      fi
+      ;;
+    bundle)
+      if ! bundle; then
+        error "Ran into issues bundling artifacts..."
+        exit 1
+      fi
+      ;;
+    *)
+      error "Invalid deploy target $ENUM_DEPLOY_OPTION"
       exit 1
-    fi
-  else
-    if ! deploy_local; then
-      error "Ran into issues deploying artifacts at the project level..."
-      exit 1
-    fi
-  fi
+  esac
 }
 
 : <<'DOC'
@@ -103,10 +110,10 @@ function parse_args() {
         FLAG_RELEASE=true
         ;;
       -p|--project)
-        FLAG_DEPLOY_TO_SYSTEM=false
+        ENUM_DEPLOY_OPTION="project"
         ;;
       -s|--system)
-        FLAG_DEPLOY_TO_SYSTEM=true
+        ENUM_DEPLOY_OPTION="system"
         ;;
       -R|--rust-only)
         FLAG_GO=false
@@ -115,7 +122,7 @@ function parse_args() {
         FLAG_RUST=false
         ;;
       -b|--bundle)
-        FLAG_BUNDLE_ARTIFACTS=true
+        ENUM_DEPLOY_OPTION="bundle"
         ;;
       -h|--help)
         log "$USAGE"
