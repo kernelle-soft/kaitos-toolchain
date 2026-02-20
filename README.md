@@ -14,7 +14,7 @@
     src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/7.gif"
   />
   <br>
-  <span id="pokemon-name"><b>Release #7: v0.0.7 - Squirtle</b></span>
+  <span id="pokemon-name"><b>Release #7: v0.0.9 - Squirtle</b></span>
   <br>
   <img
     id="rust-runtime-coverage"
@@ -46,7 +46,7 @@
     </tr>
     <tr>
       <td>Bash</td>
-      <td>2500</td>
+      <td>2528</td>
     </tr>
   </table>
 </div>
