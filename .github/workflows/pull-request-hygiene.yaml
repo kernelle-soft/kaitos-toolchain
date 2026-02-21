@@ -11,6 +11,7 @@ on:
 
 jobs:
   check-requirements:
+    name: Check Requirements
     runs-on: ubuntu-24.04
     steps:
       - name: Check for assignee

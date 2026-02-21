@@ -9,20 +9,24 @@ on:
 
 jobs:
   validate:
+    name: Validate
     uses: ./.github/workflows/_validate.yaml
     secrets: inherit
 
   bump:
+    name: Bump
     needs: validate
     uses: ./.github/workflows/_bump_version.yaml
     secrets: inherit
 
   release:
+    name: Release
     needs: bump
     uses: ./.github/workflows/_create_release.yaml
     secrets: inherit
 
   test-install-live:
+    name: Test Install
     needs: release
     uses: ./.github/workflows/_test_install.yaml
     with:
@@ -30,6 +34,7 @@ jobs:
     secrets: inherit
 
   cleanup-failed-release:
+    name: Cleanup Failed Release
     needs: [release, test-install-live]
     if: ${{ always() && needs.test-install-live.result == 'failure' }}
     runs-on: ubuntu-24.04
