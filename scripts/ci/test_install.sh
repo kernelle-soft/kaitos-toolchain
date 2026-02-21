@@ -79,11 +79,29 @@ function test_template_expansion() {
     "env.sh has no unexpanded __GODOT_VERSION__"
 }
 
+function __test__detect_rc_file() {
+  local shell_name
+  shell_name="$(basename "${SHELL:-bash}")"
+
+  case "$shell_name" in
+    zsh)  echo "$HOME/.zshrc" ;;
+    bash) echo "$HOME/.bashrc" ;;
+    *)
+      warn "Unsupported shell: $shell_name — cannot determine rc file"
+      return 1
+      ;;
+  esac
+}
+
 function test_shell_rc() {
   log ""
   log "--- Shell rc ---"
 
-  local rc_file="$HOME/.bashrc"
+  local rc_file
+  if ! rc_file="$(__test__detect_rc_file)"; then
+    __test__fail "rc file check — unsupported shell: ${SHELL:-<unset>}"
+    return
+  fi
 
   assert_contains "$rc_file" \
     "# kaitos" \
@@ -95,7 +113,11 @@ function test_idempotency() {
   log "--- Idempotency ---"
 
   local config="$__test__XDG_CONFIG_HOME/kaitos/settings.yaml"
-  local rc_file="$HOME/.bashrc"
+  local rc_file
+  if ! rc_file="$(__test__detect_rc_file)"; then
+    __test__fail "idempotency rc check — unsupported shell: ${SHELL:-<unset>}"
+    return
+  fi
 
   if [[ ! -f "$config" ]]; then
     __test__fail "Config missing before idempotency check: $config"
