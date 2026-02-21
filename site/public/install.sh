@@ -119,7 +119,7 @@ verify_checksum() {
   fi
 
   if [ "$_vc_actual" != "$_vc_expected" ]; then
-    die "Checksum verification failed for ${_vc_name}"
+    die "Checksum verification failed for ${_vc_name}. Expected: ${_vc_expected}, Got: ${_vc_actual}"
   fi
 
   info "Checksum OK."
