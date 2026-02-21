@@ -16,7 +16,14 @@ GITHUB_API="https://api.github.com/repos/${GITHUB_ORG}/${GITHUB_REPO}"
 _FLAG_PRERELEASE=false
 
 main() {
-  parse_flags "$@"
+  # Consume bootstrapper flags; $@ retains the rest for the installer
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      -p|--prerelease) _FLAG_PRERELEASE=true; shift ;;
+      --) shift; break ;;
+      *)  break ;;
+    esac
+  done
 
   _os="$(detect_os)"
   _arch="$(detect_arch)"
@@ -44,23 +51,8 @@ main() {
   # Set KAITOSHOME so .envrc enters install context when the installer sources it
   export KAITOSHOME="$_extract_dir"
 
-  # Hand off to the real installer (forward only installer flags)
-  /usr/bin/env bash "$_extract_dir/scripts/install/install.sh" $_installer_args
-}
-
-parse_flags() {
-  _installer_args=""
-  while [ $# -gt 0 ]; do
-    case "$1" in
-      -p|--prerelease)
-        _FLAG_PRERELEASE=true
-        ;;
-      *)
-        _installer_args="$_installer_args $1"
-        ;;
-    esac
-    shift
-  done
+  # Hand off to the real installer with remaining args
+  /usr/bin/env bash "$_extract_dir/scripts/install/install.sh" "$@"
 }
 
 detect_os() {
