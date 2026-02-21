@@ -2,7 +2,7 @@
 #   1. Suggest applicable labels from the repo's label catalog.
 #   2. Score each issue's fitness for autonomous agentic implementation.
 #
-# Issues scoring >90% confidence get tagged `agentic-candidate` for human review.
+# Issues scoring >=90% confidence get tagged `agentic-candidate` for human review.
 # All others get tagged `agentic-triaged` so they aren't re-assessed.
 #
 # Label flow: agentic-triaged | agentic-candidate → (human) → agentic-greenlit
