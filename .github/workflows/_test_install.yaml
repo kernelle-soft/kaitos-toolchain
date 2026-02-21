@@ -1,0 +1,70 @@
+name: Test Install
+
+on:
+  workflow_call:
+    inputs:
+      mode:
+        description: >
+          "simulated" builds the tarball locally and runs the installer directly.
+          "live" curls the bootstrapper with --prerelease against a real GitHub release.
+        required: true
+        type: string
+
+jobs:
+  test-install:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Cache Godot binary
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/kaitos/godot
+          key: godot-${{ hashFiles('manifest.json') }}
+
+      # -- Simulated mode: build tarball, extract, run installer --
+
+      - name: Setup build tools
+        if: inputs.mode == 'simulated'
+        uses: ./.github/actions/setup
+
+      - uses: ./.github/actions/envrc
+        if: inputs.mode == 'simulated'
+
+      - name: Build and bundle
+        if: inputs.mode == 'simulated'
+        id: build
+        run: |
+          echo "artifact=$(./scripts/chores/build.sh --release --bundle)" \
+            >> "$GITHUB_OUTPUT"
+
+      - name: Extract tarball
+        if: inputs.mode == 'simulated'
+        run: |
+          mkdir -p /tmp/kaitos-install-test
+          tar -xzf "${{ steps.build.outputs.artifact }}.tar.gz" \
+            -C /tmp/kaitos-install-test
+
+      - name: Run installer (simulated)
+        if: inputs.mode == 'simulated'
+        run: |
+          extract_dir="$(find /tmp/kaitos-install-test -mindepth 1 -maxdepth 1 -type d | head -n 1)"
+          echo "KAITOSHOME=$extract_dir" >> "$GITHUB_ENV"
+          export KAITOSHOME="$extract_dir"
+          bash "$extract_dir/scripts/install/install.sh"
+
+      # -- Live mode: curl the bootstrapper --
+
+      - name: Run bootstrapper (live)
+        if: inputs.mode == 'live'
+        run: |
+          curl -fsSL kaitos.dev/install.sh | sh -s -- --prerelease
+
+      # -- Shared: run verification --
+
+      - name: Setup test environment
+        run: |
+          echo "CI_ENVRC=source $GITHUB_WORKSPACE/.envrc" >> "$GITHUB_ENV"
+
+      - name: Verify installation
+        run: ./scripts/ci/test_install.sh
