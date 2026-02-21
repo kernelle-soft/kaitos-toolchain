@@ -4,17 +4,17 @@ on:
 
 jobs:
   lint:
-    name: Lint
+    name: lint
     uses: ./.github/workflows/_lint.yaml
     secrets: inherit
 
   security:
-    name: Security
+    name: security
     uses: ./.github/workflows/_security.yaml
     secrets: inherit
 
   coverage:
-    name: Coverage
+    name: coverage
     uses: ./.github/workflows/_coverage.yaml
     secrets: inherit
 

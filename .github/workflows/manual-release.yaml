@@ -23,13 +23,13 @@ on:
 
 jobs:
   validate:
-    name: Validate
+    name: validate
     if: ${{ !inputs.skip_validation }}
     uses: ./.github/workflows/_validate.yaml
     secrets: inherit
 
   bump:
-    name: Bump
+    name: bump
     needs: [validate]
     if: ${{ always() && (needs.validate.result == 'success' || inputs.skip_validation) }}
     uses: ./.github/workflows/_bump_version.yaml
@@ -38,13 +38,13 @@ jobs:
     secrets: inherit
 
   release:
-    name: Release
+    name: release
     needs: [bump]
     uses: ./.github/workflows/_create_release.yaml
     secrets: inherit
 
   test-install-live:
-    name: Test Install
+    name: test-install
     needs: [release]
     uses: ./.github/workflows/_test_install.yaml
     with:
@@ -52,7 +52,7 @@ jobs:
     secrets: inherit
 
   cleanup-failed-release:
-    name: Cleanup Failed Release
+    name: cleanup-failed-release
     needs: [release, test-install-live]
     if: ${{ always() && needs.test-install-live.result == 'failure' }}
     runs-on: ubuntu-24.04

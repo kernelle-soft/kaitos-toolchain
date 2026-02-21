@@ -4,7 +4,7 @@ on:
 
 jobs:
   go:
-    name: Go
+    name: go
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
@@ -19,7 +19,7 @@ jobs:
         run: cd go && govulncheck ./...
 
   rust:
-    name: Rust
+    name: rust
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6

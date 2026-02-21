@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   bump-version:
-    name: Bump Version
+    name: bump-version
     runs-on: ubuntu-24.04
     steps:
       - name: Generate Auth Token

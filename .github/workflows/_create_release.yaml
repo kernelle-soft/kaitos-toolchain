@@ -9,12 +9,12 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: build
     uses: ./.github/workflows/_build.yaml
     secrets: inherit
 
   release:
-    name: Release
+    name: release
     runs-on: ubuntu-24.04
     needs: [build]
     outputs:

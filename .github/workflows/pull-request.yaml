@@ -7,12 +7,12 @@ on:
 
 jobs:
   validate:
-    name: Validate
+    name: validate
     uses: ./.github/workflows/_validate.yaml
     secrets: inherit
 
   test-install:
-    name: Test Install
+    name: test-install
     uses: ./.github/workflows/_test_install.yaml
     with:
       mode: simulated
