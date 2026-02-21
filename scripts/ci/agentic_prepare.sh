@@ -61,6 +61,8 @@ function check_body_length() {
     echo "auto_triage=true" >> "${GITHUB_OUTPUT:-/dev/null}"
     return 1
   fi
+
+  return 0
 }
 
 : <<'DOC'
