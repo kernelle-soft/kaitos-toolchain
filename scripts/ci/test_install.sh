@@ -156,6 +156,7 @@ function __test__run_installer() {
     bash "$KAITOSHOME/scripts/install/install.sh" "$@"
   else
     fatal "KAITOSHOME must point to a local installer (or set TEST_INSTALL_USE_LIVE=1)"
+    return 1
   fi
 }
 
