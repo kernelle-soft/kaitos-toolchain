@@ -43,7 +43,7 @@ changelog:
     - title: "Dependencies"
       labels: [dependencies]
 
-    - title: "🤖 Agentic Contributions"
+    - title: "Agentic Contributions"
       labels: [agentic-greenlit]
 
     - title: "Other Changes"
