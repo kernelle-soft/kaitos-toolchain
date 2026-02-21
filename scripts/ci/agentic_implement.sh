@@ -20,10 +20,10 @@ Expects:
 EOF
 )"
 
+log() { echo "$@" >&2; }
+
 GREENLIT_SOFT_CAP=100
 COPILOT_USER="copilot-swe-agent[bot]"
-
-log() { echo "$@" >&2; }
 
 function main() {
   parse_args "$@"
@@ -45,6 +45,9 @@ function main() {
   done
 }
 
+: <<'DOC'
+  Fetches open issues tagged agentic-greenlit, capped at GREENLIT_SOFT_CAP.
+DOC
 function fetch_greenlit_issues() {
   gh issue list \
     --repo "$GITHUB_REPOSITORY" \
@@ -54,7 +57,6 @@ function fetch_greenlit_issues() {
     --limit "$GREENLIT_SOFT_CAP" \
     -q '[.[].number]'
 }
-
 
 : <<'DOC'
   Returns 0 if anyone is already assigned to the given issue.

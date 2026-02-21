@@ -102,6 +102,9 @@ function format_comment() {
   fi
 }
 
+: <<'DOC'
+  Formats and posts the triage assessment as a comment on the issue.
+DOC
 function post_comment() {
   format_comment "$@" > comment.md
 
