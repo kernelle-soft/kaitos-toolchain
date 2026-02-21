@@ -1,36 +1,87 @@
 #!/usr/bin/env bash
 set -euo pipefail
+eval "${CI_ENVRC:-}"
 
-# Assigns Copilot to all open issues tagged agentic-greenlit.
-# Expects: GH_TOKEN, GITHUB_REPOSITORY
+USAGE="$(cat <<EOF
+Assigns the Copilot coding agent to all open issues tagged agentic-greenlit.
 
-repo="${GITHUB_REPOSITORY:?}"
+Usage: agentic_implement.sh [-h]
 
-issues=$(gh issue list \
-  --repo "$repo" \
-  --state open \
-  --label "agentic-greenlit" \
-  --json number \
-  --limit 999 \
-  -q '[.[].number]')
+Copilot creates a branch and opens a PR for each assigned issue. Intended
+to be triggered after a human reviews agentic-candidate issues and re-tags
+the approved ones.
 
-count=$(echo "$issues" | jq length)
-echo "Found $count greenlit issue(s)"
+Flags:
+  -h, --help    Show this help text.
 
-if [ "$count" -eq 0 ]; then
-  echo "Nothing to do."
-  exit 0
-fi
+Expects:
+  GH_TOKEN             GitHub token with issues:write
+  GITHUB_REPOSITORY    owner/repo
+EOF
+)"
 
-for number in $(echo "$issues" | jq -r '.[]'); do
+command -v log &>/dev/null || log() { echo "$@"; }
+
+function main() {
+  parse_args "$@"
+
+  local issues count
+  issues=$(gh issue list \
+    --repo "$GITHUB_REPOSITORY" \
+    --state open \
+    --label "agentic-greenlit" \
+    --json number \
+    --limit 999 \
+    -q '[.[].number]')
+
+  count=$(echo "$issues" | jq length)
+  log "Found $count greenlit issue(s)"
+
+  if [ "$count" -eq 0 ]; then
+    log "Nothing to do."
+    exit 0
+  fi
+
+  local number
+  for number in $(echo "$issues" | jq -r '.[]'); do
+    assign_copilot "$number"
+  done
+}
+
+: <<'DOC'
+  Assigns Copilot to a single issue via the REST assignees endpoint.
+DOC
+function assign_copilot() {
+  local number="$1"
+
   echo "::group::Issue #$number"
-  echo "Assigning Copilot to issue #$number..."
+  log "Assigning Copilot to issue #$number..."
 
-  gh api "repos/${repo}/issues/${number}/assignees" \
+  gh api "repos/${GITHUB_REPOSITORY}/issues/${number}/assignees" \
     --method POST -f "assignees[]=copilot" \
     --silent \
-  && echo "Assigned." \
+  && log "Assigned." \
   || echo "::warning::Failed to assign Copilot to issue #$number"
 
   echo "::endgroup::"
-done
+}
+
+: <<'DOC'
+  Parses CLI flags.
+  See USAGE for flag descriptions.
+DOC
+function parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -h|--help)  log "$USAGE" && exit 0;;
+      *)
+        log "Unknown option: $1"
+        log "$USAGE"
+        exit 1
+        ;;
+    esac
+    shift
+  done
+}
+
+main "$@"

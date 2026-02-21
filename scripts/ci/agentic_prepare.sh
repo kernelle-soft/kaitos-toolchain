@@ -1,25 +1,93 @@
 #!/usr/bin/env bash
 set -euo pipefail
+eval "${CI_ENVRC:-}"
 
-# Fetches issue details and repo label catalog for the triage prompt.
-# Outputs: issue.json, labels.txt in the current directory.
-# Expects: GH_TOKEN, GITHUB_REPOSITORY
-# Args: $1 = issue number
+USAGE="$(cat <<EOF
+Fetches context needed by the triage prompt: issue details and label catalog.
 
-repo="${GITHUB_REPOSITORY:?}"
-issue_number="${1:?usage: agentic_prepare.sh <issue_number>}"
+Usage: agentic_prepare.sh [-h] <issue_number>
 
-gh api "repos/${repo}/issues/${issue_number}" \
-  | jq '{number, title, body, labels: [.labels[].name]}' \
-  > issue.json
+Arguments:
+  issue_number    The GitHub issue number to fetch.
 
-# Fetch labels, excluding workflow-managed and meta-labels so the model
-# only sees labels it's allowed to suggest.
-gh api "repos/${repo}/labels" --paginate \
-  -q '.[]
-    | select(.name |
-        test("^(agentic-|duplicate$|invalid$|wontfix$|question$|help wanted$|good first issue$|skip-changelog$)")
-        | not
-      )
-    | "\(.name) — \(.description // "no description")"' \
-  > labels.txt
+Flags:
+  -h, --help      Show this help text.
+
+Writes:
+  issue.json      Issue metadata (number, title, body, current labels).
+  labels.txt      Filtered label catalog (name - description), one per line.
+
+Expects:
+  GH_TOKEN             GitHub token with issues:read
+  GITHUB_REPOSITORY    owner/repo
+EOF
+)"
+
+command -v log &>/dev/null || log() { echo "$@"; }
+
+ARG_ISSUE_NUMBER=""
+
+function main() {
+  parse_args "$@"
+  fetch_issue
+  fetch_labels
+}
+
+: <<'DOC'
+  Fetches the issue and extracts the fields the triage prompt needs.
+DOC
+function fetch_issue() {
+  gh api "repos/${GITHUB_REPOSITORY}/issues/${ARG_ISSUE_NUMBER}" \
+    | jq '{number, title, body, labels: [.labels[].name]}' \
+    > issue.json
+}
+
+: <<'DOC'
+  Fetches the repo's label catalog, filtering out workflow-managed and
+  meta-labels so the model only sees labels it is allowed to suggest.
+DOC
+function fetch_labels() {
+  gh api "repos/${GITHUB_REPOSITORY}/labels" --paginate \
+    -q '.[]
+      | select(.name |
+          test("^(agentic-|duplicate$|invalid$|wontfix$|question$|help wanted$|good first issue$|skip-changelog$)")
+          | not
+        )
+      | "\(.name) — \(.description // "no description")"' \
+    > labels.txt
+}
+
+: <<'DOC'
+  Parses CLI arguments.
+  See USAGE for argument descriptions.
+DOC
+function parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -h|--help)  log "$USAGE" && exit 0;;
+      -*)
+        log "Unknown option: $1"
+        log "$USAGE"
+        exit 1
+        ;;
+      *)
+        if [[ -z "$ARG_ISSUE_NUMBER" ]]; then
+          ARG_ISSUE_NUMBER="$1"
+        else
+          log "Unexpected argument: $1"
+          log "$USAGE"
+          exit 1
+        fi
+        ;;
+    esac
+    shift
+  done
+
+  if [[ -z "$ARG_ISSUE_NUMBER" ]]; then
+    log "Missing required argument: issue_number"
+    log "$USAGE"
+    exit 1
+  fi
+}
+
+main "$@"
