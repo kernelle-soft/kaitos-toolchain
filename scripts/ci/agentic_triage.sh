@@ -106,10 +106,14 @@ function format_comment() {
   Formats and posts the triage assessment as a comment on the issue.
 DOC
 function post_comment() {
-  format_comment "$@" > comment.md
+  local tmp
+  tmp=$(mktemp)
+  trap "rm -f '$tmp'" EXIT INT TERM
+
+  format_comment "$@" > "$tmp"
 
   gh issue comment "$ARG_ISSUE_NUMBER" \
-    --body-file comment.md \
+    --body-file "$tmp" \
     --repo "$GITHUB_REPOSITORY"
 }
 
