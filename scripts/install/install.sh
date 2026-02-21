@@ -52,12 +52,6 @@ __install__FLAG_RESET_CONFIGS=false
 function main() {
   parse_flags "$@"
 
-  for cmd in jq curl unzip; do
-    if ! command -v "$cmd" &>/dev/null; then
-      fatal "Required command not found: $cmd"
-    fi
-  done
-
   log_banner "Installing Kaitos"
 
   deploy_artifacts
@@ -113,7 +107,7 @@ DOC
 function download_godot() {
   import "$KAITOSHOME/scripts/shared/godot.api.sh"
 
-  godot_download
+  godot_download "$GODOT_VERSION"
 }
 
 : <<'DOC'
@@ -143,13 +137,11 @@ function install_config() {
   Expands __KAITOS_VERSION__ and __GODOT_VERSION__ placeholders.
 DOC
 function install_shell_env() {
-  import "$KAITOSHOME/scripts/shared/manifest.api.sh"
-
   local target="$__install__SHELL_ENV_DIR/env.sh"
   local template="$KAITOSHOME/templates/env.template.sh"
   local kaitos_version
 
-  kaitos_version="$(manifest_get stable)"
+  kaitos_version="$(__install__json_get "stable" "$KAITOSHOME/manifest.json")"
 
   mkdir -p "$__install__SHELL_ENV_DIR"
   sed \
@@ -157,6 +149,25 @@ function install_shell_env() {
     -e "s/__GODOT_VERSION__/$GODOT_VERSION/g" \
     "$template" > "$target"
   log "Installed shell env to $target"
+}
+
+: <<'DOC'
+  Extracts a top-level string value from a JSON file without jq.
+  Only handles simple "key": "value" pairs — not nested paths.
+
+  Usage: __install__json_get <key> <file>
+DOC
+function __install__json_get() {
+  local key="$1" file="$2"
+  local value
+
+  value="$(grep "\"$key\"" "$file" | head -n 1 | sed 's/.*"'"$key"'"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')"
+
+  if [[ -z "$value" ]]; then
+    fatal "Could not read '$key' from $file"
+  fi
+
+  printf '%s' "$value"
 }
 
 : <<'DOC'
