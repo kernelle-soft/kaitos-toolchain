@@ -150,10 +150,13 @@ function test_reset_configs() {
 }
 
 function __test__run_installer() {
-  if [[ -n "${KAITOSHOME:-}" && -f "$KAITOSHOME/scripts/install/install.sh" ]]; then
+  if [[ "${TEST_INSTALL_USE_LIVE:-}" == "1" ]]; then
+    curl -fsSL kaitos.dev/install.sh | sh -s -- --prerelease "$@"
+  elif [[ -n "${KAITOSHOME:-}" && -f "$KAITOSHOME/scripts/install/install.sh" ]]; then
     bash "$KAITOSHOME/scripts/install/install.sh" "$@"
   else
-    curl -fsSL kaitos.dev/install.sh | sh -s -- --prerelease "$@"
+    fatal "KAITOSHOME must point to a local installer (or set TEST_INSTALL_USE_LIVE=1)"
+    return 1
   fi
 }
 
