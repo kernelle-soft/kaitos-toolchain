@@ -1,0 +1,79 @@
+# Scans open issues weekly (or on manual dispatch) and uses an LLM to:
+#   1. Suggest applicable labels from the repo's label catalog.
+#   2. Score each issue's fitness for autonomous agentic implementation.
+#
+# Issues scoring >=90% confidence get tagged `agentic-candidate` for human review.
+# All others get tagged `agentic-triaged` so they aren't re-assessed.
+#
+# Label flow: agentic-triaged | agentic-candidate → (human) → agentic-greenlit
+# See also: agentic-implement.yaml
+
+name: Agentic Triage
+
+on:
+  schedule:
+    - cron: "0 12 * * 6" # 6 AM MDT every Saturday
+  workflow_dispatch:
+
+jobs:
+  collect:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      issues: read
+    outputs:
+      issue_numbers: ${{ steps.filter.outputs.numbers }}
+      has_issues: ${{ steps.filter.outputs.has_issues }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Find untriaged issues
+        id: filter
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          numbers=$(scripts/ci/agentic_collect.sh | jq -c '.')
+          has_issues=$([ "$(echo "$numbers" | jq length)" -gt 0 ] && echo true || echo false)
+          echo "has_issues=$has_issues" >> "$GITHUB_OUTPUT"
+          echo "numbers=$numbers" >> "$GITHUB_OUTPUT"
+
+  triage:
+    needs: collect
+    if: needs.collect.outputs.has_issues == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      issues: write
+      models: read
+      contents: read
+    strategy:
+      matrix:
+        issue_number: ${{ fromJson(needs.collect.outputs.issue_numbers) }}
+      max-parallel: 3
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Fetch issue and label catalog
+        id: prepare
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: scripts/ci/agentic_prepare.sh "${{ matrix.issue_number }}"
+
+      - name: Assess issue
+        id: assess
+        if: steps.prepare.outputs.auto_triage != 'true'
+        uses: actions/ai-inference@v1
+        with:
+          prompt-file: .github/prompts/triage-issue.prompt.yml
+          file_input: |
+            issue: ./issue.json
+            labels: ./labels.txt
+          max-tokens: 1000
+          temperature: 0.3
+
+      - name: Apply triage results
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          scripts/ci/agentic_triage.sh
+          "${{ matrix.issue_number }}"
+          "${{ steps.prepare.outputs.auto_triage == 'true' && './auto_response.json' || steps.assess.outputs.response-file }}"

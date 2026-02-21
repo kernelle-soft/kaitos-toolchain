@@ -1,0 +1,25 @@
+# Manual-dispatch workflow that assigns Copilot's coding agent to every open
+# issue tagged `agentic-greenlit`. Copilot creates a branch and opens a PR
+# for each one.
+#
+# Intended to be triggered after a human reviews `agentic-candidate` issues
+# from the triage workflow and re-tags the approved ones as `agentic-greenlit`.
+# See also: agentic-triage.yaml
+
+name: Agentic Implementation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  implement:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v6
+      - name: Assign Copilot to greenlit issues
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: scripts/ci/agentic_implement.sh
