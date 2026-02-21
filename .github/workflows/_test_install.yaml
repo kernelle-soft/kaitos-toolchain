@@ -66,5 +66,9 @@ jobs:
         run: |
           echo "CI_ENVRC=source $GITHUB_WORKSPACE/.envrc" >> "$GITHUB_ENV"
 
+      - name: Set live install mode for re-run tests
+        if: inputs.mode == 'live'
+        run: echo "TEST_INSTALL_USE_LIVE=1" >> "$GITHUB_ENV"
+
       - name: Verify installation
         run: ./scripts/ci/test_install.sh
