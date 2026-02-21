@@ -27,9 +27,16 @@ jobs:
     uses: ./.github/workflows/_validate.yaml
     secrets: inherit
 
-  bump:
+  test-install-live:
     needs: [validate]
     if: ${{ always() && (needs.validate.result == 'success' || inputs.skip_validation) }}
+    uses: ./.github/workflows/_test_install.yaml
+    with:
+      mode: live
+    secrets: inherit
+
+  bump:
+    needs: [test-install-live]
     uses: ./.github/workflows/_bump_version.yaml
     with:
       bump_type: ${{ inputs.bump_type }}

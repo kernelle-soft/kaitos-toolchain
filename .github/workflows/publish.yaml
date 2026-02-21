@@ -21,3 +21,10 @@ jobs:
     needs: bump
     uses: ./.github/workflows/_create_release.yaml
     secrets: inherit
+
+  test-install-live:
+    needs: release
+    uses: ./.github/workflows/_test_install.yaml
+    with:
+      mode: live
+    secrets: inherit
