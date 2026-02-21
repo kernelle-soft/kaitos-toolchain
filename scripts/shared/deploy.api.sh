@@ -115,10 +115,11 @@ function deploy_bundle() {
 
   local tmp_dir
   tmp_dir="$(mktemp -d)"
-  trap 'rm -rf "$tmp_dir"' RETURN
 
   cp -r "$source_dir" "$tmp_dir/$artifact_name"
   tar -czvf "${artifact_name}.tar.gz" -C "$tmp_dir" "$artifact_name" >&2
+
+  rm -rf "$tmp_dir"
 
   echo "$artifact_name"
 }
