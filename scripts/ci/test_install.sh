@@ -44,7 +44,7 @@ function test_file_layout() {
   log "--- File layout ---"
 
   log "  DEBUG: ls -la $__test__XDG_BIN_HOME/"
-  ls -la "$__test__XDG_BIN_HOME/" 2>&1 | while IFS= read -r line; do log "  DEBUG: $line"; done
+  ls -la "$__test__XDG_BIN_HOME/" 2>&1 | while IFS= read -r line; do log "  DEBUG: $line"; done || true
 
   assert_executable "$__test__XDG_BIN_HOME/kaitos" \
     "CLI binary"
