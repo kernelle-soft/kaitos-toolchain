@@ -21,6 +21,7 @@ EOF
 )"
 
 GREENLIT_SOFT_CAP=100
+COPILOT_USER="copilot-swe-agent[bot]"
 
 log() { echo "$@" >&2; }
 
@@ -54,27 +55,46 @@ function fetch_greenlit_issues() {
     -q '[.[].number]'
 }
 
+
 : <<'DOC'
-  Adds "copilot" to the assignees list for the given issue number.
+  Returns 0 if anyone is already assigned to the given issue.
+DOC
+function has_assignees() {
+  local number="$1"
+
+  gh api "repos/${GITHUB_REPOSITORY}/issues/${number}" \
+    --jq '.assignees | length > 0' \
+    | grep -q true
+}
+
+: <<'DOC'
+  Adds the Copilot coding agent to the assignees list for the given issue.
 DOC
 function add_copilot_assignee() {
   local number="$1"
 
   gh api "repos/${GITHUB_REPOSITORY}/issues/${number}/assignees" \
     --method POST \
-    -f "assignees[]=copilot" \
+    -f "assignees[]=$COPILOT_USER" \
     --silent
 }
 
 : <<'DOC'
   Attempts to assign Copilot to a single issue.
+  Skips issues where someone (including Copilot) is already assigned.
   Non-fatal — logs a warning and continues if assignment fails.
 DOC
 function try_assign_copilot() {
   local number="$1"
 
-  # Workflow commands: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions
   echo "::group::Issue #$number"
+
+  if has_assignees "$number"; then
+    log "Issue #$number already has assignees, skipping."
+    echo "::endgroup::"
+    return
+  fi
+
   log "Assigning Copilot to issue #$number..."
 
   if add_copilot_assignee "$number"; then
