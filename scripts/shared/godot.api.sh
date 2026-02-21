@@ -20,7 +20,7 @@ __godot_api__CACHE_DIR="$__godot_api__XDG_CACHE_HOME/kaitos/godot"
   Maps uname values to the Godot release naming scheme.
 
   Returns the platform suffix used in Godot release filenames:
-    - Linux:  linux.<arch>  (x86_64, arm64, x86_32, arm32)
+    - Linux:  linux.<arch>  (x86_64, arm64)
     - macOS:  macos.universal
 
   Usage:
@@ -49,8 +49,6 @@ function __godot_api__platform_suffix() {
   case "$arch" in
     x86_64)  echo "linux.x86_64" ;;
     aarch64) echo "linux.arm64" ;;
-    armv7l)  echo "linux.arm32" ;;
-    i686)    echo "linux.x86_32" ;;
     *)
       fatal "Unsupported architecture: $arch"
       return 1
