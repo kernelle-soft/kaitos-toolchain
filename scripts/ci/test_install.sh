@@ -97,10 +97,20 @@ function test_idempotency() {
   local config="$__test__XDG_CONFIG_HOME/kaitos/settings.yaml"
   local rc_file="$HOME/.bashrc"
 
+  if [[ ! -f "$config" ]]; then
+    __test__fail "Config missing before idempotency check: $config"
+    return
+  fi
+
   local checksum_before
   checksum_before="$(md5sum "$config" | cut -d' ' -f1)"
 
   __test__run_installer
+
+  if [[ ! -f "$config" ]]; then
+    __test__fail "Config missing after re-install: $config"
+    return
+  fi
 
   local checksum_after
   checksum_after="$(md5sum "$config" | cut -d' ' -f1)"
@@ -109,7 +119,7 @@ function test_idempotency() {
     "Config unchanged after re-install"
 
   local kaitos_count
-  kaitos_count="$(grep -c "# kaitos" "$rc_file")"
+  kaitos_count="$(grep -c "# kaitos" "$rc_file" || true)"
 
   assert_equal "$kaitos_count" "1" \
     "rc file has exactly one kaitos block (got $kaitos_count)"
@@ -120,6 +130,11 @@ function test_reset_configs() {
   log "--- Reset configs ---"
 
   local config="$__test__XDG_CONFIG_HOME/kaitos/settings.yaml"
+
+  if [[ ! -f "$config" ]]; then
+    __test__fail "Config missing before reset-configs check: $config"
+    return
+  fi
 
   echo "# test modification" >> "$config"
   local checksum_before

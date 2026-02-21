@@ -27,16 +27,9 @@ jobs:
     uses: ./.github/workflows/_validate.yaml
     secrets: inherit
 
-  test-install-live:
+  bump:
     needs: [validate]
     if: ${{ always() && (needs.validate.result == 'success' || inputs.skip_validation) }}
-    uses: ./.github/workflows/_test_install.yaml
-    with:
-      mode: live
-    secrets: inherit
-
-  bump:
-    needs: [test-install-live]
     uses: ./.github/workflows/_bump_version.yaml
     with:
       bump_type: ${{ inputs.bump_type }}
@@ -46,3 +39,23 @@ jobs:
     needs: [bump]
     uses: ./.github/workflows/_create_release.yaml
     secrets: inherit
+
+  test-install-live:
+    needs: [release]
+    uses: ./.github/workflows/_test_install.yaml
+    with:
+      mode: live
+    secrets: inherit
+
+  cleanup-failed-release:
+    needs: [release, test-install-live]
+    if: ${{ always() && needs.test-install-live.result == 'failure' }}
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Delete failed release
+        run: |
+          echo "Install test failed — deleting release ${{ needs.release.outputs.tag }}"
+          gh release delete "${{ needs.release.outputs.tag }}" --yes \
+            --repo "${{ github.repository }}"
