@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [[ -z "${KAITOSHOME:-}" ]]; then
+  echo "fatal: KAITOSHOME must be set before running install.sh" >&2
+  exit 1
+fi
+
 # shellcheck disable=SC1091
 source "$KAITOSHOME/.envrc"
 
@@ -46,6 +51,12 @@ __install__FLAG_RESET_CONFIGS=false
 
 function main() {
   parse_flags "$@"
+
+  for cmd in jq curl unzip; do
+    if ! command -v "$cmd" &>/dev/null; then
+      fatal "Required command not found: $cmd"
+    fi
+  done
 
   log_banner "Installing Kaitos"
 
@@ -159,9 +170,9 @@ function patch_rc() {
   local source_line="# kaitos"$'\n'"[ -f \"$env_path\" ] && source \"$env_path\""
   local rc_file
 
-  rc_file="$(__install__detect_rc_file)" || return 1
+  rc_file="$(__install__detect_rc_file)" || return 0
 
-  if grep -qF "# kaitos" "$rc_file" 2>/dev/null; then
+  if grep -qF "$env_path" "$rc_file" 2>/dev/null; then
     log "Shell rc already patched ($rc_file)"
     return 0
   fi

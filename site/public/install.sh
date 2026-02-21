@@ -4,8 +4,8 @@
 # Downloads the latest stable release tarball, extracts it, and hands off
 # to the real installer. This script is a rarely-changed permalink.
 #
-# Dependencies: curl, tar, uname
-# No jq, no bash-specific features (POSIX sh for maximum portability).
+# Dependencies (this bootstrapper): curl or wget, tar, uname, mktemp, find, grep, sed, head
+# Shells: runs under POSIX sh, then execs /usr/bin/env bash for the main installer.
 
 set -eu
 
@@ -21,7 +21,7 @@ main() {
   info "Installing Kaitos ${_tag} for ${_os}/${_arch}"
 
   _tarball_url="https://github.com/${GITHUB_ORG}/${GITHUB_REPO}/releases/download/${_tag}/kaitos-${_tag}-${_os}-${_arch}.tar.gz"
-  _tmp_dir="$(mktemp -d)"
+  _tmp_dir="$(mktemp -d 2>/dev/null || mktemp -d -t kaitos)"
   trap 'rm -rf "$_tmp_dir"' EXIT
 
   info "Downloading ${_tarball_url}..."
