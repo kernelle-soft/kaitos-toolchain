@@ -21,43 +21,41 @@ EOF
 
 log() { echo "$@" >&2; }
 
+ISSUE_SOFT_CAP=100
+
 function main() {
   parse_args "$@"
 
-  local all_issues untriaged count
+  local untriaged count
 
-  all_issues=$(fetch_open_issues)
-  untriaged=$(filter_untriaged "$all_issues")
+  untriaged=$(fetch_untriaged_issues)
 
   count=$(echo "$untriaged" | jq length)
-  log "Found $count untriaged issue(s)"
+
+  if [ "$count" -gt "$ISSUE_SOFT_CAP" ]; then
+    log "WARNING: untriaged issues exceed cap of $ISSUE_SOFT_CAP."
+    log "Only the oldest $ISSUE_SOFT_CAP will be triaged this run."
+    untriaged=$(echo "$untriaged" | jq ".[:$ISSUE_SOFT_CAP]")
+  fi
 
   echo "$untriaged"
 }
 
-function fetch_open_issues() {
-  gh issue list \
+: <<'DOC'
+  Searches for open issues that have not yet been processed by the agentic
+  workflow (no agentic-* labels). Results are sorted oldest-first so the
+  backlog drains FIFO. Fetches one beyond the soft cap to detect overflow.
+DOC
+function fetch_untriaged_issues() {
+  gh search issues \
     --repo "$GITHUB_REPOSITORY" \
     --state open \
-    --json number,labels \
-    --limit 999
-}
-
-: <<'DOC'
-  Filters out issues that have already been processed by the agentic workflow.
-  Any issue carrying an agentic-* label (candidate, triaged, or greenlit)
-  is considered processed and excluded from the result.
-DOC
-function filter_untriaged() {
-  local all_issues="$1"
-
-  echo "$all_issues" | jq '[.[]
-    | select(
-        .labels | map(.name) | any(startswith("agentic-"))
-        | not
-      )
-    | .number
-  ]'
+    --sort created \
+    --order asc \
+    --json number \
+    --limit "$((ISSUE_SOFT_CAP + 1))" \
+    -- -label:agentic-triaged -label:agentic-candidate -label:agentic-greenlit \
+    | jq '[.[].number]'
 }
 
 : <<'DOC'
