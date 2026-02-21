@@ -50,7 +50,7 @@ jobs:
       max-parallel: 3
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Fetch issue and label catalog
         id: prepare
