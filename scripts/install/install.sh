@@ -126,7 +126,7 @@ function install_config() {
   fi
 
   mkdir -p "$__install__CONFIG_DIR"
-  sed "s/__GODOT_VERSION__/$GODOT_VERSION/g" "$template" > "$target"
+  sed "s|__GODOT_VERSION__|$GODOT_VERSION|g" "$template" > "$target"
   log "Installed config to $target"
 }
 
@@ -145,8 +145,8 @@ function install_shell_env() {
 
   mkdir -p "$__install__SHELL_ENV_DIR"
   sed \
-    -e "s/__KAITOS_VERSION__/$kaitos_version/g" \
-    -e "s/__GODOT_VERSION__/$GODOT_VERSION/g" \
+    -e "s|__KAITOS_VERSION__|$kaitos_version|g" \
+    -e "s|__GODOT_VERSION__|$GODOT_VERSION|g" \
     "$template" > "$target"
   log "Installed shell env to $target"
 }
