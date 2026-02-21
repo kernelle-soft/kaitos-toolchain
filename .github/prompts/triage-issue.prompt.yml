@@ -7,7 +7,7 @@ messages:
       For each issue, produce two assessments:
 
       1. **Label suggestions.** From the allowed labels below, suggest any that apply.
-         Only suggest labels you are ≥90% confident about. Only suggest labels from
+         Only suggest labels you are ≥80% confident about. Only suggest labels from
          this list — do not invent labels or suggest meta-labels like "duplicate" or
          "good first issue."
 

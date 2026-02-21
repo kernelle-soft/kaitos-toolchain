@@ -6,7 +6,7 @@ USAGE="$(cat <<EOF
 Applies agentic triage results to a GitHub issue.
 
 Parses the structured JSON response from the triage model, applies any
-suggested labels, tags the issue as agentic-candidate (>=90% confidence)
+suggested labels, tags the issue as agentic-candidate (>=80% confidence)
 or agentic-triaged, and posts an assessment comment.
 
 Usage: agentic_triage.sh [-h] <issue_number> <response_file>
@@ -67,13 +67,13 @@ function apply_labels() {
 }
 
 : <<'DOC'
-  Returns "agentic-candidate" if confidence meets the threshold (>=90),
+  Returns "agentic-candidate" if confidence meets the threshold (>=80),
   "agentic-triaged" otherwise.
 DOC
 function resolve_agentic_label() {
   local confidence="$1"
 
-  if [[ $(echo "$confidence" | jq '. >= 90') == "true" ]]; then
+  if [[ $(echo "$confidence" | jq '. >= 80') == "true" ]]; then
     echo "agentic-candidate"
   else
     echo "agentic-triaged"
