@@ -108,7 +108,7 @@ DOC
 function post_comment() {
   local tmp
   tmp=$(mktemp)
-  trap 'rm -f "$tmp"' EXIT INT TERM
+  trap "rm -f '$tmp'" EXIT INT TERM
 
   format_comment "$@" > "$tmp"
 
