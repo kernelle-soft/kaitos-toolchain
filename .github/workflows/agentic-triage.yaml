@@ -19,6 +19,7 @@ jobs:
   collect:
     runs-on: ubuntu-24.04
     permissions:
+      contents: read
       issues: read
     outputs:
       issue_numbers: ${{ steps.filter.outputs.numbers }}
