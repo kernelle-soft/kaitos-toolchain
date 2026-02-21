@@ -13,10 +13,14 @@ GITHUB_ORG="kernelle-soft"
 GITHUB_REPO="kaitos-toolchain"
 GITHUB_API="https://api.github.com/repos/${GITHUB_ORG}/${GITHUB_REPO}"
 
+_FLAG_PRERELEASE=false
+
 main() {
+  parse_flags "$@"
+
   _os="$(detect_os)"
   _arch="$(detect_arch)"
-  _tag="$(resolve_latest_tag)"
+  _tag="$(resolve_tag)"
 
   info "Installing Kaitos ${_tag} for ${_os}/${_arch}"
 
@@ -40,8 +44,23 @@ main() {
   # Set KAITOSHOME so .envrc enters install context when the installer sources it
   export KAITOSHOME="$_extract_dir"
 
-  # Hand off to the real installer
-  /usr/bin/env bash "$_extract_dir/scripts/install/install.sh" "$@"
+  # Hand off to the real installer (forward only installer flags)
+  /usr/bin/env bash "$_extract_dir/scripts/install/install.sh" $_installer_args
+}
+
+parse_flags() {
+  _installer_args=""
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      -p|--prerelease)
+        _FLAG_PRERELEASE=true
+        ;;
+      *)
+        _installer_args="$_installer_args $1"
+        ;;
+    esac
+    shift
+  done
 }
 
 detect_os() {
@@ -64,16 +83,19 @@ detect_arch() {
   esac
 }
 
-resolve_latest_tag() {
-  _url="${GITHUB_API}/releases/latest"
+resolve_tag() {
+  if [ "$_FLAG_PRERELEASE" = true ]; then
+    _url="${GITHUB_API}/releases?per_page=1"
+  else
+    _url="${GITHUB_API}/releases/latest"
+  fi
 
-  _response="$(download_text "$_url")" || die "Failed to fetch latest release from GitHub API"
+  _response="$(download_text "$_url")" || die "Failed to fetch release info from GitHub API"
 
-  # Extract tag_name without jq — match "tag_name": "..."
   _tag="$(printf '%s' "$_response" | grep '"tag_name"' | head -n 1 | sed 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')"
 
   if [ -z "$_tag" ]; then
-    die "Could not determine latest release tag"
+    die "Could not determine release tag"
   fi
 
   printf '%s' "$_tag"
