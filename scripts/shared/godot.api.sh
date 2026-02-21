@@ -134,21 +134,21 @@ function godot_download() {
   local tmp_dir
   tmp_dir="$(mktemp -d)"
 
+  local _rc=0
   if ! curl -fSL "$url" -o "$tmp_dir/$zip_name"; then
     error "Failed to download $url"
-    rm -rf "$tmp_dir"
-    return 1
-  fi
-
-  mkdir -p "$cache_dir"
-
-  if ! unzip -qo "$tmp_dir/$zip_name" -d "$cache_dir"; then
-    error "Failed to extract $zip_name"
-    rm -rf "$cache_dir" "$tmp_dir"
-    return 1
+    _rc=1
+  else
+    mkdir -p "$cache_dir"
+    if ! unzip -qo "$tmp_dir/$zip_name" -d "$cache_dir"; then
+      error "Failed to extract $zip_name"
+      rm -rf "$cache_dir"
+      _rc=1
+    fi
   fi
 
   rm -rf "$tmp_dir"
+  [[ $_rc -eq 0 ]] || return 1
 
   if [[ ! -x "$binary_path" ]]; then
     chmod +x "$binary_path"
