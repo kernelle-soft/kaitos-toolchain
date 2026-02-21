@@ -98,7 +98,10 @@ function test_shell_rc() {
   log "--- Shell rc ---"
 
   local rc_file
-  rc_file="$(__test__detect_rc_file)" || { __test__fail "rc file check — unsupported shell: ${SHELL:-<unset>}"; return; }
+  if ! rc_file="$(__test__detect_rc_file)"; then
+    __test__fail "rc file check — unsupported shell: ${SHELL:-<unset>}"
+    return
+  fi
 
   assert_contains "$rc_file" \
     "# kaitos" \
@@ -111,7 +114,10 @@ function test_idempotency() {
 
   local config="$__test__XDG_CONFIG_HOME/kaitos/settings.yaml"
   local rc_file
-  rc_file="$(__test__detect_rc_file)" || { __test__fail "idempotency rc check — unsupported shell: ${SHELL:-<unset>}"; return; }
+  if ! rc_file="$(__test__detect_rc_file)"; then
+    __test__fail "idempotency rc check — unsupported shell: ${SHELL:-<unset>}"
+    return
+  fi
 
   if [[ ! -f "$config" ]]; then
     __test__fail "Config missing before idempotency check: $config"
