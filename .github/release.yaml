@@ -11,28 +11,40 @@ changelog:
       labels: [breaking]
 
     - title: "New Features"
-      labels: [feature, enhancement]
+      labels: [enhancement]
 
     - title: "New Language Features"
-      labels: [vertex, edge, flair, vsave, dsl]
+      labels: [vertex, edge, flair, vsave]
 
     - title: "Runtime Changes"
       labels: [vm, ecs, runtime, performance]
 
     - title: "Bindings Changes"
-      labels: [godot, bevy, binding]
+      labels: [godot, bevy]
 
     - title: "Bug Fixes"
-      labels: [bug, fix]
+      labels: [bug]
 
-    - title: "Documentation Updates"
-      labels: [docs, documentation]
+    - title: "Security"
+      labels: [security]
+
+    - title: "Environment & Install"
+      labels: [environment, install]
+
+    - title: "Documentation"
+      labels: [docs, site]
+
+    - title: "Testing"
+      labels: [testing]
 
     - title: "Maintenance"
-      labels: [chore, ci, refactor, internal]
+      labels: [chore, ci, refactor]
 
     - title: "Dependencies"
       labels: [dependencies]
+
+    - title: "🤖 Agentic Contributions"
+      labels: [agentic-greenlit]
 
     - title: "Other Changes"
       labels: ["*"]
