@@ -24,7 +24,7 @@ Expects:
 EOF
 )"
 
-command -v log &>/dev/null || log() { echo "$@"; }
+log() { echo "$@" >&2; }
 
 ARG_ISSUE_NUMBER=""
 ARG_RESPONSE_FILE=""
@@ -32,52 +32,38 @@ ARG_RESPONSE_FILE=""
 function main() {
   parse_args "$@"
 
-  local response confidence rationale suggested agentic_label suggested_list
+  local confidence rationale suggested_csv agentic_label
 
-  response="$(cat "$ARG_RESPONSE_FILE")"
+  confidence=$(jq -r '.agentic_confidence' "$ARG_RESPONSE_FILE")
+  rationale=$(jq -r '.agentic_rationale' "$ARG_RESPONSE_FILE")
+  suggested_csv=$(jq -r '
+    .suggested_labels | if length > 0 then join(",") else "" end
+  ' "$ARG_RESPONSE_FILE")
 
-  confidence="$(echo "$response" | jq -r '.agentic_confidence')"
-  rationale="$(echo "$response" | jq -r '.agentic_rationale')"
+  agentic_label=$(resolve_agentic_label "$confidence")
 
-  # .suggested_labels is always present (schema-enforced) but may be empty.
-  suggested="$(echo "$response" | jq -r '.suggested_labels[]' 2>/dev/null || true)"
+  apply_labels "$agentic_label" "$suggested_csv"
+  post_comment "$confidence" "$rationale" "$suggested_csv" "$agentic_label"
+}
 
-  apply_suggested_labels "$suggested"
+: <<'DOC'
+  Applies the agentic triage label and any model-suggested labels to the issue.
+  Suggested labels are best-effort (the model may hallucinate a label that
+  doesn't exist in the repo), so that call is non-fatal.
+DOC
+function apply_labels() {
+  local agentic_label="$1"
+  local suggested_csv="$2"
 
-  agentic_label="$(resolve_agentic_label "$confidence")"
+  if [[ -n "$suggested_csv" ]]; then
+    gh issue edit "$ARG_ISSUE_NUMBER" \
+      --add-label "$suggested_csv" \
+      --repo "$GITHUB_REPOSITORY" || true
+  fi
 
   gh issue edit "$ARG_ISSUE_NUMBER" \
     --add-label "$agentic_label" \
     --repo "$GITHUB_REPOSITORY"
-
-  suggested_list="$(
-    echo "$response" \
-    | jq -r '.suggested_labels | join(", ")' 2>/dev/null \
-    || echo "none"
-  )"
-
-  post_comment "$confidence" "$rationale" "$suggested_list" "$agentic_label"
-}
-
-: <<'DOC'
-  Adds the model's suggested labels to the issue. Non-fatal if a label
-  does not exist (the model may occasionally hallucinate one).
-DOC
-function apply_suggested_labels() {
-  local suggested="$1"
-
-  if [[ -z "$suggested" ]]; then
-    return
-  fi
-
-  # Join newline-delimited label names into the comma-separated
-  # format that gh --add-label expects.
-  local label_csv
-  label_csv="$(echo "$suggested" | paste -sd, -)"
-
-  gh issue edit "$ARG_ISSUE_NUMBER" \
-    --add-label "$label_csv" \
-    --repo "$GITHUB_REPOSITORY" || true
 }
 
 : <<'DOC'
@@ -97,26 +83,33 @@ function resolve_agentic_label() {
 }
 
 : <<'DOC'
-  Posts the triage assessment as a comment on the issue.
+  Writes the triage assessment markdown to stdout.
 DOC
-function post_comment() {
+function format_comment() {
   local confidence="$1" rationale="$2"
-  local suggested_list="$3" agentic_label="$4"
+  local suggested_csv="$3" agentic_label="$4"
 
-  {
-    echo "### Agentic Triage Assessment"
-    echo ""
-    echo "**Agentic fitness:** ${confidence}%"
-    echo "**Rationale:** ${rationale}"
-    echo "**Labels suggested:** ${suggested_list}"
-    echo "**Triage result:** \`${agentic_label}\`"
+# I really wish heredocs did indentation better :/ Oh well.
+cat <<COMMENT
+### Agentic Triage Assessment
 
-    if [[ "$agentic_label" = "agentic-candidate" ]]; then
-      echo ""
-      echo "> This issue looks like a good candidate for agentic implementation."
-      echo "> A maintainer can re-tag as \`agentic-greenlit\` to approve."
-    fi
-  } > comment.md
+**Agentic fitness:** ${confidence}%
+**Rationale:** ${rationale}
+**Labels suggested:** ${suggested_csv:-none}
+**Triage result:** \`${agentic_label}\`
+COMMENT
+
+  if [[ "$agentic_label" = "agentic-candidate" ]]; then
+cat <<'COMMENT'
+
+> This issue looks like a good candidate for agentic implementation.
+> A maintainer can re-tag as `agentic-greenlit` to approve.
+COMMENT
+  fi
+}
+
+function post_comment() {
+  format_comment "$@" > comment.md
 
   gh issue comment "$ARG_ISSUE_NUMBER" \
     --body-file comment.md \

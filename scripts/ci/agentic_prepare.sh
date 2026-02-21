@@ -23,7 +23,7 @@ Expects:
 EOF
 )"
 
-command -v log &>/dev/null || log() { echo "$@"; }
+log() { echo "$@" >&2; }
 
 ARG_ISSUE_NUMBER=""
 
@@ -44,25 +44,33 @@ function fetch_issue() {
 }
 
 : <<'DOC'
-  Fetches the repo's label catalog and formats each as "name - description",
-  one per line, for injection into the triage prompt.
-
-  Labels excluded from the output (the model should never suggest these):
-    - agentic-*:       managed by the triage/implement workflows
-    - duplicate, invalid, wontfix, question: require human judgment
-    - help wanted, good first issue:         community meta-labels
-    - skip-changelog:  release process label
+  Fetches the repo's label catalog, removes labels the model should never
+  suggest, and writes the survivors as "name — description" lines for
+  injection into the triage prompt.
 DOC
 function fetch_labels() {
-  gh api "repos/${GITHUB_REPOSITORY}/labels" --paginate \
-    -q '.[]
-      | select(.name |
-          test("^agentic-")
-          or test("^(duplicate|invalid|wontfix|question|help wanted|good first issue|skip-changelog)$")
-          | not
-        )
-      | "\(.name) — \(.description // "no description")"' \
-    > labels.txt
+  local all_labels
+
+  all_labels=$(gh api "repos/${GITHUB_REPOSITORY}/labels" --paginate)
+
+  # Labels excluded from the triage prompt:
+  #   agentic-*:      managed by the triage/implement workflows
+  #   meta-labels:    require human judgment (duplicate, invalid, etc.)
+  #   skip-changelog: release process label
+  local meta_labels='[
+    "duplicate", "invalid", "wontfix", "question",
+    "help wanted", "good first issue", "skip-changelog"
+  ]'
+
+  echo "$all_labels" | jq -r --argjson meta "$meta_labels" '
+    .[]
+    | select(
+        (.name | startswith("agentic-"))
+        or (.name as $n | $meta | index($n) != null)
+        | not
+      )
+    | "\(.name) — \(.description // "no description")"
+  ' > labels.txt
 }
 
 : <<'DOC'

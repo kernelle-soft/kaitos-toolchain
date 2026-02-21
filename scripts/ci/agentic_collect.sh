@@ -7,8 +7,8 @@ Finds open issues not yet assessed by the agentic triage workflow.
 
 Usage: agentic_collect.sh [-h]
 
-Outputs the list of untriaged issue numbers as a JSON array to \$GITHUB_OUTPUT
-for use as a matrix in downstream workflow jobs.
+Prints a JSON array of untriaged issue numbers to stdout.
+Diagnostics are written to stderr.
 
 Flags:
   -h, --help    Show this help text.
@@ -16,11 +16,10 @@ Flags:
 Expects:
   GH_TOKEN             GitHub token with issues:read
   GITHUB_REPOSITORY    owner/repo
-  GITHUB_OUTPUT        Actions output file
 EOF
 )"
 
-command -v log &>/dev/null || log() { echo "$@"; }
+log() { echo "$@" >&2; }
 
 function main() {
   parse_args "$@"
@@ -33,13 +32,7 @@ function main() {
   count=$(echo "$untriaged" | jq length)
   log "Found $count untriaged issue(s)"
 
-  if [ "$count" -eq 0 ]; then
-    echo "has_issues=false" >> "$GITHUB_OUTPUT"
-    echo "numbers=[]" >> "$GITHUB_OUTPUT"
-  else
-    echo "has_issues=true" >> "$GITHUB_OUTPUT"
-    echo "numbers=$untriaged" >> "$GITHUB_OUTPUT"
-  fi
+  echo "$untriaged"
 }
 
 function fetch_open_issues() {
@@ -52,20 +45,15 @@ function fetch_open_issues() {
 
 : <<'DOC'
   Filters out issues that have already been processed by the agentic workflow.
-  An issue is considered "processed" if it carries any of the three agentic
-  lifecycle labels: agentic-candidate, agentic-triaged, or agentic-greenlit.
+  Any issue carrying an agentic-* label (candidate, triaged, or greenlit)
+  is considered processed and excluded from the result.
 DOC
 function filter_untriaged() {
   local all_issues="$1"
 
   echo "$all_issues" | jq '[.[]
     | select(
-        .labels | map(.name)
-        | any(
-            . == "agentic-candidate"
-            or . == "agentic-triaged"
-            or . == "agentic-greenlit"
-          )
+        .labels | map(.name) | any(startswith("agentic-"))
         | not
       )
     | .number

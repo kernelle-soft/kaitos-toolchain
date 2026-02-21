@@ -20,7 +20,7 @@ Expects:
 EOF
 )"
 
-command -v log &>/dev/null || log() { echo "$@"; }
+log() { echo "$@" >&2; }
 
 function main() {
   parse_args "$@"
@@ -42,9 +42,6 @@ function main() {
   done
 }
 
-: <<'DOC'
-  Grabs the list of issues that have been greenlit for agentic autoimplementation.
-DOC
 function fetch_greenlit_issues() {
   gh issue list \
     --repo "$GITHUB_REPOSITORY" \
@@ -62,6 +59,7 @@ DOC
 function assign_copilot() {
   local number="$1"
 
+  # Workflow commands: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions
   echo "::group::Issue #$number"
   log "Assigning Copilot to issue #$number..."
 
