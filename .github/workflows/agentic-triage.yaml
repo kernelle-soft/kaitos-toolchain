@@ -55,7 +55,7 @@ jobs:
       - name: Fetch issue and label catalog
         env:
           GH_TOKEN: ${{ github.token }}
-        run: scripts/ci/agentic_prepare.sh ${{ matrix.issue_number }}
+        run: scripts/ci/agentic_prepare.sh "${{ matrix.issue_number }}"
 
       - name: Assess issue
         id: assess
@@ -73,5 +73,5 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: >-
           scripts/ci/agentic_triage.sh
-          ${{ matrix.issue_number }}
+          "${{ matrix.issue_number }}"
           "${{ steps.assess.outputs.response-file }}"
