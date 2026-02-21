@@ -28,10 +28,11 @@ main() {
   _os="$(detect_os)"
   _arch="$(detect_arch)"
   _tag="$(resolve_tag)"
+  _version="${_tag#v}"
 
   info "Installing Kaitos ${_tag} for ${_os}/${_arch}"
 
-  _tarball_url="https://github.com/${GITHUB_ORG}/${GITHUB_REPO}/releases/download/${_tag}/kaitos-${_tag}-${_os}-${_arch}.tar.gz"
+  _tarball_url="https://github.com/${GITHUB_ORG}/${GITHUB_REPO}/releases/download/${_tag}/kaitos-${_version}-${_os}-${_arch}.tar.gz"
   _tmp_dir="$(mktemp -d 2>/dev/null || mktemp -d -t kaitos)"
   trap 'rm -rf "$_tmp_dir"' EXIT
 
