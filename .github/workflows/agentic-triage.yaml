@@ -25,7 +25,7 @@ jobs:
       issue_numbers: ${{ steps.filter.outputs.numbers }}
       has_issues: ${{ steps.filter.outputs.has_issues }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Find untriaged issues
         id: filter
         env:
