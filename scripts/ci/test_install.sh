@@ -197,12 +197,12 @@ function assert_not_equal() {
 
 function __test__pass() {
   log "  PASS: $1"
-  (( __test__PASS++ ))
+  __test__PASS=$(( __test__PASS + 1 ))
 }
 
 function __test__fail() {
   error "  FAIL: $1"
-  (( __test__FAIL++ ))
+  __test__FAIL=$(( __test__FAIL + 1 ))
 }
 
 main "$@"
