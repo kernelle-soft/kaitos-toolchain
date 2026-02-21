@@ -165,6 +165,7 @@ function __install__json_get() {
 
   if [[ -z "$value" ]]; then
     fatal "Could not read '$key' from $file"
+    return 1
   fi
 
   printf '%s' "$value"
