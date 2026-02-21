@@ -53,12 +53,14 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Fetch issue and label catalog
+        id: prepare
         env:
           GH_TOKEN: ${{ github.token }}
         run: scripts/ci/agentic_prepare.sh "${{ matrix.issue_number }}"
 
       - name: Assess issue
         id: assess
+        if: steps.prepare.outputs.auto_triage != 'true'
         uses: actions/ai-inference@v1
         with:
           prompt-file: .github/prompts/triage-issue.prompt.yml
@@ -74,4 +76,4 @@ jobs:
         run: >-
           scripts/ci/agentic_triage.sh
           "${{ matrix.issue_number }}"
-          "${{ steps.assess.outputs.response-file }}"
+          "${{ steps.prepare.outputs.auto_triage == 'true' && './auto_response.json' || steps.assess.outputs.response-file }}"

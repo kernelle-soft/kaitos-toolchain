@@ -14,8 +14,12 @@ Flags:
   -h, --help      Show this help text.
 
 Writes:
-  issue.json      Issue metadata (number, title, body, current labels).
-  labels.txt      Filtered label catalog (name - description), one per line.
+  issue.json              Issue metadata (number, title, body, current labels).
+  labels.txt              Filtered label catalog (name - description), one per line.
+  auto_response.json      Synthetic triage response (only if body exceeds threshold).
+
+Outputs (via GITHUB_OUTPUT):
+  auto_triage=true        Set when the issue body is too long for model assessment.
 
 Expects:
   GH_TOKEN             GitHub token with issues:read
@@ -26,20 +30,62 @@ EOF
 log() { echo "$@" >&2; }
 
 ARG_ISSUE_NUMBER=""
+BODY_LENGTH_LIMIT=8000
 
 function main() {
   parse_args "$@"
-  fetch_issue
-  fetch_labels
+
+  local raw_issue
+  raw_issue=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${ARG_ISSUE_NUMBER}")
+
+  if check_body_length "$raw_issue"; then
+    write_issue "$raw_issue"
+    fetch_labels
+  fi
 }
 
 : <<'DOC'
-  Fetches the issue and extracts only the fields the triage prompt needs:
-  number, title, body, and current label names.
+  Checks the raw body length against BODY_LENGTH_LIMIT. If the body is too
+  long, writes a synthetic response file and signals the workflow to skip
+  the model call. Returns non-zero to short-circuit the rest of main.
 DOC
-function fetch_issue() {
-  gh api "repos/${GITHUB_REPOSITORY}/issues/${ARG_ISSUE_NUMBER}" \
-    | jq '{number, title, body, labels: [.labels[].name]}' \
+function check_body_length() {
+  local raw_issue="$1"
+  local body_len
+
+  body_len=$(echo "$raw_issue" | jq '.body | length')
+
+  if [ "$body_len" -gt "$BODY_LENGTH_LIMIT" ]; then
+    log "Issue body is $body_len chars (limit: $BODY_LENGTH_LIMIT); auto-triaging."
+    write_auto_response "$body_len"
+    echo "auto_triage=true" >> "${GITHUB_OUTPUT:-/dev/null}"
+    return 1
+  fi
+}
+
+: <<'DOC'
+  Writes a synthetic triage response for issues that are too long to
+  warrant a model call.
+DOC
+function write_auto_response() {
+  local body_len="$1"
+
+  jq -n --argjson len "$body_len" '{
+    suggested_labels: [],
+    agentic_confidence: 0,
+    agentic_rationale: ("Auto-triaged: issue body is \($len) chars, exceeding the length threshold. Oversized issues are unlikely to be well-scoped for agentic implementation.")
+  }' > auto_response.json
+}
+
+: <<'DOC'
+  Extracts the fields the triage prompt needs from the raw API response:
+  number, title, body (truncated to 4K chars), and current label names.
+DOC
+function write_issue() {
+  local raw_issue="$1"
+
+  echo "$raw_issue" \
+    | jq '{number, title, body: (.body[:4000] // ""), labels: [.labels[].name]}' \
     > issue.json
 }
 

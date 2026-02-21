@@ -20,6 +20,8 @@ Expects:
 EOF
 )"
 
+GREENLIT_SOFT_CAP=100
+
 log() { echo "$@" >&2; }
 
 function main() {
@@ -48,7 +50,7 @@ function fetch_greenlit_issues() {
     --state open \
     --label "agentic-greenlit" \
     --json number \
-    --limit 999 \
+    --limit "$GREENLIT_SOFT_CAP" \
     -q '[.[].number]'
 }
 
