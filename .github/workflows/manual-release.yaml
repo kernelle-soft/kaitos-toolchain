@@ -58,4 +58,4 @@ jobs:
         run: |
           echo "Install test failed — deleting release ${{ needs.release.outputs.tag }}"
           gh release delete "${{ needs.release.outputs.tag }}" --yes \
-            --repo "${{ github.repository }}"
+            --cleanup-tag --repo "${{ github.repository }}"
