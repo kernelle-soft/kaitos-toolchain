@@ -61,6 +61,13 @@ function main() {
     exit 0
   fi
 
+  # Generate SHA256SUMS for all release artifacts. Strip any directory prefix
+  # from filenames in the output so entries match what the bootstrapper expects.
+  if [[ ${#ARG_ARTIFACTS[@]} -gt 0 ]]; then
+    sha256sum "${ARG_ARTIFACTS[@]}" | sed 's|  .*/|  |' > SHA256SUMS
+    ARG_ARTIFACTS+=("SHA256SUMS")
+  fi
+
   # Intentionally leaving out the quotes on $prerelease_flag.
   # Otherwise, "" will be passed explicitly if prerelease isn't set,
   # breaking the pipeline.

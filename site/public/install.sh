@@ -4,7 +4,7 @@
 # Downloads the latest stable release tarball, extracts it, and hands off
 # to the real installer. This script is a rarely-changed permalink.
 #
-# Dependencies (this bootstrapper): curl or wget, tar, uname, mktemp, find, grep, sed, head
+# Dependencies (this bootstrapper): curl or wget, tar, uname, mktemp, find, grep, sed, head, awk, sha256sum or shasum
 # Shells: runs under POSIX sh, then execs /usr/bin/env bash for the main installer.
 
 set -eu
@@ -32,12 +32,18 @@ main() {
 
   info "Installing Kaitos ${_tag} for ${_os}/${_arch}"
 
-  _tarball_url="https://github.com/${GITHUB_ORG}/${GITHUB_REPO}/releases/download/${_tag}/kaitos-${_version}-${_os}-${_arch}.tar.gz"
+  _tarball_name="kaitos-${_version}-${_os}-${_arch}.tar.gz"
+  _tarball_url="https://github.com/${GITHUB_ORG}/${GITHUB_REPO}/releases/download/${_tag}/${_tarball_name}"
+  _sums_url="https://github.com/${GITHUB_ORG}/${GITHUB_REPO}/releases/download/${_tag}/SHA256SUMS"
   _tmp_dir="$(mktemp -d 2>/dev/null || mktemp -d -t kaitos)"
   trap 'rm -rf "$_tmp_dir"' EXIT
 
   info "Downloading ${_tarball_url}..."
   download "$_tarball_url" "$_tmp_dir/kaitos.tar.gz"
+
+  info "Verifying checksum..."
+  download "$_sums_url" "$_tmp_dir/SHA256SUMS"
+  verify_checksum "$_tmp_dir/kaitos.tar.gz" "$_tarball_name" "$_tmp_dir/SHA256SUMS"
 
   info "Extracting..."
   tar -xzf "$_tmp_dir/kaitos.tar.gz" -C "$_tmp_dir"
@@ -92,6 +98,31 @@ resolve_tag() {
   fi
 
   printf '%s' "$_tag"
+}
+
+verify_checksum() {
+  _vc_file="$1"
+  _vc_name="$2"
+  _vc_sums="$3"
+
+  _vc_expected="$(grep "  ${_vc_name}$" "$_vc_sums" | awk '{print $1}')"
+  if [ -z "$_vc_expected" ]; then
+    die "Checksum for ${_vc_name} not found in SHA256SUMS"
+  fi
+
+  if command -v sha256sum >/dev/null 2>&1; then
+    _vc_actual="$(sha256sum "$_vc_file" | awk '{print $1}')"
+  elif command -v shasum >/dev/null 2>&1; then
+    _vc_actual="$(shasum -a 256 "$_vc_file" | awk '{print $1}')"
+  else
+    die "No SHA-256 utility found (tried sha256sum, shasum)"
+  fi
+
+  if [ "$_vc_actual" != "$_vc_expected" ]; then
+    die "Checksum verification failed for ${_vc_name}"
+  fi
+
+  info "Checksum OK."
 }
 
 download() {
