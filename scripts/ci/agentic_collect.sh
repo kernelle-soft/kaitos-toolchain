@@ -55,7 +55,7 @@ function fetch_untriaged_issues() {
     --json number \
     --limit "$((ISSUE_SOFT_CAP + 1))" \
     -- -label:agentic-triaged -label:agentic-candidate -label:agentic-greenlit \
-    | jq '[.[].number]'
+    | jq -c '[.[].number]'
 }
 
 : <<'DOC'

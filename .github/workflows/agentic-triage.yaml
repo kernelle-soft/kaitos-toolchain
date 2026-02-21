@@ -31,7 +31,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          numbers=$(scripts/ci/agentic_collect.sh)
+          numbers=$(scripts/ci/agentic_collect.sh | jq -c '.')
           has_issues=$([ "$(echo "$numbers" | jq length)" -gt 0 ] && echo true || echo false)
           echo "has_issues=$has_issues" >> "$GITHUB_OUTPUT"
           echo "numbers=$numbers" >> "$GITHUB_OUTPUT"
