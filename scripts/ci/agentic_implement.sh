@@ -38,7 +38,7 @@ function main() {
 
   local number
   for number in $(echo "$issues" | jq -r '.[]'); do
-    assign_copilot "$number"
+    try_assign_copilot "$number"
   done
 }
 
@@ -53,22 +53,33 @@ function fetch_greenlit_issues() {
 }
 
 : <<'DOC'
-  Assigns Copilot to a single issue via the REST assignees endpoint.
+  Adds "copilot" to the assignees list for the given issue number.
+DOC
+function add_copilot_assignee() {
+  local number="$1"
+
+  gh api "repos/${GITHUB_REPOSITORY}/issues/${number}/assignees" \
+    --method POST \
+    -f "assignees[]=copilot" \
+    --silent
+}
+
+: <<'DOC'
+  Attempts to assign Copilot to a single issue.
   Non-fatal — logs a warning and continues if assignment fails.
 DOC
-function assign_copilot() {
+function try_assign_copilot() {
   local number="$1"
 
   # Workflow commands: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions
   echo "::group::Issue #$number"
   log "Assigning Copilot to issue #$number..."
 
-  gh api "repos/${GITHUB_REPOSITORY}/issues/${number}/assignees" \
-    --method POST \
-    -f "assignees[]=copilot" \
-    --silent \
-  && log "Assigned." \
-  || echo "::warning::Failed to assign Copilot to issue #$number"
+  if add_copilot_assignee "$number"; then
+    log "Assigned."
+  else
+    echo "::warning::Failed to assign Copilot to issue #$number"
+  fi
 
   echo "::endgroup::"
 }

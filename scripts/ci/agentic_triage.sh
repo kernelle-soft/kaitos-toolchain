@@ -89,22 +89,18 @@ function format_comment() {
   local confidence="$1" rationale="$2"
   local suggested_csv="$3" agentic_label="$4"
 
-# I really wish heredocs did indentation better :/ Oh well.
-cat <<COMMENT
-### Agentic Triage Assessment
-
-**Agentic fitness:** ${confidence}%
-**Rationale:** ${rationale}
-**Labels suggested:** ${suggested_csv:-none}
-**Triage result:** \`${agentic_label}\`
-COMMENT
+  printf '%s\n' \
+    "### Agentic Triage Assessment" \
+    "" \
+    "**Agentic fitness:** ${confidence}%" \
+    "**Rationale:** ${rationale}" \
+    "**Labels suggested:** ${suggested_csv:-none}" \
+    "**Triage result:** \`${agentic_label}\`"
 
   if [[ "$agentic_label" = "agentic-candidate" ]]; then
-cat <<'COMMENT'
-
-> This issue looks like a good candidate for agentic implementation.
-> A maintainer can re-tag as `agentic-greenlit` to approve.
-COMMENT
+    printf '\n%s\n%s\n' \
+      "> This issue looks like a good candidate for agentic implementation." \
+      "> A maintainer can re-tag as \`agentic-greenlit\` to approve."
   fi
 }
 
