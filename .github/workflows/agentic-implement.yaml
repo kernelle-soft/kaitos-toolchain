@@ -17,6 +17,7 @@ on:
 
 jobs:
   implement:
+    name: implement
     runs-on: ubuntu-24.04
     permissions:
       contents: read

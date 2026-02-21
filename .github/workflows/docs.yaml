@@ -19,6 +19,7 @@ concurrency:
 
 jobs:
   build:
+    name: build
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
@@ -43,6 +44,7 @@ jobs:
           path: ./site/dist
 
   deploy:
+    name: deploy
     runs-on: ubuntu-24.04
     needs: build
     environment:

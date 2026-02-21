@@ -17,6 +17,7 @@ on:
 
 jobs:
   collect:
+    name: collect
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -37,6 +38,7 @@ jobs:
           echo "numbers=$numbers" >> "$GITHUB_OUTPUT"
 
   triage:
+    name: triage
     needs: collect
     if: needs.collect.outputs.has_issues == 'true'
     runs-on: ubuntu-24.04
