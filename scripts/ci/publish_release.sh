@@ -61,6 +61,20 @@ function main() {
     exit 0
   fi
 
+  # Generate SHA256SUMS for all release artifacts, excluding any pre-existing
+  # SHA256SUMS to avoid a self-referential catch-22. Strip any directory prefix
+  # from filenames in the output so entries match what the bootstrapper expects.
+  local _checksum_artifacts=()
+  for _artifact in ${ARG_ARTIFACTS[@]+"${ARG_ARTIFACTS[@]}"}; do
+    [[ "${_artifact##*/}" == "SHA256SUMS" ]] && continue
+    _checksum_artifacts+=("$_artifact")
+  done
+
+  if [[ ${#_checksum_artifacts[@]} -gt 0 ]]; then
+    sha256sum "${_checksum_artifacts[@]}" | sed 's|  .*/|  |' > SHA256SUMS
+    ARG_ARTIFACTS+=("SHA256SUMS")
+  fi
+
   # Intentionally leaving out the quotes on $prerelease_flag.
   # Otherwise, "" will be passed explicitly if prerelease isn't set,
   # breaking the pipeline.
