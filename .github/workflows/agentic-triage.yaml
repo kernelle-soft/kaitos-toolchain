@@ -66,6 +66,7 @@ jobs:
       - name: Apply triage results
         env:
           GH_TOKEN: ${{ github.token }}
-          RESPONSE: ${{ steps.assess.outputs.response }}
-          ISSUE_NUMBER: ${{ matrix.issue_number }}
-        run: scripts/ci/agentic_triage.sh
+        run: >-
+          scripts/ci/agentic_triage.sh
+          ${{ matrix.issue_number }}
+          "${{ steps.assess.outputs.response-file }}"

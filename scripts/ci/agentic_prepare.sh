@@ -34,7 +34,8 @@ function main() {
 }
 
 : <<'DOC'
-  Fetches the issue and extracts the fields the triage prompt needs.
+  Fetches the issue and extracts only the fields the triage prompt needs:
+  number, title, body, and current label names.
 DOC
 function fetch_issue() {
   gh api "repos/${GITHUB_REPOSITORY}/issues/${ARG_ISSUE_NUMBER}" \
@@ -43,14 +44,21 @@ function fetch_issue() {
 }
 
 : <<'DOC'
-  Fetches the repo's label catalog, filtering out workflow-managed and
-  meta-labels so the model only sees labels it is allowed to suggest.
+  Fetches the repo's label catalog and formats each as "name - description",
+  one per line, for injection into the triage prompt.
+
+  Labels excluded from the output (the model should never suggest these):
+    - agentic-*:       managed by the triage/implement workflows
+    - duplicate, invalid, wontfix, question: require human judgment
+    - help wanted, good first issue:         community meta-labels
+    - skip-changelog:  release process label
 DOC
 function fetch_labels() {
   gh api "repos/${GITHUB_REPOSITORY}/labels" --paginate \
     -q '.[]
       | select(.name |
-          test("^(agentic-|duplicate$|invalid$|wontfix$|question$|help wanted$|good first issue$|skip-changelog$)")
+          test("^agentic-")
+          or test("^(duplicate|invalid|wontfix|question|help wanted|good first issue|skip-changelog)$")
           | not
         )
       | "\(.name) — \(.description // "no description")"' \

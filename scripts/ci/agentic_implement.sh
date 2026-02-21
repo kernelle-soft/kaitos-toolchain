@@ -26,14 +26,8 @@ function main() {
   parse_args "$@"
 
   local issues count
-  issues=$(gh issue list \
-    --repo "$GITHUB_REPOSITORY" \
-    --state open \
-    --label "agentic-greenlit" \
-    --json number \
-    --limit 999 \
-    -q '[.[].number]')
 
+  issues=$(fetch_greenlit_issues)
   count=$(echo "$issues" | jq length)
   log "Found $count greenlit issue(s)"
 
@@ -49,7 +43,21 @@ function main() {
 }
 
 : <<'DOC'
+  Grabs the list of issues that have been greenlit for agentic autoimplementation.
+DOC
+function fetch_greenlit_issues() {
+  gh issue list \
+    --repo "$GITHUB_REPOSITORY" \
+    --state open \
+    --label "agentic-greenlit" \
+    --json number \
+    --limit 999 \
+    -q '[.[].number]'
+}
+
+: <<'DOC'
   Assigns Copilot to a single issue via the REST assignees endpoint.
+  Non-fatal — logs a warning and continues if assignment fails.
 DOC
 function assign_copilot() {
   local number="$1"
@@ -58,7 +66,8 @@ function assign_copilot() {
   log "Assigning Copilot to issue #$number..."
 
   gh api "repos/${GITHUB_REPOSITORY}/issues/${number}/assignees" \
-    --method POST -f "assignees[]=copilot" \
+    --method POST \
+    -f "assignees[]=copilot" \
     --silent \
   && log "Assigned." \
   || echo "::warning::Failed to assign Copilot to issue #$number"

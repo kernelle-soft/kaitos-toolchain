@@ -25,23 +25,10 @@ command -v log &>/dev/null || log() { echo "$@"; }
 function main() {
   parse_args "$@"
 
-  local untriaged count
-  untriaged=$(gh issue list \
-    --repo "$GITHUB_REPOSITORY" \
-    --state open \
-    --json number,labels \
-    --limit 999 \
-    -q '[.[]
-      | select(
-          ([.labels[].name]
-            | (contains(["agentic-candidate"])
-              or contains(["agentic-triaged"])
-              or contains(["agentic-greenlit"])
-            )
-          ) | not
-        )
-      | .number
-    ]')
+  local all_issues untriaged count
+
+  all_issues=$(fetch_open_issues)
+  untriaged=$(filter_untriaged "$all_issues")
 
   count=$(echo "$untriaged" | jq length)
   log "Found $count untriaged issue(s)"
@@ -53,6 +40,36 @@ function main() {
     echo "has_issues=true" >> "$GITHUB_OUTPUT"
     echo "numbers=$untriaged" >> "$GITHUB_OUTPUT"
   fi
+}
+
+function fetch_open_issues() {
+  gh issue list \
+    --repo "$GITHUB_REPOSITORY" \
+    --state open \
+    --json number,labels \
+    --limit 999
+}
+
+: <<'DOC'
+  Filters out issues that have already been processed by the agentic workflow.
+  An issue is considered "processed" if it carries any of the three agentic
+  lifecycle labels: agentic-candidate, agentic-triaged, or agentic-greenlit.
+DOC
+function filter_untriaged() {
+  local all_issues="$1"
+
+  echo "$all_issues" | jq '[.[]
+    | select(
+        .labels | map(.name)
+        | any(
+            . == "agentic-candidate"
+            or . == "agentic-triaged"
+            or . == "agentic-greenlit"
+          )
+        | not
+      )
+    | .number
+  ]'
 }
 
 : <<'DOC'
