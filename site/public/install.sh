@@ -37,12 +37,8 @@ main() {
     die "Failed to locate extracted tarball contents"
   fi
 
-  # Set KAITOSHOME so .envrc enters install context
+  # Set KAITOSHOME so .envrc enters install context when the installer sources it
   export KAITOSHOME="$_extract_dir"
-
-  # Bootstrap the environment (log, import, version vars)
-  # shellcheck disable=SC1091
-  . "$_extract_dir/.envrc"
 
   # Hand off to the real installer
   /usr/bin/env bash "$_extract_dir/scripts/install/install.sh" "$@"

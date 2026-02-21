@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# shellcheck disable=SC1091
+source "$KAITOSHOME/.envrc"
+
 USAGE="$(cat <<EOF
 Kaitos installer — runs inside an extracted release tarball.
 
