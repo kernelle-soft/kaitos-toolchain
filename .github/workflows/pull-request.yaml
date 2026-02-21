@@ -14,4 +14,3 @@ jobs:
     uses: ./.github/workflows/_test_install.yaml
     with:
       mode: simulated
-    secrets: inherit
