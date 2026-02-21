@@ -38,7 +38,13 @@ function manifest_get() {
   fi
 
   if [[ -z "${__manifest_api_cache[$path]+isset}" ]]; then
-    __manifest_api_cache["$path"]=$(jq -r "$path" < "$__manifest_api_file")
+    local value
+    value=$(jq -r "$path" < "$__manifest_api_file")
+    if [[ "$value" == "null" ]]; then
+      log "manifest.json key '$key' is null or missing"
+      return 1
+    fi
+    __manifest_api_cache["$path"]="$value"
   fi
 
   echo "${__manifest_api_cache[$path]}"
