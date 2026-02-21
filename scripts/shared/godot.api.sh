@@ -140,7 +140,11 @@ function godot_download() {
     return 1
   fi
 
-  mkdir -p "$cache_dir"
+  if ! mkdir -p "$cache_dir"; then
+    error "Failed to create cache directory $cache_dir"
+    rm -rf "$tmp_dir"
+    return 1
+  fi
 
   if ! unzip -qo "$tmp_dir/$zip_name" -d "$cache_dir"; then
     error "Failed to extract $zip_name"
