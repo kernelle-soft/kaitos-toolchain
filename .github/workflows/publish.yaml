@@ -31,6 +31,7 @@ jobs:
     uses: ./.github/workflows/_test_install.yaml
     with:
       mode: live
+      tag: ${{ needs.release.outputs.tag }}
     secrets: inherit
 
   cleanup-failed-release:
