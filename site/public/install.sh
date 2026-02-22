@@ -15,6 +15,10 @@ RELEASE_INDEX_URL="https://kaitos.dev/release-index.json"
 
 _FLAG_PRERELEASE=false
 _FLAG_TAG=""
+
+# POSIX sh: functions can't modify the caller's $@, so
+# parse_args tracks how many args it consumed and main
+# shifts them off after the call.
 _ARGS_CONSUMED=0
 
 main() {
