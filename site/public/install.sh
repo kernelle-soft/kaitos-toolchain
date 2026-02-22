@@ -25,6 +25,9 @@ main() {
         shift
         ;;
       -t|--tag)
+        if [ $# -lt 2 ] || [ -z "${2-}" ]; then
+          die "missing value for --tag"
+        fi
         _FLAG_TAG="$2"
         shift 2
         ;;
