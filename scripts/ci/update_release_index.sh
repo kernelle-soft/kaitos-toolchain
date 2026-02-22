@@ -64,14 +64,17 @@ function write_release_index() {
   local checksum_key="${channel}_sha256_linux_x86_64"
   local index="$KAITOSHOME/site/public/release-index.json"
 
+  local tmp
+  tmp="$(mktemp)"
+
   jq --arg channel "$channel" \
      --arg tag "$tag" \
      --arg key "$checksum_key" \
      --arg checksum "$checksum" \
      '.[$channel] = $tag | .[$key] = $checksum' \
-     "$index" > /tmp/release-index.json
+     "$index" > "$tmp"
 
-  mv /tmp/release-index.json "$index"
+  mv "$tmp" "$index"
 }
 
 : <<'DOC'
