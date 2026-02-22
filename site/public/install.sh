@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 # Kaitos bootstrapper — curl -fsSL kaitos.dev/install.sh | sh
 #
-# Downloads the latest stable release tarball, extracts it, and hands off
+# Downloads the latest release tarball, extracts it, then hands off
 # to the real installer. This script is a rarely-changed permalink.
 #
 # Dependencies (this bootstrapper): curl or wget, tar, uname, mktemp, find, grep, sed, head, awk, sha256sum or shasum
@@ -11,30 +11,50 @@ set -eu
 
 GITHUB_ORG="kernelle-soft"
 GITHUB_REPO="kaitos-toolchain"
-GITHUB_API="https://api.github.com/repos/${GITHUB_ORG}/${GITHUB_REPO}"
+RELEASE_INDEX_URL="https://kaitos.dev/release-index.json"
 
 _FLAG_PRERELEASE=false
+_FLAG_TAG=""
 
 main() {
   # Consume bootstrapper flags; $@ retains the rest for the installer
   while [ $# -gt 0 ]; do
     case "$1" in
-      -p|--prerelease) _FLAG_PRERELEASE=true; shift ;;
-      --) shift; break ;;
-      *)  break ;;
+      -p|--prerelease)
+        _FLAG_PRERELEASE=true
+        shift
+        ;;
+      -t|--tag)
+        _FLAG_TAG="$2"
+        shift 2
+        ;;
+      --)
+        shift
+        break
+        ;;
+      *)
+        break
+        ;;
     esac
   done
 
   _os="$(detect_os)"
   _arch="$(detect_arch)"
-  _tag="$(resolve_tag)"
+
+  if [ -n "$_FLAG_TAG" ]; then
+    _tag="$_FLAG_TAG"
+    _checksum=""
+  else
+    resolve_version
+  fi
+
+  # Strip leading v
   _version="${_tag#v}"
 
   info "Installing Kaitos ${_tag} for ${_os}/${_arch}"
 
   _tarball_name="kaitos-${_version}-${_os}-${_arch}.tar.gz"
   _tarball_url="https://github.com/${GITHUB_ORG}/${GITHUB_REPO}/releases/download/${_tag}/${_tarball_name}"
-  _sums_url="https://github.com/${GITHUB_ORG}/${GITHUB_REPO}/releases/download/${_tag}/SHA256SUMS"
   _tmp_dir="$(mktemp -d 2>/dev/null || mktemp -d -t kaitos)"
   trap 'rm -rf "$_tmp_dir"' EXIT
 
@@ -42,8 +62,13 @@ main() {
   download "$_tarball_url" "$_tmp_dir/kaitos.tar.gz"
 
   info "Verifying checksum..."
-  download "$_sums_url" "$_tmp_dir/SHA256SUMS"
-  verify_checksum "$_tmp_dir/kaitos.tar.gz" "$_tarball_name" "$_tmp_dir/SHA256SUMS"
+  if [ -n "$_checksum" ]; then
+    verify_checksum_direct "$_tmp_dir/kaitos.tar.gz" "$_checksum"
+  else
+    _sums_url="https://github.com/${GITHUB_ORG}/${GITHUB_REPO}/releases/download/${_tag}/SHA256SUMS"
+    download "$_sums_url" "$_tmp_dir/SHA256SUMS"
+    verify_checksum "$_tmp_dir/kaitos.tar.gz" "$_tarball_name" "$_tmp_dir/SHA256SUMS"
+  fi
 
   info "Extracting..."
   tar -xzf "$_tmp_dir/kaitos.tar.gz" -C "$_tmp_dir"
@@ -82,24 +107,56 @@ detect_arch() {
   esac
 }
 
-resolve_tag() {
+# Fetches kaitos.dev/release-index.json and sets _tag and _checksum for
+# the requested channel. _checksum may be empty when the index hasn't
+# been populated for this platform yet; the caller falls back to
+# SHA256SUMS from the release in that case.
+resolve_version() {
+  _vj="$(download_text "$RELEASE_INDEX_URL")" || die "Failed to fetch release index from ${RELEASE_INDEX_URL}"
+
   if [ "$_FLAG_PRERELEASE" = true ]; then
-    _url="${GITHUB_API}/releases?per_page=1"
+    _channel="prerelease"
   else
-    _url="${GITHUB_API}/releases/latest"
+    _channel="stable"
   fi
 
-  _response="$(download_text "$_url")" || die "Failed to fetch release info from GitHub API"
-
-  _tag="$(printf '%s' "$_response" | grep '"tag_name"' | head -n 1 | sed 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')"
+  _tag="$(printf '%s' "$_vj" \
+    | grep "\"${_channel}\"[[:space:]]*:" \
+    | head -n 1 \
+    | sed 's/.*:[[:space:]]*"\([^"]*\)".*/\1/')"
 
   if [ -z "$_tag" ]; then
-    die "Could not determine release tag"
+    die "No ${_channel} release available"
   fi
 
-  printf '%s' "$_tag"
+  _checksum_key="${_channel}_sha256_${_os}_${_arch}"
+  _checksum="$(printf '%s' "$_vj" \
+    | grep "\"${_checksum_key}\"[[:space:]]*:" \
+    | head -n 1 \
+    | sed 's/.*:[[:space:]]*"\([^"]*\)".*/\1/')" || true
 }
 
+# Verifies a file's SHA-256 against an expected hash string.
+verify_checksum_direct() {
+  _vcd_file="$1"
+  _vcd_expected="$2"
+
+  if command -v sha256sum >/dev/null 2>&1; then
+    _vcd_actual="$(sha256sum "$_vcd_file" | awk '{print $1}')"
+  elif command -v shasum >/dev/null 2>&1; then
+    _vcd_actual="$(shasum -a 256 "$_vcd_file" | awk '{print $1}')"
+  else
+    die "No SHA-256 utility found (tried sha256sum, shasum)"
+  fi
+
+  if [ "$_vcd_actual" != "$_vcd_expected" ]; then
+    die "Checksum verification failed. Expected: ${_vcd_expected}, Got: ${_vcd_actual}"
+  fi
+
+  info "Checksum OK."
+}
+
+# Verifies a file's SHA-256 against an entry in a SHA256SUMS file.
 verify_checksum() {
   _vc_file="$1"
   _vc_name="$2"
