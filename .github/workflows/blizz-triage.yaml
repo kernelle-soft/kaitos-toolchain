@@ -1,0 +1,11 @@
+name: Blizz Triage
+
+on:
+  schedule:
+    - cron: "0 12 * * 6"
+  workflow_dispatch:
+
+jobs:
+  triage:
+    uses: kernelle-soft/.github/.github/workflows/blizz-triage.yaml@main
+    secrets: inherit
