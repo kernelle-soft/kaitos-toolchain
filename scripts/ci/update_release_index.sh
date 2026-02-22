@@ -85,8 +85,22 @@ function commit_release_index() {
   local tag="$1"
 
   git add "$KAITOSHOME/site/public/release-index.json"
+
+  if nothing_to_release; then
+    log "Release index already up to date for ${tag}; skipping commit."
+    return 0
+  fi
+
   git commit -m "chore: update release index for ${tag} [skip ci]"
   git push
+}
+
+: <<'DOC'
+  Checks if there are changes to be released.
+  Returns 1 if there are, 0 if there are not.
+DOC
+function nothing_to_release() {
+  git diff --cached --quiet
 }
 
 : <<'DOC'
