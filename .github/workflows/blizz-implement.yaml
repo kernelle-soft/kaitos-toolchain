@@ -1,0 +1,9 @@
+name: Blizz Implementation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  implement:
+    uses: kernelle-soft/.github/.github/workflows/blizz-implement.yaml@main
+    secrets: inherit
