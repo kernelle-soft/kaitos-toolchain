@@ -17,6 +17,9 @@ jobs:
     name: release
     runs-on: ubuntu-24.04
     needs: [build]
+    permissions:
+      contents: write
+      actions: write
     outputs:
       tag: ${{ steps.publish.outputs.tag }}
     env:
