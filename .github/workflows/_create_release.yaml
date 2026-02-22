@@ -39,3 +39,6 @@ jobs:
           echo "tag=v$(jq -r '.latest' manifest.json)" >> "$GITHUB_OUTPUT"
           ./scripts/ci/publish_release.sh \
             "${{ needs.build.outputs.artifact }}.tar.gz"
+
+      - name: Configure git
+        run: ./scripts/ci/git_config.sh
