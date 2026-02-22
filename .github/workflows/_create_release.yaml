@@ -25,11 +25,22 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
+      - name: Generate Auth Token
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v6
         with:
           ref: main # make sure to get HEAD, instead of triggering commit
+          token: ${{ steps.generate-token.outputs.token }}
 
       - uses: ./.github/actions/envrc
+
+      - name: Configure git
+        run: ./scripts/ci/git_config.sh
 
       - name: Download artifact
         uses: actions/download-artifact@v7
@@ -42,9 +53,6 @@ jobs:
           echo "tag=v$(jq -r '.latest' manifest.json)" >> "$GITHUB_OUTPUT"
           ./scripts/ci/publish_release.sh \
             "${{ needs.build.outputs.artifact }}.tar.gz"
-
-      - name: Configure git
-        run: ./scripts/ci/git_config.sh
 
       - name: Update release index and deploy site
         run: |
