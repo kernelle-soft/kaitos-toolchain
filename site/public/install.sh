@@ -15,13 +15,32 @@ RELEASE_INDEX_URL="https://kaitos.dev/release-index.json"
 
 _FLAG_PRERELEASE=false
 _FLAG_TAG=""
+_ARGS_CONSUMED=0
 
 main() {
-  # Consume bootstrapper flags; $@ retains the rest for the installer
+  parse_args "$@"
+  shift "$_ARGS_CONSUMED"
+
+  _os="$(detect_os)"
+  _arch="$(detect_arch)"
+  resolve_release
+
+  _tmp_dir="$(mktemp -d 2>/dev/null || mktemp -d -t kaitos)"
+  trap 'rm -rf "$_tmp_dir"' EXIT
+
+  info "Installing Kaitos ${_tag} for ${_os}/${_arch}"
+  fetch_release
+  verify_release
+  extract_release
+  run_installer "$@"
+}
+
+parse_args() {
   while [ $# -gt 0 ]; do
     case "$1" in
       -p|--prerelease)
         _FLAG_PRERELEASE=true
+        _ARGS_CONSUMED=$((_ARGS_CONSUMED + 1))
         shift
         ;;
       -t|--tag)
@@ -29,10 +48,11 @@ main() {
           die "missing value for --tag"
         fi
         _FLAG_TAG="$2"
+        _ARGS_CONSUMED=$((_ARGS_CONSUMED + 2))
         shift 2
         ;;
       --)
-        shift
+        _ARGS_CONSUMED=$((_ARGS_CONSUMED + 1))
         break
         ;;
       *)
@@ -40,10 +60,9 @@ main() {
         ;;
     esac
   done
+}
 
-  _os="$(detect_os)"
-  _arch="$(detect_arch)"
-
+resolve_release() {
   if [ -n "$_FLAG_TAG" ]; then
     _tag="$_FLAG_TAG"
     _checksum=""
@@ -51,19 +70,17 @@ main() {
     resolve_version
   fi
 
-  # Strip leading v
   _version="${_tag#v}"
-
-  info "Installing Kaitos ${_tag} for ${_os}/${_arch}"
-
   _tarball_name="kaitos-${_version}-${_os}-${_arch}.tar.gz"
   _tarball_url="https://github.com/${GITHUB_ORG}/${GITHUB_REPO}/releases/download/${_tag}/${_tarball_name}"
-  _tmp_dir="$(mktemp -d 2>/dev/null || mktemp -d -t kaitos)"
-  trap 'rm -rf "$_tmp_dir"' EXIT
+}
 
+fetch_release() {
   info "Downloading ${_tarball_url}..."
   download "$_tarball_url" "$_tmp_dir/kaitos.tar.gz"
+}
 
+verify_release() {
   info "Verifying checksum..."
   if [ -n "$_checksum" ]; then
     verify_checksum_direct "$_tmp_dir/kaitos.tar.gz" "$_checksum"
@@ -72,21 +89,21 @@ main() {
     download "$_sums_url" "$_tmp_dir/SHA256SUMS"
     verify_checksum "$_tmp_dir/kaitos.tar.gz" "$_tarball_name" "$_tmp_dir/SHA256SUMS"
   fi
+}
 
+extract_release() {
   info "Extracting..."
   tar -xzf "$_tmp_dir/kaitos.tar.gz" -C "$_tmp_dir"
 
-  # The tarball extracts to kaitos-<version>-<os>-<arch>/
   _extract_dir="$(find "$_tmp_dir" -mindepth 1 -maxdepth 1 -type d | head -n 1)"
-
   if [ -z "$_extract_dir" ]; then
     die "Failed to locate extracted tarball contents"
   fi
+}
 
-  # Set KAITOSHOME so .envrc enters install context when the installer sources it
+# Sets KAITOSHOME and hands off to the real installer with remaining args.
+run_installer() {
   export KAITOSHOME="$_extract_dir"
-
-  # Hand off to the real installer with remaining args
   /usr/bin/env bash "$_extract_dir/scripts/install/install.sh" "$@"
 }
 
@@ -185,6 +202,7 @@ verify_checksum() {
   info "Checksum OK."
 }
 
+# Downloads a URL to a file on disk.
 download() {
   if command -v curl >/dev/null 2>&1; then
     curl -fSL "$1" -o "$2"
@@ -195,6 +213,7 @@ download() {
   fi
 }
 
+# Downloads a URL and writes the content to stdout.
 download_text() {
   if command -v curl >/dev/null 2>&1; then
     curl -fsSL "$1"
