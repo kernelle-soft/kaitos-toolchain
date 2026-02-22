@@ -35,8 +35,10 @@ function main() {
   log "Updating release index: ${channel} → ${tag}"
 
   write_release_index "$tag" "$channel" "$checksum"
-  commit_release_index "$tag"
-  deploy_site
+
+  if commit_release_index "$tag"; then
+    deploy_site
+  fi
 }
 
 : <<'DOC'
@@ -88,7 +90,7 @@ function commit_release_index() {
 
   if nothing_to_release; then
     log "Release index already up to date for ${tag}; skipping commit."
-    return 0
+    return 1
   fi
 
   git commit -m "chore: update release index for ${tag} [skip ci]"

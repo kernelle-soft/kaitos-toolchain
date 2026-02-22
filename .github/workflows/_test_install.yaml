@@ -65,9 +65,11 @@ jobs:
 
       - name: Run bootstrapper (live)
         if: inputs.mode == 'live'
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
         run: |
-          if [ -n "${{ inputs.tag }}" ]; then
-            curl -fsSL kaitos.dev/install.sh | sh -s -- --tag "${{ inputs.tag }}"
+          if [ -n "$RELEASE_TAG" ]; then
+            curl -fsSL kaitos.dev/install.sh | sh -s -- --tag "$RELEASE_TAG"
           else
             curl -fsSL kaitos.dev/install.sh | sh -s -- --prerelease
           fi
