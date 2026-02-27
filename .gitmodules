@@ -1,0 +1,3 @@
+[submodule "shell/.shock"]
+	path = shell/.shock
+	url = git@github.com:kernelle-soft/shellshock.git
