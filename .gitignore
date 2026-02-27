@@ -16,6 +16,9 @@ go/kaitos
 kaitos-*-linux-*
 *.tar.gz
 
+# Derived from shellshock submodule
+shell/shock
+
 # Docs Stuff
 .astro/
 node_modules/
