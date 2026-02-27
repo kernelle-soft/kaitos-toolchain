@@ -32,6 +32,10 @@ jobs:
           path: ~/.cache/kaitos/godot
           key: godot-${{ hashFiles('manifest.json') }}
 
+      - name: Wait for release index to propagate
+        if: inputs.mode == 'live' && inputs.tag != ''
+        run: ./shell/scripts/ci/await_release_index.sh "${{ inputs.tag }}"
+
       # -- Simulated mode: build tarball, extract, run installer --
 
       - name: Setup build tools
