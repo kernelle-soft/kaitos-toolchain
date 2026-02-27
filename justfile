@@ -17,7 +17,7 @@ test-all:
   just test rust
 
 bump *args:
-  ./shell/scripts/chores/bump_git_version.sh {{args}}
+  ./shell/shock git-bump {{args}}
 
 publish *args:
   ./shell/scripts/ci/publish_release.sh {{args}}

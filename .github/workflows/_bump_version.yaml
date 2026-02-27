@@ -48,7 +48,7 @@ jobs:
           if [[ -n "${{ inputs.bump_type }}" ]]; then
             args+=("--${{ inputs.bump_type }}")
           fi
-          VERSION=$(./shell/scripts/chores/bump_git_version.sh "${args[@]}")
+          VERSION=$(./shell/shock git-bump "${args[@]}")
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Sync Cargo Workspace
