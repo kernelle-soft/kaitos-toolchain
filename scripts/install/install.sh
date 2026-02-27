@@ -92,7 +92,7 @@ function parse_flags() {
   Source dir is the tarball root (PROJ).
 DOC
 function deploy_artifacts() {
-  import "$PROJ/scripts/shared/deploy.api.sh"
+  import "$PROJ/shell/scripts/lib/deploy.api.sh"
 
   log "Deploying CLI and shared library..."
 
@@ -105,7 +105,7 @@ function deploy_artifacts() {
   Downloads the Godot editor to XDG cache.
 DOC
 function download_godot() {
-  import "$PROJ/scripts/shared/godot.api.sh"
+  import "$PROJ/shell/scripts/lib/godot.api.sh"
 
   godot_download "$GODOT_VERSION"
 }

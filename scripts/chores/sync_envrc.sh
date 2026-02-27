@@ -24,7 +24,7 @@ EOF
 import \
   "$PROJ/shell/.shock/lib/manifest.api.sh" \
   "$PROJ/shell/.shock/lib/envrc.api.sh" \
-  "$PROJ/scripts/shared/compatibility.api.sh"
+  "$PROJ/shell/scripts/lib/compatibility.api.sh"
 
 __sync_envrc__ARG_GODOT_URL=""
 __sync_envrc__ARG_GODOT_VERSION=""

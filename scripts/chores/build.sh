@@ -36,7 +36,8 @@ Flags:
     kaitos-<version>-<platform>-<arch>.tar.gz/
       kaitos                          CLI binary
       lib/libgodot.{so,dylib}         Shared library
-      scripts/shared/                 Shell APIs
+      shell/.shock/lib/               Shellshock libraries
+      shell/scripts/lib/              Kaitos shell libraries
       scripts/install/                Installer specific code
       templates/                      Config and env templates
       .envrc                          Environment bootstrap
@@ -48,8 +49,8 @@ EOF
 )"
 
 import \
-  "$PROJ/scripts/shared/compile.api.sh" \
-  "$PROJ/scripts/shared/deploy.api.sh"
+  "$PROJ/shell/scripts/lib/compile.api.sh" \
+  "$PROJ/shell/scripts/lib/deploy.api.sh"
 
 FLAG_GO=true
 FLAG_RUST=true
@@ -114,13 +115,15 @@ function assemble_dist() {
   local dist="$PROJ/dist"
 
   rm -rf \
+    "$dist/shell" \
     "$dist/scripts" \
     "$dist/templates" \
     "$dist/.envrc" \
     "$dist/manifest.json"
 
-  mkdir -p "$dist/scripts"
-  cp -r "$PROJ/scripts/shared"    "$dist/scripts/shared"
+  mkdir -p "$dist/shell/.shock" "$dist/scripts"
+  cp -r "$PROJ/shell/.shock/lib"  "$dist/shell/.shock/lib"
+  cp -r "$PROJ/shell/scripts/lib" "$dist/shell/scripts/lib"
   cp -r "$PROJ/scripts/install"   "$dist/scripts/install"
   cp -r "$PROJ/templates"         "$dist/templates"
   cp    "$PROJ/.envrc"            "$dist/.envrc"

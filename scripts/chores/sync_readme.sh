@@ -23,7 +23,7 @@ EOF
 )"
 
 import \
-  "$PROJ/scripts/shared/poke.api.sh"
+  "$PROJ/shell/scripts/lib/poke.api.sh"
 
 ARG_VERSION=""
 
