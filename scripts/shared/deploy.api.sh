@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 eval "${SHELLSHOCK_ENVRC:-}"
 
-import "$PROJ/scripts/shared/cross_platform.api.sh"
+import "$PROJ/shell/.shock/lib/cross_platform.api.sh"
 
 __deploy_api__DEFAULT_SOURCE_DIR="$PROJ/dist"
 __deploy_api__XDG_BIN_HOME="${XDG_BIN_HOME:-$HOME/.local/bin}"
@@ -95,7 +95,7 @@ function deploy_project() {
     which is only used during builds where $PROJ is available.
 DOC
 function deploy_bundle() {
-  import "$PROJ/scripts/shared/manifest.api.sh"
+  import "$PROJ/shell/.shock/lib/manifest.api.sh"
 
   local source_dir version os arch artifact_name
   if [[ -z "${1:-}" ]]; then

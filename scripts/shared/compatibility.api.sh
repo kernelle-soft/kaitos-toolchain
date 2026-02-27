@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 eval "${SHELLSHOCK_ENVRC:-}"
 
-import "$PROJ/scripts/shared/manifest.api.sh"
+import "$PROJ/shell/.shock/lib/manifest.api.sh"
 
 : <<'DOC'
 API for checking version compatibility against supported engine versions

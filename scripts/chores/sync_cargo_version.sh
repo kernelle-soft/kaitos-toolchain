@@ -19,7 +19,7 @@ EOF
 ARG_VERSION=""
 REGEX_SEMVER='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
 
-import "$PROJ/scripts/shared/versions.api.sh"
+import "$PROJ/shell/.shock/lib/versions.api.sh"
 
 PATH_CARGO_WORKSPACE="$PROJ/crates/Cargo.toml"
 

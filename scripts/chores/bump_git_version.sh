@@ -33,8 +33,8 @@ EOF
 )"
 
 import \
-  "$PROJ/scripts/shared/versions.api.sh" \
-  "$PROJ/scripts/shared/manifest.api.sh"
+  "$PROJ/shell/.shock/lib/versions.api.sh" \
+  "$PROJ/shell/.shock/lib/manifest.api.sh"
 
 REGEX_SEMVER='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
 REGEX_SEMVER_GIT_TAG="^v${REGEX_SEMVER#^}"  # ^v[0-9]+...

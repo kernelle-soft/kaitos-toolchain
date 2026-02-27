@@ -21,9 +21,9 @@ ARG_ARTIFACTS=()
 FLAG_DRY_RUN=false
 
 import \
-  "$PROJ/scripts/shared/manifest.api.sh" \
-  "$PROJ/scripts/shared/versions.api.sh" \
-  "$PROJ/scripts/shared/get_date.func.sh"
+  "$PROJ/shell/.shock/lib/manifest.api.sh" \
+  "$PROJ/shell/.shock/lib/versions.api.sh" \
+  "$PROJ/shell/.shock/lib/get_date.func.sh"
 
 function main() {
   parse_args "$@"

@@ -20,8 +20,8 @@ EOF
 ARG_ARTIFACT=""
 
 import \
-  "$PROJ/scripts/shared/manifest.api.sh" \
-  "$PROJ/scripts/shared/versions.api.sh"
+  "$PROJ/shell/.shock/lib/manifest.api.sh" \
+  "$PROJ/shell/.shock/lib/versions.api.sh"
 
 function main() {
   parse_args "$@"

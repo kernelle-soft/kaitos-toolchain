@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 eval "${SHELLSHOCK_ENVRC:-}"
 
-import "$PROJ/scripts/shared/cross_platform.api.sh"
+import "$PROJ/shell/.shock/lib/cross_platform.api.sh"
 
 __compile_api__GO_OUTPUT_PATH="$PROJ/dist/kaitos"
 __compile_api__RUST_TARGET_DIR="$PROJ/crates/target"

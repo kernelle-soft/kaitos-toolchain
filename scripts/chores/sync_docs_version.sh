@@ -18,7 +18,7 @@ EOF
 
 ARG_VERSION=""
 
-import "$PROJ/scripts/shared/versions.api.sh"
+import "$PROJ/shell/.shock/lib/versions.api.sh"
 
 PATH_DOCS_PACKAGE="$PROJ/site/package.json"
 

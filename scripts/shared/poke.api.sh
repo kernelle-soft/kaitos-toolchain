@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 eval "${SHELLSHOCK_ENVRC:-}"
 
-import "$PROJ/scripts/shared/manifest.api.sh"
+import "$PROJ/shell/.shock/lib/manifest.api.sh"
 
 export POKE_START="<!--POKE_INFO_START-->"
 export POKE_END="<!--POKE_INFO_END-->"

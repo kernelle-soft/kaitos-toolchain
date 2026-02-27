@@ -22,8 +22,8 @@ EOF
 )"
 
 import \
-  "$PROJ/scripts/shared/manifest.api.sh" \
-  "$PROJ/scripts/shared/envrc.api.sh" \
+  "$PROJ/shell/.shock/lib/manifest.api.sh" \
+  "$PROJ/shell/.shock/lib/envrc.api.sh" \
   "$PROJ/scripts/shared/compatibility.api.sh"
 
 __sync_envrc__ARG_GODOT_URL=""

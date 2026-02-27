@@ -20,8 +20,8 @@ EOF
 ARG_VERSION=""
 
 import \
-  "$PROJ/scripts/shared/versions.api.sh" \
-  "$PROJ/scripts/shared/manifest.api.sh"
+  "$PROJ/shell/.shock/lib/versions.api.sh" \
+  "$PROJ/shell/.shock/lib/manifest.api.sh"
 
 function main() {
   local latest

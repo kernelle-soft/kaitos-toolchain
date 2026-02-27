@@ -19,7 +19,7 @@ Notes:
 EOF
 )"
 
-import "$PROJ/scripts/shared/lint.api.sh"
+import "$PROJ/shell/.shock/lib/lint.api.sh"
 
 FLAG_RUST=true
 FLAG_GO=true
