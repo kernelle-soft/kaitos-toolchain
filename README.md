@@ -74,7 +74,7 @@ Bootstrap the development environment (initializes the [shellshock](https://gith
 just setup-workspace
 ```
 
-#### The old fashoned way
+#### The old fashioned way
 
 ```bash
 git submodule update --init shell/.shock && shell/.shock/workspace_init.sh
