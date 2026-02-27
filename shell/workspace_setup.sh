@@ -3,15 +3,20 @@ set -euo pipefail
 
 # Bootstrap the development environment.
 #
-# Initializes the shellshock submodule, copies the shock dispatcher,
-# and installs project tools.
+# Initializes the shellshock submodule, syncs the shock dispatcher,
+# and installs project tools declared in manifest.json.
 #
-# Usage: shell/workspace_setup.sh [tools...]
+# Usage: shell/workspace_setup.sh [args...]
 #
-# Arguments are forwarded to the tool installer. If none are given,
-# all registered tools are installed.
+# Arguments are forwarded to `shock workspace`.
+# Examples:
+#   shell/workspace_setup.sh              # install all tools
+#   shell/workspace_setup.sh tokei gh     # install specific tools
+#   shell/workspace_setup.sh --check      # check tool status
+#   shell/workspace_setup.sh --force      # force reinstall
 
 PROJ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export PROJ
 
 function main() {
   init_submodule
@@ -32,7 +37,8 @@ function sync_dispatcher() {
 }
 
 function install_tools() {
-  "$PROJ/shell/scripts/chores/install_tools.sh" "$@"
+  TOOLS_SCRIPTS_DIR="$PROJ/shell/scripts" \
+    "$PROJ/shell/shock" workspace "$@"
 }
 
 main "$@"

@@ -1,0 +1,45 @@
+{
+  "go-install": {
+      "gocover-cobertura": {
+        "version": "1.4.0",
+        "pkg": "github.com/boumenot/gocover-cobertura"
+      },
+      "govulncheck": {
+        "version": "1.1.4",
+        "pkg": "golang.org/x/vuln/cmd/govulncheck"
+      }
+    },
+    "cargo-install": {
+      "cargo-binstall": {
+        "version": "1.17.4"
+      }
+    },
+    "cargo-binstall": {
+      "tokei": {
+        "version": "14.0.0",
+        "args": "--locked --force",
+        "needs": ["cargo-binstall"]
+      },
+      "cargo-llvm-cov": {
+        "version": "0.6.24",
+        "args": "--locked --force",
+        "needs": ["cargo-binstall"]
+      },
+      "cargo-audit": {
+        "version": "0.22.0",
+        "args": "--locked --force",
+        "needs": ["cargo-binstall"]
+      },
+      "watchexec": {
+        "version": "2.3.3",
+        "crate": "watchexec-cli",
+        "args": "--locked --force",
+        "needs": ["cargo-binstall"]
+      }
+    },
+    "local": {
+      "gh": {
+        "version": "latest"
+      }
+    }
+}
