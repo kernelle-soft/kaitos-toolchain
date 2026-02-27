@@ -61,10 +61,20 @@
 - Rust (stable)
 - Cargo
 - [direnv](https://direnv.net/) - automatically loads environment from `.envrc`
+- [optional] [just](https://github.com/casey/just)
+- [optional] [lefthook](https://github.com/evilmartians/lefthook)
 
 ### Workspace Setup
 
-Bootstrap the development environment (initializes the [shellshock](https://github.com/kernelle-soft/shellshock) submodule and installs tools):
+Bootstrap the development environment (initializes the [shellshock](https://github.com/kernelle-soft/shellshock) submodule and installs tools). Shellshock is a well-groomed library of bash scripts for keeping CI/CD and your local development environment synced. This means fewer pipeline surprises when you go to submit your PR.
+
+#### With Just
+
+```
+just setup-workspace
+```
+
+#### The old fashoned way
 
 ```bash
 git submodule update --init shell/.shock && shell/.shock/workspace_init.sh
@@ -74,21 +84,6 @@ Check tool status without installing:
 
 ```bash
 shell/shock workspace --check
-```
-
-### Project Structure
-
-```
-shell/
-  shock                         # CLI dispatcher (derived from .shock/)
-  .shock/                       # shellshock submodule
-  scripts/
-    lib/                        # kaitos-specific shell libraries
-    chores/                     # chore scripts (build, sync, lint)
-    ci/                         # CI scripts (publish, coverage, test)
-    install/                    # installer scripts
-shock.lock                      # tool dependencies (read by shock workspace)
-manifest.json                   # project metadata
 ```
 
 ### Git Hooks

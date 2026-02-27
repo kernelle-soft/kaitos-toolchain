@@ -5,9 +5,6 @@ mod test 'just/test.just'
 mod sync 'just/sync.just'
 mod docs 'site'
 
-workspace-setup *args:
-  git submodule update --init shell/.shock && shell/.shock/workspace_init.sh {{args}}
-
 clean *args:
   ./shell/scripts/chores/clean.sh {{args}}
 
@@ -40,3 +37,6 @@ watch *args:
     --watch crates \
     -i 'crates/target/**' \
     -- just build {{args}}
+
+setup-workspace *args:
+  git submodule update --init shell/.shock && shell/.shock/workspace_init.sh {{args}}
