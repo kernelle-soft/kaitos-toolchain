@@ -57,8 +57,8 @@ jobs:
         if: inputs.mode == 'simulated'
         run: |
           extract_dir="$(find /tmp/kaitos-install-test -mindepth 1 -maxdepth 1 -type d | head -n 1)"
-          echo "KAITOSHOME=$extract_dir" >> "$GITHUB_ENV"
-          export KAITOSHOME="$extract_dir"
+          echo "PROJ=$extract_dir" >> "$GITHUB_ENV"
+          export PROJ="$extract_dir"
           bash "$extract_dir/scripts/install/install.sh"
 
       # -- Live mode: curl the bootstrapper --
@@ -78,7 +78,7 @@ jobs:
 
       - name: Setup test environment
         run: |
-          echo "CI_ENVRC=source $GITHUB_WORKSPACE/.envrc" >> "$GITHUB_ENV"
+          echo "SHELLSHOCK_ENVRC=source $GITHUB_WORKSPACE/.envrc" >> "$GITHUB_ENV"
 
       - name: Set live install mode for re-run tests
         if: inputs.mode == 'live'

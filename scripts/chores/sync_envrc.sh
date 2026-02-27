@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Syncs up environment setup information from the project manifest.
@@ -22,9 +22,9 @@ EOF
 )"
 
 import \
-  "$KAITOSHOME/scripts/shared/manifest.api.sh" \
-  "$KAITOSHOME/scripts/shared/envrc.api.sh" \
-  "$KAITOSHOME/scripts/shared/compatibility.api.sh"
+  "$PROJ/scripts/shared/manifest.api.sh" \
+  "$PROJ/scripts/shared/envrc.api.sh" \
+  "$PROJ/scripts/shared/compatibility.api.sh"
 
 __sync_envrc__ARG_GODOT_URL=""
 __sync_envrc__ARG_GODOT_VERSION=""

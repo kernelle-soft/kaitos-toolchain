@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 
@@ -13,11 +13,11 @@ EOF
 function main() {
   parse_args "$@"
 
-  
+
 }
 
 : <<'DOC'
-  Parses CLI flags. 
+  Parses CLI flags.
   See USAGE for flag descriptions.
 DOC
 function parse_args() {

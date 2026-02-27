@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 : <<'DOC'
 Post-install verification for the kaitos install flow.
@@ -174,10 +174,10 @@ function test_reset_configs() {
 function __test__run_installer() {
   if [[ "${TEST_INSTALL_USE_LIVE:-}" == "1" ]]; then
     curl -fsSL kaitos.dev/install.sh | sh -s -- --prerelease "$@"
-  elif [[ -n "${KAITOSHOME:-}" && -f "$KAITOSHOME/scripts/install/install.sh" ]]; then
-    bash "$KAITOSHOME/scripts/install/install.sh" "$@"
+  elif [[ -n "${PROJ:-}" && -f "$PROJ/scripts/install/install.sh" ]]; then
+    bash "$PROJ/scripts/install/install.sh" "$@"
   else
-    fatal "KAITOSHOME must point to a local installer (or set TEST_INSTALL_USE_LIVE=1)"
+    fatal "PROJ must point to a local installer (or set TEST_INSTALL_USE_LIVE=1)"
     return 1
   fi
 }

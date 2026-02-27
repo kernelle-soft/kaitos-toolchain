@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
-import "$KAITOSHOME/scripts/shared/cross_platform.api.sh"
+import "$PROJ/scripts/shared/cross_platform.api.sh"
 
-__deploy_api__DEFAULT_SOURCE_DIR="$KAITOSHOME/dist"
+__deploy_api__DEFAULT_SOURCE_DIR="$PROJ/dist"
 __deploy_api__XDG_BIN_HOME="${XDG_BIN_HOME:-$HOME/.local/bin}"
 __deploy_api__XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 __deploy_api__KAITOS_LIB_DIR="$__deploy_api__XDG_DATA_HOME/kaitos/lib"
@@ -21,7 +21,7 @@ __deploy_api__KAITOS_LIB_DIR="$__deploy_api__XDG_DATA_HOME/kaitos/lib"
   Options:
     options[source_dir]: string
       Path to the directory containing built artifacts.
-      Default is $KAITOSHOME/dist.
+      Default is $PROJ/dist.
 
   Expects source_dir to contain:
     - kaitos                      (CLI binary)
@@ -81,7 +81,7 @@ function deploy_project() {
   Options:
     options[source_dir]: string
       Path to the directory containing built artifacts.
-      Default is $KAITOSHOME/dist.
+      Default is $PROJ/dist.
 
   Outputs:
     Prints the artifact name (without .tar.gz) to stdout for capture by CI.
@@ -92,10 +92,10 @@ function deploy_project() {
     deploy_system and deploy_project are designed to work outside the repo
     (e.g. a curl|sh bootstrapper that only needs to place artifacts).
     Importing manifest.api.sh here keeps that dependency scoped to bundle,
-    which is only used during builds where $KAITOSHOME is available.
+    which is only used during builds where $PROJ is available.
 DOC
 function deploy_bundle() {
-  import "$KAITOSHOME/scripts/shared/manifest.api.sh"
+  import "$PROJ/scripts/shared/manifest.api.sh"
 
   local source_dir version os arch artifact_name
   if [[ -z "${1:-}" ]]; then

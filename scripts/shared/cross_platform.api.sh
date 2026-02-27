@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 : <<'DOC'
   Returns the platform-appropriate rust shared library filename for a given name.

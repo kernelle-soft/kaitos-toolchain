@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Orchestrates compilation and deployment of Kaitos.
@@ -48,8 +48,8 @@ EOF
 )"
 
 import \
-  "$KAITOSHOME/scripts/shared/compile.api.sh" \
-  "$KAITOSHOME/scripts/shared/deploy.api.sh"
+  "$PROJ/scripts/shared/compile.api.sh" \
+  "$PROJ/scripts/shared/deploy.api.sh"
 
 FLAG_GO=true
 FLAG_RUST=true
@@ -65,7 +65,7 @@ function main() {
     compile_opts[release]=true
   fi
 
-  mkdir -p "$KAITOSHOME/dist"
+  mkdir -p "$PROJ/dist"
 
   if [[ $FLAG_GO = true ]] && ! compile_go compile_opts; then
     error "Ran into issues compiling go..."
@@ -111,7 +111,7 @@ function main() {
   from the compile phase. This adds everything else the installer needs.
 DOC
 function assemble_dist() {
-  local dist="$KAITOSHOME/dist"
+  local dist="$PROJ/dist"
 
   rm -rf \
     "$dist/scripts" \
@@ -120,11 +120,11 @@ function assemble_dist() {
     "$dist/manifest.json"
 
   mkdir -p "$dist/scripts"
-  cp -r "$KAITOSHOME/scripts/shared"    "$dist/scripts/shared"
-  cp -r "$KAITOSHOME/scripts/install"   "$dist/scripts/install"
-  cp -r "$KAITOSHOME/templates"         "$dist/templates"
-  cp    "$KAITOSHOME/.envrc"            "$dist/.envrc"
-  cp    "$KAITOSHOME/manifest.json"     "$dist/manifest.json"
+  cp -r "$PROJ/scripts/shared"    "$dist/scripts/shared"
+  cp -r "$PROJ/scripts/install"   "$dist/scripts/install"
+  cp -r "$PROJ/templates"         "$dist/templates"
+  cp    "$PROJ/.envrc"            "$dist/.envrc"
+  cp    "$PROJ/manifest.json"     "$dist/manifest.json"
 }
 
 : <<'DOC'

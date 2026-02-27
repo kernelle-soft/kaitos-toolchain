@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Clean up the project of various temp folders and artifacts.
@@ -28,33 +28,33 @@ FLAG_DOCS=false
 function main() {
   parse_args "$@"
 
-  rm -rf "$KAITOSHOME/temp"
-  rm -rf "$KAITOSHOME/tmp"
-  rm -rf "$KAITOSHOME"/kaitos-*-linux-*
-  rm -rf "$KAITOSHOME"/kaitos-*.tar.gz
+  rm -rf "$PROJ/temp"
+  rm -rf "$PROJ/tmp"
+  rm -rf "$PROJ"/kaitos-*-linux-*
+  rm -rf "$PROJ"/kaitos-*.tar.gz
 
   if [[ $FLAG_BUILD = true ]]; then
-    rm -rf "$KAITOSHOME/build/" "$KAITOSHOME/dist/"
+    rm -rf "$PROJ/build/" "$PROJ/dist/"
   fi
 
   if [[ $FLAG_COVERAGE = true ]]; then
-    rm -rf "$KAITOSHOME/coverage/"
+    rm -rf "$PROJ/coverage/"
   fi
 
   if [[ $FLAG_RUST = true ]]; then
     shopt -s globstar nullglob
-    rm -rf "$KAITOSHOME"/crates/**/target/
+    rm -rf "$PROJ"/crates/**/target/
     shopt -u globstar nullglob
   fi
 
   if [[ $FLAG_GO = true ]]; then
-    rm -f "$KAITOSHOME/go/kaitos"
+    rm -f "$PROJ/go/kaitos"
   fi
 
   if [[ $FLAG_DOCS = true ]]; then
     rm -rf \
-      "$KAITOSHOME/site/.astro" \
-      "$KAITOSHOME/site/dist"
+      "$PROJ/site/.astro" \
+      "$PROJ/site/dist"
   fi
 }
 

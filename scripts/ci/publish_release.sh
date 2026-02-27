@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Creates a GitHub release for the latest tag marked in the project manifest
@@ -21,9 +21,9 @@ ARG_ARTIFACTS=()
 FLAG_DRY_RUN=false
 
 import \
-  "$KAITOSHOME/scripts/shared/manifest.api.sh" \
-  "$KAITOSHOME/scripts/shared/versions.api.sh" \
-  "$KAITOSHOME/scripts/shared/get_date.func.sh"
+  "$PROJ/scripts/shared/manifest.api.sh" \
+  "$PROJ/scripts/shared/versions.api.sh" \
+  "$PROJ/scripts/shared/get_date.func.sh"
 
 function main() {
   parse_args "$@"

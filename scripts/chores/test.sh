@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Orchestrates unit testing for the project.
@@ -64,7 +64,7 @@ Runs the rust unit test suite for the project.
 DOC
 function run_rust_tests() {
   log_banner "Rust Unit Tests"
-  cargo test --manifest-path "$KAITOSHOME/crates/Cargo.toml"
+  cargo test --manifest-path "$PROJ/crates/Cargo.toml"
 }
 
 : <<'DOC'
@@ -72,7 +72,7 @@ Runs the go unit test suite for the project.
 DOC
 function run_go_tests() {
   log_banner "Go Unit Tests"
-  cd "$KAITOSHOME/go" && go test -v ./...
+  cd "$PROJ/go" && go test -v ./...
 }
 
 main "$@"

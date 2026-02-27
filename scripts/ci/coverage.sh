@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Orchestrates running coverage and saving the data out as a Cobertura file. Not generally for manual use.
@@ -15,7 +15,7 @@ EOF
 
 function main() {
   parse_args "$@"
-  mkdir -p "$KAITOSHOME/coverage" "$KAITOSHOME/temp"
+  mkdir -p "$PROJ/coverage" "$PROJ/temp"
 
   if has_go_changes; then
     run_go_coverage
@@ -65,12 +65,12 @@ function has_rust_changes() {
 function run_go_coverage() {
   local path_tempfile path_cobertura
 
-  path_tempfile="$KAITOSHOME/temp/go_coverage.out"
-  path_cobertura="$KAITOSHOME/coverage/go_coverage.xml"
+  path_tempfile="$PROJ/temp/go_coverage.out"
+  path_cobertura="$PROJ/coverage/go_coverage.xml"
 
   log_banner "Go Coverage"
 
-  cd "$KAITOSHOME/go"
+  cd "$PROJ/go"
   go test -coverprofile="$path_tempfile" ./...
   gocover-cobertura < "$path_tempfile" > "$path_cobertura"
 }
@@ -79,8 +79,8 @@ function run_rust_coverage() {
   log_banner "Rust Coverage"
   cargo llvm-cov \
     --cobertura \
-    --manifest-path "$KAITOSHOME/crates/Cargo.toml" \
-    --output-path "$KAITOSHOME/coverage/rust_coverage.xml"
+    --manifest-path "$PROJ/crates/Cargo.toml" \
+    --output-path "$PROJ/coverage/rust_coverage.xml"
 }
 
 main "$@"

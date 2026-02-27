@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 : <<'DOC'
 API for working with semver versions and git tags.

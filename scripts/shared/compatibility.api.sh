@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
-import "$KAITOSHOME/scripts/shared/manifest.api.sh"
+import "$PROJ/scripts/shared/manifest.api.sh"
 
 : <<'DOC'
 API for checking version compatibility against supported engine versions

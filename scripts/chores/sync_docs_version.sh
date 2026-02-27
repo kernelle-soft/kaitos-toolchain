@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Syncs the docs site version (site/package.json) to the canonical project version.
@@ -18,9 +18,9 @@ EOF
 
 ARG_VERSION=""
 
-import "$KAITOSHOME/scripts/shared/versions.api.sh"
+import "$PROJ/scripts/shared/versions.api.sh"
 
-PATH_DOCS_PACKAGE="$KAITOSHOME/site/package.json"
+PATH_DOCS_PACKAGE="$PROJ/site/package.json"
 
 function main() {
   local current_version old_version

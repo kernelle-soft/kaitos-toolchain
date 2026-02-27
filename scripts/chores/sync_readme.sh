@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Syncs up the README to the current project manifest and version.
@@ -23,7 +23,7 @@ EOF
 )"
 
 import \
-  "$KAITOSHOME/scripts/shared/poke.api.sh"
+  "$PROJ/scripts/shared/poke.api.sh"
 
 ARG_VERSION=""
 
@@ -50,7 +50,7 @@ function update_readme() {
   local -n __poke__="$1"
   local readme_file new_content tmp_file
 
-  readme_file="$KAITOSHOME/README.md"
+  readme_file="$PROJ/README.md"
   tmp_file="$(mktemp)"
   new_content="$(generate_pokedex_entry __poke__)"
 

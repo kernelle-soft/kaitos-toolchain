@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ -z "${KAITOSHOME:-}" ]]; then
-  echo "fatal: KAITOSHOME must be set before running install.sh" >&2
+if [[ -z "${PROJ:-}" ]]; then
+  echo "fatal: PROJ must be set before running install.sh" >&2
   exit 1
 fi
 
 # shellcheck disable=SC1091
-source "$KAITOSHOME/.envrc"
+source "$PROJ/.envrc"
 
 USAGE="$(cat <<EOF
 Kaitos installer — runs inside an extracted release tarball.
 
-Expects KAITOSHOME to be set to the tarball root (done by .envrc context
+Expects PROJ to be set to the tarball root (done by .envrc context
 detection or the bootstrapper). Deploys the CLI, shared lib, Godot engine,
 config template, and shell environment to XDG-compliant locations.
 
@@ -89,15 +89,15 @@ function parse_flags() {
 
 : <<'DOC'
   Deploys CLI binary and shared library via deploy.api.sh.
-  Source dir is the tarball root (KAITOSHOME).
+  Source dir is the tarball root (PROJ).
 DOC
 function deploy_artifacts() {
-  import "$KAITOSHOME/scripts/shared/deploy.api.sh"
+  import "$PROJ/scripts/shared/deploy.api.sh"
 
   log "Deploying CLI and shared library..."
 
   # shellcheck disable=2034
-  declare -A opts=( [source_dir]="$KAITOSHOME" )
+  declare -A opts=( [source_dir]="$PROJ" )
   deploy_system opts
 }
 
@@ -105,7 +105,7 @@ function deploy_artifacts() {
   Downloads the Godot editor to XDG cache.
 DOC
 function download_godot() {
-  import "$KAITOSHOME/scripts/shared/godot.api.sh"
+  import "$PROJ/scripts/shared/godot.api.sh"
 
   godot_download "$GODOT_VERSION"
 }
@@ -118,7 +118,7 @@ function download_godot() {
 DOC
 function install_config() {
   local target="$__install__CONFIG_DIR/settings.yaml"
-  local template="$KAITOSHOME/templates/settings.template.yaml"
+  local template="$PROJ/templates/settings.template.yaml"
 
   if [[ -f "$target" && "$__install__FLAG_RESET_CONFIGS" == "false" ]]; then
     log "Config already exists at $target (use --reset-configs to overwrite)"
@@ -138,10 +138,10 @@ function install_config() {
 DOC
 function install_shell_env() {
   local target="$__install__SHELL_ENV_DIR/env.sh"
-  local template="$KAITOSHOME/templates/env.template.sh"
+  local template="$PROJ/templates/env.template.sh"
   local kaitos_version
 
-  kaitos_version="$(__install__json_get "stable" "$KAITOSHOME/manifest.json")"
+  kaitos_version="$(__install__json_get "stable" "$PROJ/manifest.json")"
 
   mkdir -p "$__install__SHELL_ENV_DIR"
   sed \

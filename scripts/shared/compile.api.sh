@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
-import "$KAITOSHOME/scripts/shared/cross_platform.api.sh"
+import "$PROJ/scripts/shared/cross_platform.api.sh"
 
-__compile_api__GO_OUTPUT_PATH="$KAITOSHOME/dist/kaitos"
-__compile_api__RUST_TARGET_DIR="$KAITOSHOME/crates/target"
-__compile_api__RUST_OUTPUT_DIR="$KAITOSHOME/dist/lib"
-__compile_api__RUST_MANIFEST_PATH="$KAITOSHOME/crates/Cargo.toml"
+__compile_api__GO_OUTPUT_PATH="$PROJ/dist/kaitos"
+__compile_api__RUST_TARGET_DIR="$PROJ/crates/target"
+__compile_api__RUST_OUTPUT_DIR="$PROJ/dist/lib"
+__compile_api__RUST_MANIFEST_PATH="$PROJ/crates/Cargo.toml"
 
 : <<'DOC'
   Compiles the go binary for the project.
@@ -23,7 +23,7 @@ __compile_api__RUST_MANIFEST_PATH="$KAITOSHOME/crates/Cargo.toml"
       Compile the go binary in release mode. Default is false.
 
     options[output_path]: string
-      The path to the output binary. Default is $KAITOSHOME/dist/kaitos.
+      The path to the output binary. Default is $PROJ/dist/kaitos.
 
   Returns:
     - 0 if the go binary is compiled successfully.
@@ -54,9 +54,9 @@ function compile_go() {
   output_path="${__opts__[output_path]:-$__compile_api__GO_OUTPUT_PATH}"
   mkdir -p "$(dirname "$output_path")" || return 1
 
-  cd "$KAITOSHOME/go" || return 1
+  cd "$PROJ/go" || return 1
   go build -o "$output_path" "${args[@]}" "./cmd/kaitos.go"
-  cd "$KAITOSHOME" || return 1
+  cd "$PROJ" || return 1
 }
 
 : <<'DOC'
@@ -73,11 +73,11 @@ function compile_go() {
     options[release]: boolean
       Compile the rust binary in release mode. Default is false.
     options[output_dir]: string
-      The path to the output directory. Default is $KAITOSHOME/dist/lib.
+      The path to the output directory. Default is $PROJ/dist/lib.
     options[manifest_path]: string
-      The path to the cargo manifest. Default is $KAITOSHOME/crates/Cargo.toml.
+      The path to the cargo manifest. Default is $PROJ/crates/Cargo.toml.
     options[target_dir]: string
-      The path to the target directory. Default is $KAITOSHOME/crates/target.
+      The path to the target directory. Default is $PROJ/crates/target.
 
   Returns:
     - 0 if the shared library is compiled and copied successfully.

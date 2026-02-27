@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Handler for checking project linting in CI/CD & commit hooks.
@@ -19,7 +19,7 @@ Notes:
 EOF
 )"
 
-import "$KAITOSHOME/scripts/shared/lint.api.sh"
+import "$PROJ/scripts/shared/lint.api.sh"
 
 FLAG_RUST=true
 FLAG_GO=true

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Pulls the latest version of the repository from git and applies it to the Cargo workspace version.
@@ -19,9 +19,9 @@ EOF
 ARG_VERSION=""
 REGEX_SEMVER='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
 
-import "$KAITOSHOME/scripts/shared/versions.api.sh"
+import "$PROJ/scripts/shared/versions.api.sh"
 
-PATH_CARGO_WORKSPACE="$KAITOSHOME/crates/Cargo.toml"
+PATH_CARGO_WORKSPACE="$PROJ/crates/Cargo.toml"
 
 function main() {
   local current_version old_version_line new_version_line

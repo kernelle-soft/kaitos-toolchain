@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Updates site/public/release-index.json with the latest release tag and
@@ -20,8 +20,8 @@ EOF
 ARG_ARTIFACT=""
 
 import \
-  "$KAITOSHOME/scripts/shared/manifest.api.sh" \
-  "$KAITOSHOME/scripts/shared/versions.api.sh"
+  "$PROJ/scripts/shared/manifest.api.sh" \
+  "$PROJ/scripts/shared/versions.api.sh"
 
 function main() {
   parse_args "$@"
@@ -64,7 +64,7 @@ DOC
 function write_release_index() {
   local tag="$1" channel="$2" checksum="$3"
   local checksum_key="${channel}_sha256_linux_x86_64"
-  local index="$KAITOSHOME/site/public/release-index.json"
+  local index="$PROJ/site/public/release-index.json"
 
   local tmp
   tmp="$(mktemp)"
@@ -86,7 +86,7 @@ DOC
 function commit_release_index() {
   local tag="$1"
 
-  git add "$KAITOSHOME/site/public/release-index.json"
+  git add "$PROJ/site/public/release-index.json"
 
   if nothing_to_release; then
     log "Release index already up to date for ${tag}; skipping commit."

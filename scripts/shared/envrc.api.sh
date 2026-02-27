@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 : <<'DOC'
 API for getting and setting managed information in the project's environment settings
 DOC
 
-__envrc_api__file="$KAITOSHOME/.envrc"
+__envrc_api__file="$PROJ/.envrc"
 __envrc_api__slug_begin="@managed:begin"
 __envrc_api__slug_end="@managed:end"
 

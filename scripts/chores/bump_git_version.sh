@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Intelligently bump the git version based on the latest version tag.
@@ -33,8 +33,8 @@ EOF
 )"
 
 import \
-  "$KAITOSHOME/scripts/shared/versions.api.sh" \
-  "$KAITOSHOME/scripts/shared/manifest.api.sh"
+  "$PROJ/scripts/shared/versions.api.sh" \
+  "$PROJ/scripts/shared/manifest.api.sh"
 
 REGEX_SEMVER='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
 REGEX_SEMVER_GIT_TAG="^v${REGEX_SEMVER#^}"  # ^v[0-9]+...

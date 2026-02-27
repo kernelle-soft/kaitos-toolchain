@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Automatic installer for 3rd party developer tools. This is useful for setting up a new machine or for CI/CD setup. Who wants to mess around manually installing all these tools with a crappy README, amiright?

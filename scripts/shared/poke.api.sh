@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
-import "$KAITOSHOME/scripts/shared/manifest.api.sh"
+import "$PROJ/scripts/shared/manifest.api.sh"
 
 export POKE_START="<!--POKE_INFO_START-->"
 export POKE_END="<!--POKE_INFO_END-->"
@@ -148,7 +148,7 @@ function __poke_api__get_loc() {
   local -n __out__="$1"
   local tokei_json
 
-  tokei_json="$(tokei --output json "$KAITOSHOME")"
+  tokei_json="$(tokei --output json "$PROJ")"
 
   __out__[go_loc]="$(jq -r '.Go.code // 0' <<< "$tokei_json")"
   __out__[rust_loc]="$(jq -r '.Rust.code // 0' <<< "$tokei_json")"

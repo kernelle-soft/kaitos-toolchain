@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${CI_ENVRC:-}"
+eval "${SHELLSHOCK_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Syncs up the project manifest based on the latest in git.
@@ -20,8 +20,8 @@ EOF
 ARG_VERSION=""
 
 import \
-  "$KAITOSHOME/scripts/shared/versions.api.sh" \
-  "$KAITOSHOME/scripts/shared/manifest.api.sh"
+  "$PROJ/scripts/shared/versions.api.sh" \
+  "$PROJ/scripts/shared/manifest.api.sh"
 
 function main() {
   local latest
