@@ -27,18 +27,19 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
+          submodules: recursive
 
-      - uses: ./.github/actions/envrc
+      - uses: ./shell/.shock/actions/envrc
 
       - uses: ./.github/actions/setup
         with:
           go: false
 
       - name: Configure git
-        run: ./scripts/ci/git_config.sh
+        uses: ./shell/.shock/actions/git-config
 
       - name: Install Additional Tools
-        run: ./scripts/chores/install_tools.sh tokei
+        run: ./shell/shock workspace tokei
 
       - name: Plan Version Bump
         id: plan
@@ -47,37 +48,37 @@ jobs:
           if [[ -n "${{ inputs.bump_type }}" ]]; then
             args+=("--${{ inputs.bump_type }}")
           fi
-          VERSION=$(./scripts/chores/bump_git_version.sh "${args[@]}")
+          VERSION=$(./shell/shock git-bump "${args[@]}")
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Sync Cargo Workspace
         run: |
-          ./scripts/chores/sync_cargo_version.sh \
+          ./shell/scripts/chores/sync_cargo_version.sh \
             "${{ steps.plan.outputs.version }}"
 
       - name: Sync Project Manifest
         run: |
-          ./scripts/chores/sync_project_manifest.sh \
+          ./shell/scripts/chores/sync_project_manifest.sh \
             "${{ steps.plan.outputs.version }}"
 
       - name: Sync README
         run: |
-          ./scripts/chores/sync_readme.sh \
+          ./shell/scripts/chores/sync_readme.sh \
             "${{ steps.plan.outputs.version }}"
         env:
           CODECOV_API_TOKEN: ${{ secrets.CODECOV_API_TOKEN }}
 
       - name: Sync Docs Version
         run: |
-          ./scripts/chores/sync_docs_version.sh \
+          ./shell/scripts/chores/sync_docs_version.sh \
             "${{ steps.plan.outputs.version }}"
 
       - name: Sync Project Environment
-        run: ./scripts/chores/sync_envrc.sh
+        run: ./shell/scripts/chores/sync_envrc.sh
 
       - name: Commit Version Bump
         run: |
-          ./scripts/ci/git_commit.sh -a \
+          ./shell/shock git-commit -a \
             -m "chore: bump to v${{ steps.plan.outputs.version }} [skip ci]"
 
       - name: Create Version Tag

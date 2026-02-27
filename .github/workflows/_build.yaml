@@ -17,14 +17,15 @@ jobs:
       - uses: actions/checkout@v6
         with:
           ref: main
+          submodules: recursive
 
-      - uses: ./.github/actions/envrc
+      - uses: ./shell/.shock/actions/envrc
       - uses: ./.github/actions/setup
 
       - name: Build and package
         id: build
         run: |
-          echo "artifact=$(./scripts/chores/build.sh --release --bundle)" \
+          echo "artifact=$(./shell/scripts/chores/build.sh --release --bundle)" \
             >> "$GITHUB_OUTPUT"
 
       - name: Upload artifact

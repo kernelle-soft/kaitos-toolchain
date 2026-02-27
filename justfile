@@ -6,7 +6,7 @@ mod sync 'just/sync.just'
 mod docs 'site'
 
 clean *args:
-  ./scripts/chores/clean.sh {{args}}
+  ./shell/scripts/chores/clean.sh {{args}}
 
 lint:
   cd go && go fmt ./...
@@ -17,16 +17,16 @@ test-all:
   just test rust
 
 bump *args:
-  ./scripts/chores/bump_git_version.sh {{args}}
+  ./shell/shock git-bump {{args}}
 
 publish *args:
-  ./scripts/ci/publish_release.sh {{args}}
+  ./shell/scripts/ci/publish_release.sh {{args}}
 
 build *args:
-  ./scripts/chores/build.sh {{args}}
+  ./shell/scripts/chores/build.sh {{args}}
 
 release *args:
-  ./scripts/chores/build.sh --release --bundle {{args}}
+  ./shell/scripts/chores/build.sh --release --bundle {{args}}
 
 watch *args:
   watchexec \
@@ -37,3 +37,6 @@ watch *args:
     --watch crates \
     -i 'crates/target/**' \
     -- just build {{args}}
+
+setup-workspace *args:
+  git submodule update --init shell/.shock && shell/.shock/workspace_init.sh {{args}}

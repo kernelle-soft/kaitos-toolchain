@@ -61,6 +61,30 @@
 - Rust (stable)
 - Cargo
 - [direnv](https://direnv.net/) - automatically loads environment from `.envrc`
+- [optional] [just](https://github.com/casey/just)
+- [optional] [lefthook](https://github.com/evilmartians/lefthook)
+
+### Workspace Setup
+
+Bootstrap the development environment (initializes the [shellshock](https://github.com/kernelle-soft/shellshock) submodule and installs tools). Shellshock is a well-groomed library of bash scripts for keeping CI/CD and your local development environment synced. This means fewer pipeline surprises when you go to submit your PR.
+
+#### With Just
+
+```
+just setup-workspace
+```
+
+#### The old fashioned way
+
+```bash
+git submodule update --init shell/.shock && shell/.shock/workspace_init.sh
+```
+
+Check tool status without installing:
+
+```bash
+shell/shock workspace --check
+```
 
 ### Git Hooks
 
@@ -76,15 +100,3 @@ lefthook install
 This configures pre-commit hooks that run:
 - `gofmt` on Go files
 - `rustfmt` on Rust files
-
-### Manual Formatting
-
-If you need to fix formatting manually:
-
-```bash
-# Go
-gofmt -w go/
-
-# Rust
-cargo fmt --manifest-path crates/Cargo.toml --all
-```

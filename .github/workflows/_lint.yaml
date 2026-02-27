@@ -9,11 +9,13 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-      - uses: ./.github/actions/envrc
+        with:
+          submodules: recursive
+      - uses: ./shell/.shock/actions/envrc
 
       - uses: ./.github/actions/setup
         with:
           rust-components: rustfmt
 
       - name: Check formatting
-        run: ./scripts/chores/lint.sh
+        run: ./shell/scripts/chores/lint.sh
