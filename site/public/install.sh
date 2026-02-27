@@ -108,7 +108,7 @@ extract_release() {
 # Sets PROJ and hands off to the real installer with remaining args.
 run_installer() {
   export PROJ="$_extract_dir"
-  /usr/bin/env bash "$_extract_dir/scripts/install/install.sh" "$@"
+  /usr/bin/env bash "$_extract_dir/shell/scripts/install/install.sh" "$@"
 }
 
 detect_os() {

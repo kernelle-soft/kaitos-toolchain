@@ -38,7 +38,7 @@ Flags:
       lib/libgodot.{so,dylib}         Shared library
       shell/.shock/lib/               Shellshock libraries
       shell/scripts/lib/              Kaitos shell libraries
-      scripts/install/                Installer specific code
+      shell/scripts/install/          Installer specific code
       templates/                      Config and env templates
       .envrc                          Environment bootstrap
       manifest.json                   Project metadata
@@ -116,15 +116,14 @@ function assemble_dist() {
 
   rm -rf \
     "$dist/shell" \
-    "$dist/scripts" \
     "$dist/templates" \
     "$dist/.envrc" \
     "$dist/manifest.json"
 
-  mkdir -p "$dist/shell/.shock" "$dist/scripts"
-  cp -r "$PROJ/shell/.shock/lib"  "$dist/shell/.shock/lib"
-  cp -r "$PROJ/shell/scripts/lib" "$dist/shell/scripts/lib"
-  cp -r "$PROJ/scripts/install"   "$dist/scripts/install"
+  mkdir -p "$dist/shell/.shock" "$dist/shell/scripts"
+  cp -r "$PROJ/shell/.shock/lib"     "$dist/shell/.shock/lib"
+  cp -r "$PROJ/shell/scripts/lib"    "$dist/shell/scripts/lib"
+  cp -r "$PROJ/shell/scripts/install" "$dist/shell/scripts/install"
   cp -r "$PROJ/templates"         "$dist/templates"
   cp    "$PROJ/.envrc"            "$dist/.envrc"
   cp    "$PROJ/manifest.json"     "$dist/manifest.json"

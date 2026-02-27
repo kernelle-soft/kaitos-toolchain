@@ -17,12 +17,12 @@ jobs:
 
       - name: Install Coverage Tooling
         run: |
-          ./scripts/chores/install_tools.sh \
+          ./shell/scripts/chores/install_tools.sh \
             cargo-llvm-cov \
             gocover-cobertura
 
       - name: Run Tests
-        run: ./scripts/ci/coverage.sh
+        run: ./shell/scripts/ci/coverage.sh
 
       - name: Upload Go Coverage
         if: hashFiles('./coverage/go_coverage.xml') != ''

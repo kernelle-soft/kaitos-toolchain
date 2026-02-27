@@ -43,7 +43,7 @@ jobs:
         if: inputs.mode == 'simulated'
         id: build
         run: |
-          echo "artifact=$(./scripts/chores/build.sh --release --bundle)" \
+          echo "artifact=$(./shell/scripts/chores/build.sh --release --bundle)" \
             >> "$GITHUB_OUTPUT"
 
       - name: Extract tarball
@@ -59,7 +59,7 @@ jobs:
           extract_dir="$(find /tmp/kaitos-install-test -mindepth 1 -maxdepth 1 -type d | head -n 1)"
           echo "PROJ=$extract_dir" >> "$GITHUB_ENV"
           export PROJ="$extract_dir"
-          bash "$extract_dir/scripts/install/install.sh"
+          bash "$extract_dir/shell/scripts/install/install.sh"
 
       # -- Live mode: curl the bootstrapper --
 
@@ -85,4 +85,4 @@ jobs:
         run: echo "TEST_INSTALL_USE_LIVE=1" >> "$GITHUB_ENV"
 
       - name: Verify installation
-        run: ./scripts/ci/test_install.sh
+        run: ./shell/scripts/ci/test_install.sh

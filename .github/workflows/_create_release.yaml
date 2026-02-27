@@ -40,7 +40,7 @@ jobs:
       - uses: ./.github/actions/envrc
 
       - name: Configure git
-        run: ./scripts/ci/git_config.sh
+        run: ./shell/scripts/ci/git_config.sh
 
       - name: Download artifact
         uses: actions/download-artifact@v7
@@ -51,10 +51,10 @@ jobs:
         id: publish
         run: |
           echo "tag=v$(jq -r '.latest' manifest.json)" >> "$GITHUB_OUTPUT"
-          ./scripts/ci/publish_release.sh \
+          ./shell/scripts/ci/publish_release.sh \
             "${{ needs.build.outputs.artifact }}.tar.gz"
 
       - name: Update release index and deploy site
         run: |
-          ./scripts/ci/update_release_index.sh \
+          ./shell/scripts/ci/update_release_index.sh \
             "${{ needs.build.outputs.artifact }}.tar.gz"

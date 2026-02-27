@@ -16,4 +16,4 @@ jobs:
           rust-components: rustfmt
 
       - name: Check formatting
-        run: ./scripts/chores/lint.sh
+        run: ./shell/scripts/chores/lint.sh

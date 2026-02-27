@@ -13,7 +13,7 @@ jobs:
         with:
           rust: false
       - name: Additional Tools
-        run: ./scripts/chores/install_tools.sh govulncheck
+        run: ./shell/scripts/chores/install_tools.sh govulncheck
 
       - name: Go Security
         run: cd go && govulncheck ./...
@@ -28,7 +28,7 @@ jobs:
         with:
           go: false
       - name: Additional Tools
-        run: ./scripts/chores/install_tools.sh cargo-audit
+        run: ./shell/scripts/chores/install_tools.sh cargo-audit
 
       - name: Rust Security
         run: cargo audit -f crates/Cargo.lock
