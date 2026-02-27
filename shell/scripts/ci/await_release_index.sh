@@ -51,9 +51,9 @@ function main() {
 function parse_args() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      -t|--timeout)  shift; FLAG_TIMEOUT="$1" ;;
-      -i|--interval) shift; FLAG_INTERVAL="$1" ;;
-      -c|--channel)  shift; FLAG_CHANNEL="$1" ;;
+      -t|--timeout)  shift; FLAG_TIMEOUT="$1"; shift ;;
+      -i|--interval) shift; FLAG_INTERVAL="$1"; shift ;;
+      -c|--channel)  shift; FLAG_CHANNEL="$1"; shift ;;
       -h|--help)     echo "$USAGE"; exit 0 ;;
       -*)
         echo "Unknown option: $1" >&2
@@ -62,7 +62,7 @@ function parse_args() {
         ;;
       *)
         if [[ -z "$ARG_TAG" ]]; then
-          ARG_TAG="$1"
+          ARG_TAG="$1"; shift
         else
           echo "Unexpected argument: $1" >&2
           echo "$USAGE" >&2
@@ -70,7 +70,6 @@ function parse_args() {
         fi
         ;;
     esac
-    shift
   done
 
   if [[ -z "$ARG_TAG" ]]; then

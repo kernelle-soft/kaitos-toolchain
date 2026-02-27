@@ -11,9 +11,10 @@ on:
         type: string
       tag:
         description: >
-          Release tag to install in live mode (e.g. v1.2.3-dev.4).
-          When set, the bootstrapper skips tag resolution and downloads this
-          exact release. Falls back to --prerelease resolution if omitted.
+          Expected release tag in live mode (e.g. v1.2.3-dev.4).
+          When set, the job waits for the release index to reflect this tag
+          before running the bootstrapper. The bootstrapper always resolves
+          via --prerelease. Omit to skip the index wait.
         required: false
         type: string
 
@@ -71,14 +72,7 @@ jobs:
 
       - name: Run bootstrapper (live)
         if: inputs.mode == 'live'
-        env:
-          RELEASE_TAG: ${{ inputs.tag }}
-        run: |
-          if [ -n "$RELEASE_TAG" ]; then
-            curl -fsSL kaitos.dev/install.sh | sh -s -- --tag "$RELEASE_TAG"
-          else
-            curl -fsSL kaitos.dev/install.sh | sh -s -- --prerelease
-          fi
+        run: curl -fsSL kaitos.dev/install.sh | sh -s -- --prerelease
 
       # -- Shared: run verification --
 
