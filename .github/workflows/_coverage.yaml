@@ -11,13 +11,14 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          submodules: recursive
       - run: git fetch origin main
-      - uses: ./.github/actions/envrc
+      - uses: ./shell/.shock/actions/envrc
       - uses: ./.github/actions/setup
 
       - name: Install Coverage Tooling
         run: |
-          ./shell/scripts/chores/install_tools.sh \
+          ./shell/shock workspace \
             cargo-llvm-cov \
             gocover-cobertura
 

@@ -8,12 +8,14 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-      - uses: ./.github/actions/envrc
+        with:
+          submodules: recursive
+      - uses: ./shell/.shock/actions/envrc
       - uses: ./.github/actions/setup
         with:
           rust: false
       - name: Additional Tools
-        run: ./shell/scripts/chores/install_tools.sh govulncheck
+        run: ./shell/shock workspace govulncheck
 
       - name: Go Security
         run: cd go && govulncheck ./...
@@ -23,12 +25,14 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-      - uses: ./.github/actions/envrc
+        with:
+          submodules: recursive
+      - uses: ./shell/.shock/actions/envrc
       - uses: ./.github/actions/setup
         with:
           go: false
       - name: Additional Tools
-        run: ./shell/scripts/chores/install_tools.sh cargo-audit
+        run: ./shell/shock workspace cargo-audit
 
       - name: Rust Security
         run: cargo audit -f crates/Cargo.lock

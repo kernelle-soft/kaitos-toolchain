@@ -62,6 +62,35 @@
 - Cargo
 - [direnv](https://direnv.net/) - automatically loads environment from `.envrc`
 
+### Workspace Setup
+
+Bootstrap the development environment (initializes the [shellshock](https://github.com/kernelle-soft/shellshock) submodule and installs tools):
+
+```bash
+git submodule update --init shell/.shock && shell/.shock/workspace_init.sh
+```
+
+Check tool status without installing:
+
+```bash
+shell/shock workspace --check
+```
+
+### Project Structure
+
+```
+shell/
+  shock                         # CLI dispatcher (derived from .shock/)
+  .shock/                       # shellshock submodule
+  scripts/
+    lib/                        # kaitos-specific shell libraries
+    chores/                     # chore scripts (build, sync, lint)
+    ci/                         # CI scripts (publish, coverage, test)
+    install/                    # installer scripts
+shock.lock                      # tool dependencies (read by shock workspace)
+manifest.json                   # project metadata
+```
+
 ### Git Hooks
 
 This project uses [lefthook](https://github.com/evilmartians/lefthook) to manage git hooks for formatting checks.
@@ -76,15 +105,3 @@ lefthook install
 This configures pre-commit hooks that run:
 - `gofmt` on Go files
 - `rustfmt` on Rust files
-
-### Manual Formatting
-
-If you need to fix formatting manually:
-
-```bash
-# Go
-gofmt -w go/
-
-# Rust
-cargo fmt --manifest-path crates/Cargo.toml --all
-```
