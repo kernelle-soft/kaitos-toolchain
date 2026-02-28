@@ -4,7 +4,7 @@ eval "${SHELLSHOCK_ENVRC:-}"
 
 USAGE="$(cat <<EOF
 Updates site/public/release-index.json with the latest release tag and
-checksum, commits the change, and triggers a site deployment.
+checksum, then commits and pushes. Deployment is handled by the caller workflow.
 
 Usage: update_release_index.sh [-h,--help] <artifact>
 
@@ -36,9 +36,7 @@ function main() {
 
   write_release_index "$tag" "$channel" "$checksum"
 
-  if commit_release_index "$tag"; then
-    deploy_site
-  fi
+  commit_release_index "$tag"
 }
 
 : <<'DOC'
@@ -103,15 +101,6 @@ function commit_release_index() {
 DOC
 function nothing_to_release() {
   git diff --cached --quiet
-}
-
-: <<'DOC'
-  Triggers the docs workflow to deploy the site with the updated index.
-  This manual trigger is needed because GITHUB_TOKEN pushes don't trigger other workflows.
-DOC
-function deploy_site() {
-  log "Triggering site deployment..."
-  gh workflow run docs.yaml
 }
 
 : <<'DOC'
