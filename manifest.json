@@ -2,7 +2,7 @@
   "command-name": "kaitos",
   "repo": "kaitos-toolchain",
   "org": "kernelle-soft",
-  "latest": "0.0.10",
+  "latest": "0.0.11-dev.1",
   "stable": "0.0.10",
   "releases": 11,
   "naming": {
