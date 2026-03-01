@@ -11,10 +11,10 @@
   </h3>
   <img
     id="pokemon-img"
-    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/10.gif"
+    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/11.gif"
   />
   <br>
-  <span id="pokemon-name"><b>Release #10: v0.0.10 - Caterpie</b></span>
+  <span id="pokemon-name"><b>Release #11: v0.0.10 - Metapod</b></span>
   <br>
   <img
     id="rust-runtime-coverage"
