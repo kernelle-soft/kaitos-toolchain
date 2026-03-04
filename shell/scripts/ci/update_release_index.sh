@@ -58,21 +58,31 @@ function resolve_channel() {
   given channel. Keys follow the flat naming convention:
     <channel>                     → tag
     <channel>_sha256_<os>_<arch>  → checksum
+
+  When channel is "stable", also updates "prerelease" so that the bleeding
+  edge channel reflects the graduated release (e.g. v0.0.10 supersedes
+  v0.0.10-dev.4).
 DOC
 function write_release_index() {
   local tag="$1" channel="$2" checksum="$3"
-  local checksum_key="${channel}_sha256_linux_x86_64"
   local index="$PROJ/site/public/release-index.json"
 
   local tmp
   tmp="$(mktemp)"
 
-  jq --arg channel "$channel" \
-     --arg tag "$tag" \
-     --arg key "$checksum_key" \
-     --arg checksum "$checksum" \
-     '.[$channel] = $tag | .[$key] = $checksum' \
-     "$index" > "$tmp"
+  if [[ "$channel" == "stable" ]]; then
+    jq --arg tag "$tag" --arg checksum "$checksum" \
+      '.stable = $tag | .stable_sha256_linux_x86_64 = $checksum | .prerelease = $tag | .prerelease_sha256_linux_x86_64 = $checksum' \
+      "$index" > "$tmp"
+  else
+    local checksum_key="${channel}_sha256_linux_x86_64"
+    jq --arg channel "$channel" \
+       --arg tag "$tag" \
+       --arg key "$checksum_key" \
+       --arg checksum "$checksum" \
+       '.[$channel] = $tag | .[$key] = $checksum' \
+       "$index" > "$tmp"
+  fi
 
   mv "$tmp" "$index"
 }
