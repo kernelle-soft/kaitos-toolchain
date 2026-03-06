@@ -20,7 +20,7 @@ bump *args:
   ./shell/shock git-bump {{args}}
 
 publish *args:
-  ./shell/scripts/ci/publish_release.sh {{args}}
+  ./shell/shock publish-release {{args}}
 
 build *args:
   ./shell/scripts/chores/build.sh {{args}}
