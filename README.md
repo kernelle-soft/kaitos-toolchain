@@ -11,10 +11,10 @@
   </h3>
   <img
     id="pokemon-img"
-    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/12.gif"
+    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/13.gif"
   />
   <br>
-  <span id="pokemon-name"><b>Release #12: v0.0.11 - Butterfree</b></span>
+  <span id="pokemon-name"><b>Release #13: v0.0.11 - Weedle</b></span>
   <br>
   <img
     id="rust-runtime-coverage"

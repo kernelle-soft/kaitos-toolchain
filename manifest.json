@@ -4,7 +4,7 @@
   "org": "kernelle-soft",
   "latest": "0.0.11",
   "stable": "0.0.11",
-  "releases": 12,
+  "releases": 13,
   "naming": {
     "major": "Early Development",
     "minor": "Core Project Infrastructure",
