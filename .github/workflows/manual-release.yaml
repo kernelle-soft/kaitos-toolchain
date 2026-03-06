@@ -56,7 +56,7 @@ jobs:
     name: cleanup-failed-release
     needs: [release, test-install-live]
     if: ${{ always() && needs.test-install-live.result == 'failure' }}
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.DEFAULT_RUNNER || 'ubuntu-24.04' }}
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
