@@ -52,7 +52,7 @@ jobs:
         id: publish
         run: |
           echo "tag=v$(jq -r '.latest' manifest.json)" >> "$GITHUB_OUTPUT"
-          ./shell/scripts/ci/publish_release.sh \
+          ./shell/shock publish-release \
             "${{ needs.build.outputs.artifact }}.tar.gz"
 
       - name: Update release index and deploy site
