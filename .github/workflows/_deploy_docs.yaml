@@ -22,7 +22,7 @@ concurrency:
 jobs:
   build:
     name: build
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.DEFAULT_RUNNER || 'ubuntu-24.04' }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -55,7 +55,7 @@ jobs:
 
   deploy:
     name: deploy
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.DEFAULT_RUNNER || 'ubuntu-24.04' }}
     needs: build
     environment:
       name: github-pages
