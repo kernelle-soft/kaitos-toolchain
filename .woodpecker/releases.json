@@ -1,0 +1,22 @@
+{
+  "groups": [
+    {
+      "header": "Impact",
+      "labels": ["breaking", "deprecated"]
+    },
+    {
+      "header": "Development",
+      "labels": ["enhancement", "bug"]
+    },
+    {
+      "header": "Quality",
+      "labels": ["security", "performance", "testing"]
+    },
+    {
+      "header": "Support",
+      "labels": ["docs", "chore", "refactor", "dependencies", "ci"]
+    }
+  ],
+  "skip": ["skip-changelog"],
+  "default_group": "Support"
+}
