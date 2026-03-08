@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${SHELLSHOCK_ENVRC:-}"
+source "$SHOCK_DIR/.envrc"
 
 USAGE="$(cat <<EOF
 Syncs the docs site version (site/package.json) to the canonical project version.

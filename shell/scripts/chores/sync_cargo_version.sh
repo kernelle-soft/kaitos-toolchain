@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${SHELLSHOCK_ENVRC:-}"
+source "$SHOCK_DIR/.envrc"
 
 USAGE="$(cat <<EOF
 Pulls the latest version of the repository from git and applies it to the Cargo workspace version.

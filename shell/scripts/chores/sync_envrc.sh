@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${SHELLSHOCK_ENVRC:-}"
+source "$SHOCK_DIR/.envrc"
 
 USAGE="$(cat <<EOF
 Syncs up environment setup information from the project manifest.

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-eval "${SHELLSHOCK_ENVRC:-}"
+source "$SHOCK_DIR/.envrc"
 
 USAGE="$(cat <<EOF
 Clean up the project of various temp folders and artifacts.

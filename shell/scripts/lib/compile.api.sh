@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-eval "${SHELLSHOCK_ENVRC:-}"
+source "$SHOCK_DIR/.envrc"
 
 import "$PROJ/shell/.shock/lib/cross_platform.api.sh"
 

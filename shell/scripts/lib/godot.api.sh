@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-eval "${SHELLSHOCK_ENVRC:-}"
+source "$SHOCK_DIR/.envrc"
 
 : <<'DOC'
 API for downloading and locating the Godot editor binary.
