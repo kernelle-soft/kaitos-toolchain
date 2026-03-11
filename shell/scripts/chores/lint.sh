@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-source "$SHOCK_DIR/.envrc"
+source "$SHELLOPS_DIR/.envrc"
 
 USAGE="$(cat <<EOF
 Handler for checking project linting in CI/CD & commit hooks.
@@ -19,7 +19,7 @@ Notes:
 EOF
 )"
 
-import "$PROJ/shell/.shock/lib/lint.api.sh"
+import "$PROJ/shell/.ops/lib/lint.api.sh"
 
 FLAG_RUST=true
 FLAG_GO=true

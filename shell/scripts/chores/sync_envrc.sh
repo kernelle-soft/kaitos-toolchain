@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-source "$SHOCK_DIR/.envrc"
+source "$SHELLOPS_DIR/.envrc"
 
 USAGE="$(cat <<EOF
 Syncs up environment setup information from the project manifest.
@@ -22,8 +22,8 @@ EOF
 )"
 
 import \
-  "$PROJ/shell/.shock/lib/manifest.api.sh" \
-  "$PROJ/shell/.shock/lib/envrc.api.sh" \
+  "$PROJ/shell/.ops/lib/manifest.api.sh" \
+  "$PROJ/shell/.ops/lib/envrc.api.sh" \
   "$PROJ/shell/scripts/lib/compatibility.api.sh"
 
 __sync_envrc__ARG_GODOT_URL=""

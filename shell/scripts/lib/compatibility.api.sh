@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-source "$SHOCK_DIR/.envrc"
+source "$SHELLOPS_DIR/.envrc"
 
-import "$PROJ/shell/.shock/lib/manifest.api.sh"
+import "$PROJ/shell/.ops/lib/manifest.api.sh"
 
 : <<'DOC'
 API for checking version compatibility against supported engine versions

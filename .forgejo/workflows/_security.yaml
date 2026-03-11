@@ -1,0 +1,43 @@
+name: Security
+
+on:
+  workflow_call:
+
+jobs:
+  go:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: setup-shellops
+        run: source shell/actions/setup-ops
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go/go.mod
+
+      - name: install-govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+
+      - name: go-vulncheck
+        run: cd go && govulncheck ./...
+
+  rust:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: setup-shellops
+        run: source shell/actions/setup-ops
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: install-cargo-audit
+        run: cargo install cargo-audit
+
+      - name: rust-audit
+        run: cargo audit -f crates/Cargo.lock

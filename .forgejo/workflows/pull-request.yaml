@@ -1,0 +1,32 @@
+name: Pull Request
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: lint
+    uses: ./.forgejo/workflows/_lint.yaml
+    secrets: inherit
+
+  security:
+    name: security
+    uses: ./.forgejo/workflows/_security.yaml
+    secrets: inherit
+
+  test:
+    name: test
+    uses: ./.forgejo/workflows/_test.yaml
+    secrets: inherit
+
+  test-install:
+    name: test-install
+    uses: ./.forgejo/workflows/_test-install.yaml
+    secrets: inherit
+
+  hygiene:
+    name: hygiene
+    uses: ./.forgejo/workflows/_pr-hygiene.yaml
+    secrets: inherit

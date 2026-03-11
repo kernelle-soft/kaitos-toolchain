@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-source "$SHOCK_DIR/.envrc"
+source "$SHELLOPS_DIR/.envrc"
 
 USAGE="$(cat <<EOF
 Updates site/public/release-index.json with the latest release tag and
@@ -20,8 +20,8 @@ EOF
 ARG_ARTIFACT=""
 
 import \
-  "$PROJ/shell/.shock/lib/manifest.api.sh" \
-  "$PROJ/shell/.shock/lib/versions.api.sh"
+  "$PROJ/shell/.ops/lib/manifest.api.sh" \
+  "$PROJ/shell/.ops/lib/versions.api.sh"
 
 function main() {
   parse_args "$@"

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-source "$SHOCK_DIR/.envrc"
+source "$SHELLOPS_DIR/.envrc"
 
 USAGE="$(cat <<EOF
 Pulls the latest version of the repository from git and applies it to the Cargo workspace version.
@@ -19,7 +19,7 @@ EOF
 ARG_VERSION=""
 REGEX_SEMVER='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+(\.[0-9]+)?)?$'
 
-import "$PROJ/shell/.shock/lib/versions.api.sh"
+import "$PROJ/shell/.ops/lib/versions.api.sh"
 
 PATH_CARGO_WORKSPACE="$PROJ/crates/Cargo.toml"
 

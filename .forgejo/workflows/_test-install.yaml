@@ -1,0 +1,45 @@
+name: Test Install
+
+on:
+  workflow_call:
+
+jobs:
+  test-install:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: setup-shellops
+        run: source shell/actions/setup-ops
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go/go.mod
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: cargo-bins/cargo-binstall@main
+
+      - name: build-and-bundle
+        id: build
+        run: |
+          echo "artifact=$(./shell/scripts/chores/build.sh --release --bundle)" \
+            >> "$GITHUB_OUTPUT"
+
+      - name: extract-tarball
+        run: |
+          mkdir -p /tmp/kaitos-install-test
+          tar -xzf "${{ steps.build.outputs.artifact }}.tar.gz" \
+            -C /tmp/kaitos-install-test
+
+      - name: run-installer
+        run: |
+          extract_dir="$(find /tmp/kaitos-install-test -mindepth 1 -maxdepth 1 -type d | head -n 1)"
+          echo "PROJ=$extract_dir" >> "$GITHUB_ENV"
+          export PROJ="$extract_dir"
+          bash "$extract_dir/shell/scripts/install/install.sh"
+
+      - name: verify-installation
+        run: ./shell/scripts/ci/test_install.sh

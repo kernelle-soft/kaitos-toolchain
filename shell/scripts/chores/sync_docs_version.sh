@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-source "$SHOCK_DIR/.envrc"
+source "$SHELLOPS_DIR/.envrc"
 
 USAGE="$(cat <<EOF
 Syncs the docs site version (site/package.json) to the canonical project version.
@@ -18,7 +18,7 @@ EOF
 
 ARG_VERSION=""
 
-import "$PROJ/shell/.shock/lib/versions.api.sh"
+import "$PROJ/shell/.ops/lib/versions.api.sh"
 
 PATH_DOCS_PACKAGE="$PROJ/site/package.json"
 

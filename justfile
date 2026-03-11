@@ -17,10 +17,10 @@ test-all:
   just test rust
 
 bump *args:
-  ./shell/shock git-bump {{args}}
+  ./shell/ops git-bump {{args}}
 
 publish *args:
-  ./shell/shock publish-release {{args}}
+  ./shell/ops publish-release {{args}}
 
 build *args:
   ./shell/scripts/chores/build.sh {{args}}
@@ -39,4 +39,4 @@ watch *args:
     -- just build {{args}}
 
 setup-workspace *args:
-  git submodule update --init shell/.shock && shell/.shock/workspace_init.sh {{args}}
+  git submodule update --init shell/.ops && shell/.ops/workspace_init.sh {{args}}

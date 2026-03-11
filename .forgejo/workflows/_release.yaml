@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  workflow_call:
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    env:
+      FORGEJO_TOKEN: ${{ secrets.BLIZZ_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: setup-shellops
+        run: source shell/actions/setup-ops
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go/go.mod
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: cargo-bins/cargo-binstall@main
+
+      - name: install-tools
+        run: |
+          cargo binstall -y tokei
+
+      - name: configure-git
+        run: shell/actions/git-config "Blizz" "blizz@kernelle-soft.com"
+
+      - name: configure-signing
+        env:
+          BLIZZ_SIGNING_KEY: ${{ secrets.BLIZZ_SIGNING_KEY }}
+        run: shell/actions/git-sign "$BLIZZ_SIGNING_KEY"
+
+      - name: authenticate-git
+        run: shell/actions/git-auth "blizz" "${{ secrets.BLIZZ_TOKEN }}"
+
+      - name: bump-version
+        run: |
+          VERSION=$(shell/.ops/cli/git-bump --dry-run) || { echo "No bump needed, skipping release."; exit 0; }
+          shell/actions/version-guard "v${VERSION}" || exit 0
+          echo "$VERSION" > .version
+
+          ./shell/scripts/chores/sync_cargo_version.sh "$VERSION"
+          ./shell/scripts/chores/sync_project_manifest.sh "$VERSION"
+          ./shell/scripts/chores/sync_readme.sh "$VERSION"
+          ./shell/scripts/chores/sync_docs_version.sh "$VERSION"
+          ./shell/scripts/chores/sync_envrc.sh
+
+          shell/.ops/cli/git-commit -a -m "chore: bump to v${VERSION} [skip ci]"
+          git tag -a "v${VERSION}" -m "v${VERSION}"
+          git push origin main "v${VERSION}"
+
+      - name: build-artifact
+        run: |
+          [ -f .version ] || { echo 'No bump performed, skipping build.'; exit 0; }
+          echo "artifact=$(./shell/scripts/chores/build.sh --release --bundle)" > .artifact
+
+      - name: publish-release
+        run: |
+          [ -f .artifact ] || { echo 'No build performed, skipping release.'; exit 0; }
+          artifact="$(cat .artifact | sed 's/artifact=//')"
+          shell/.ops/cli/publish-release "${artifact}.tar.gz"

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-source "$SHOCK_DIR/.envrc"
+source "$SHELLOPS_DIR/.envrc"
 
-import "$PROJ/shell/.shock/lib/manifest.api.sh"
+import "$PROJ/shell/.ops/lib/manifest.api.sh"
 
 export POKE_START="<!--POKE_INFO_START-->"
 export POKE_END="<!--POKE_INFO_END-->"

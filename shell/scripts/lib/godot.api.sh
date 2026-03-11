@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source "$SHOCK_DIR/.envrc"
+source "$SHELLOPS_DIR/.envrc"
 
 : <<'DOC'
 API for downloading and locating the Godot editor binary.
@@ -11,7 +11,7 @@ executables; macOS uses a .app bundle to preserve code signing).
 Dependencies: curl, unzip
 DOC
 
-import "$PROJ/shell/.shock/lib/manifest.api.sh"
+import "$PROJ/shell/.ops/lib/manifest.api.sh"
 
 __godot_api__XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 __godot_api__CACHE_DIR="$__godot_api__XDG_CACHE_HOME/kaitos/godot"

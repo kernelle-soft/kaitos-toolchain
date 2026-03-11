@@ -1,3 +1,6 @@
-[submodule "shell/.shock"]
-	path = shell/.shock
-	url = git@codeberg.org:kernelle-soft/shellshock.git
+[submodule "shell/.ops"]
+	path = shell/.ops
+	url = https://creature-workshop.kernelle-soft.com/kernelle-soft/shellops.git
+[submodule "shell/actions"]
+	path = shell/actions
+	url = https://creature-workshop.kernelle-soft.com/kernelle-soft/shellactions.git

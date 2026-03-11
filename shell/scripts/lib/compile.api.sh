@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-source "$SHOCK_DIR/.envrc"
+source "$SHELLOPS_DIR/.envrc"
 
-import "$PROJ/shell/.shock/lib/cross_platform.api.sh"
+import "$PROJ/shell/.ops/lib/cross_platform.api.sh"
 
 __compile_api__GO_OUTPUT_PATH="$PROJ/dist/kaitos"
 __compile_api__RUST_TARGET_DIR="$PROJ/crates/target"

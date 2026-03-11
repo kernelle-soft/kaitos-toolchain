@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-source "$SHOCK_DIR/.envrc"
+source "$SHELLOPS_DIR/.envrc"
 
 USAGE="$(cat <<EOF
 Orchestrates compilation and deployment of Kaitos.
@@ -36,7 +36,7 @@ Flags:
     kaitos-<version>-<platform>-<arch>.tar.gz/
       kaitos                          CLI binary
       lib/libgodot.{so,dylib}         Shared library
-      shell/.shock/lib/               Shellshock libraries
+      shell/.ops/lib/               Shellops libraries
       shell/scripts/lib/              Kaitos shell libraries
       shell/scripts/install/          Installer specific code
       templates/                      Config and env templates
@@ -120,8 +120,8 @@ function assemble_dist() {
     "$dist/.envrc" \
     "$dist/manifest.json"
 
-  mkdir -p "$dist/shell/.shock" "$dist/shell/scripts"
-  cp -r "$PROJ/shell/.shock/lib"     "$dist/shell/.shock/lib"
+  mkdir -p "$dist/shell/.ops" "$dist/shell/scripts"
+  cp -r "$PROJ/shell/.ops/lib"     "$dist/shell/.ops/lib"
   cp -r "$PROJ/shell/scripts/lib"    "$dist/shell/scripts/lib"
   cp -r "$PROJ/shell/scripts/install" "$dist/shell/scripts/install"
   cp -r "$PROJ/templates"         "$dist/templates"

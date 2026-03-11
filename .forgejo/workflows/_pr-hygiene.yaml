@@ -1,0 +1,23 @@
+name: PR Hygiene
+
+on:
+  workflow_call:
+
+jobs:
+  check:
+    runs-on: ubuntu-22.04
+    env:
+      FORGEJO_PR_TOKEN: ${{ secrets.BLIZZ_PR_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: setup-shellops
+        run: source shell/actions/setup-ops
+
+      - name: map-pr-env
+        run: source shell/actions/pr-env
+
+      - name: check-hygiene
+        run: shell/.ops/cli/pr-hygiene

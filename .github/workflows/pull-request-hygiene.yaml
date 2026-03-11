@@ -1,9 +1,0 @@
-name: Pull Request Hygiene
-
-on:
-  pull_request:
-    types: [opened, reopened, labeled, unlabeled, assigned, unassigned]
-
-jobs:
-  hygiene:
-    uses: kernelle-soft/.github/.github/workflows/pull-request-hygiene.yaml@main
