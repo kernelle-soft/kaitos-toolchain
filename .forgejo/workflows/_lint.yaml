@@ -19,9 +19,7 @@ jobs:
           go-version-file: go/go.mod
 
       - name: setup-rust
-        run: |
-          rustup toolchain install stable --profile minimal --component rustfmt
-          rustup default stable
+        run: shell/actions/setup-rust stable rustfmt
 
       - name: check-formatting
         run: ./shell/scripts/chores/lint.sh
