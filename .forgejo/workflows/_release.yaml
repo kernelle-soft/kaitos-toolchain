@@ -21,9 +21,13 @@ jobs:
         with:
           go-version-file: go/go.mod
 
-      - uses: dtolnay/rust-toolchain@stable
+      - name: setup-rust
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
 
-      - uses: cargo-bins/cargo-binstall@main
+      - name: install-cargo-binstall
+        run: curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
 
       - name: install-tools
         run: |

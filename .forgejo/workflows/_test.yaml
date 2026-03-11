@@ -21,7 +21,10 @@ jobs:
         with:
           go-version-file: go/go.mod
 
-      - uses: dtolnay/rust-toolchain@stable
+      - name: setup-rust
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
 
       - name: run-tests
         run: ./shell/scripts/ci/coverage.sh

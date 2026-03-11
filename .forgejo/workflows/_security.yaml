@@ -34,7 +34,10 @@ jobs:
       - name: setup-shellops
         run: source shell/actions/setup-ops
 
-      - uses: dtolnay/rust-toolchain@stable
+      - name: setup-rust
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
 
       - name: install-cargo-audit
         run: cargo install cargo-audit
