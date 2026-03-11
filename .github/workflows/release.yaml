@@ -1,0 +1,37 @@
+name: Publish GitHub Release
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go/go.mod
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: cargo-bins/cargo-binstall@main
+
+      - name: setup-shellops
+        run: source shell/actions/setup-ops
+
+      - name: build-artifact
+        id: build
+        run: |
+          echo "artifact=$(./shell/scripts/chores/build.sh --release --bundle)" \
+            >> "$GITHUB_OUTPUT"
+
+      - name: publish-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: shell/.ops/cli/publish-release --github "${{ steps.build.outputs.artifact }}.tar.gz"
