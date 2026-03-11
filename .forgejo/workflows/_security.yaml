@@ -38,7 +38,7 @@ jobs:
         run: shell/actions/setup-rust
 
       - name: install-tools
-        run: shell/.ops/cli/install cargo-audit
+        run: shell/.ops/cli/install cargo-binstall cargo-audit
 
       - name: rust-audit
         run: cargo audit -f crates/Cargo.lock

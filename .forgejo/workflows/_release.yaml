@@ -25,7 +25,7 @@ jobs:
         run: shell/actions/setup-rust
 
       - name: install-tools
-        run: shell/.ops/cli/install tokei
+        run: shell/.ops/cli/install cargo-binstall tokei
 
       - name: configure-git
         run: shell/actions/git-config "Blizz" "blizz@kernelle-soft.com"
