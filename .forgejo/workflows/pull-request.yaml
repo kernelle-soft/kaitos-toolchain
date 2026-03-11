@@ -8,25 +8,30 @@ on:
 jobs:
   lint:
     name: lint
+    runs-on: ubuntu-22.04
     uses: ./.forgejo/workflows/_lint.yaml
     secrets: inherit
 
   security:
     name: security
+    runs-on: ubuntu-22.04
     uses: ./.forgejo/workflows/_security.yaml
     secrets: inherit
 
   test:
     name: test
+    runs-on: ubuntu-22.04
     uses: ./.forgejo/workflows/_test.yaml
     secrets: inherit
 
   test-install:
     name: test-install
+    runs-on: ubuntu-22.04
     uses: ./.forgejo/workflows/_test-install.yaml
     secrets: inherit
 
   hygiene:
     name: hygiene
+    runs-on: ubuntu-22.04
     uses: ./.forgejo/workflows/_pr-hygiene.yaml
     secrets: inherit

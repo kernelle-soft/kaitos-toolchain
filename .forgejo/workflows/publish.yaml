@@ -11,21 +11,25 @@ on:
 jobs:
   lint:
     name: lint
+    runs-on: ubuntu-22.04
     uses: ./.forgejo/workflows/_lint.yaml
     secrets: inherit
 
   security:
     name: security
+    runs-on: ubuntu-22.04
     uses: ./.forgejo/workflows/_security.yaml
     secrets: inherit
 
   test:
     name: test
+    runs-on: ubuntu-22.04
     uses: ./.forgejo/workflows/_test.yaml
     secrets: inherit
 
   release:
     name: release
+    runs-on: ubuntu-22.04
     needs: [lint, security, test]
     uses: ./.forgejo/workflows/_release.yaml
     secrets: inherit
