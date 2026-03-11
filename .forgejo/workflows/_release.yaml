@@ -66,3 +66,9 @@ jobs:
           [ -f .artifact ] || { echo 'No build performed, skipping release.'; exit 0; }
           artifact="$(cat .artifact | sed 's/artifact=//')"
           shell/.ops/cli/publish-release "${artifact}.tar.gz"
+
+      - name: update-release-index
+        run: |
+          [ -f .artifact ] || { echo 'No build performed, skipping index update.'; exit 0; }
+          artifact="$(cat .artifact | sed 's/artifact=//')"
+          ./shell/scripts/ci/update_release_index.sh "${artifact}.tar.gz"
