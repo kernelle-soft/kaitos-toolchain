@@ -14,7 +14,7 @@
     src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/11.gif"
   />
   <br>
-  <span id="pokemon-name"><b>Release #11: v0.0.11 - Metapod</b></span>
+  <span id="pokemon-name"><b>Release #11: v - Metapod</b></span>
   <br>
   <img
     id="rust-runtime-coverage"
@@ -46,7 +46,7 @@
     </tr>
     <tr>
       <td>Bash</td>
-      <td>2177</td>
+      <td>2183</td>
     </tr>
   </table>
 </div>
