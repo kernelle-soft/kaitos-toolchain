@@ -18,8 +18,8 @@ jobs:
         with:
           go-version-file: go/go.mod
 
-      - name: install-govulncheck
-        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+      - name: install-tools
+        run: shell/.ops/cli/install govulncheck
 
       - name: go-vulncheck
         run: cd go && govulncheck ./...
@@ -37,8 +37,8 @@ jobs:
       - name: setup-rust
         run: shell/actions/setup-rust
 
-      - name: install-cargo-audit
-        run: cargo install cargo-audit
+      - name: install-tools
+        run: shell/.ops/cli/install cargo-audit
 
       - name: rust-audit
         run: cargo audit -f crates/Cargo.lock

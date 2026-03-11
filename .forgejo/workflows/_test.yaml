@@ -24,5 +24,8 @@ jobs:
       - name: setup-rust
         run: shell/actions/setup-rust
 
+      - name: install-coverage-tools
+        run: shell/.ops/cli/install gocover-cobertura cargo-llvm-cov
+
       - name: run-tests
         run: ./shell/scripts/ci/coverage.sh

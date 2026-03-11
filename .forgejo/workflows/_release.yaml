@@ -24,12 +24,8 @@ jobs:
       - name: setup-rust
         run: shell/actions/setup-rust
 
-      - name: install-cargo-binstall
-        run: curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
-
       - name: install-tools
-        run: |
-          cargo binstall -y tokei
+        run: shell/.ops/cli/install tokei
 
       - name: configure-git
         run: shell/actions/git-config "Blizz" "blizz@kernelle-soft.com"

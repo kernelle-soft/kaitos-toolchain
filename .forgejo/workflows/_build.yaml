@@ -28,9 +28,6 @@ jobs:
       - name: setup-rust
         run: shell/actions/setup-rust
 
-      - name: install-cargo-binstall
-        run: curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
-
       - name: build-and-package
         id: build
         run: |
