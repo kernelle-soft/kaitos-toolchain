@@ -9,11 +9,7 @@
         "pkg": "golang.org/x/vuln/cmd/govulncheck"
       }
     },
-    "cargo-install": {
-      "cargo-binstall": {
-        "version": "1.17.4"
-      }
-    },
+    "cargo-install": {},
     "cargo-binstall": {
       "tokei": {
         "version": "14.0.0",
@@ -38,6 +34,9 @@
       }
     },
     "local": {
+      "cargo-binstall": {
+        "version": "latest"
+      },
       "gh": {
         "version": "latest"
       }
