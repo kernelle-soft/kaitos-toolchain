@@ -1,6 +1,6 @@
 {
   "stable": "v0.0.11",
-  "prerelease": "v0.0.11-dev.9",
-  "prerelease_sha256_linux_x86_64": "23c9cee73343df141d83374d015c05ae43e23105c169fbb5ca17216e6deb9f65",
+  "prerelease": "v0.0.11-dev.10",
+  "prerelease_sha256_linux_x86_64": "f648083e8e5c7c53d191f652eb2ab7594637de9b2e1899a3a696fa9411d38acb",
   "stable_sha256_linux_x86_64": "2acc6350b6d13a6b75493a56550a1dda762140a8218537889060e2836d2ad482"
 }
